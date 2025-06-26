@@ -1,0 +1,12 @@
+{
+    "AdminModule": true,
+    "LayoutModule": true,
+    "UserModule": true,
+    "BranchModule": true,
+    "CourseModule": true,
+    "StudentModule": true,
+    "ReportModule": true,
+    "LocationModule": true,
+    "LogModule": true,
+    "PermissionModule": true
+}

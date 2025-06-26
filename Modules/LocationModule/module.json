@@ -1,0 +1,11 @@
+{
+    "name": "LocationModule",
+    "alias": "locationmodule",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\LocationModule\\app\\Providers\\LocationModuleServiceProvider"
+    ],
+    "files": []
+}

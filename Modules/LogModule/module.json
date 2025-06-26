@@ -1,0 +1,11 @@
+{
+    "name": "LogModule",
+    "alias": "logmodule",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\LogModule\\app\\Providers\\LogModuleServiceProvider"
+    ],
+    "files": []
+}
