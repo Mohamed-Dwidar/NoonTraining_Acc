@@ -187,10 +187,12 @@
                                                             role="button">عرض</a>
 
                                                         {{-- @if (in_array('can_del_students', auth()->user()->privileges_keys())) --}}
+                                                        @if (!Auth::guard('user')->check())
                                                         <a class="btn btn-danger"
                                                             href="{{ route(Auth::getDefaultDriver() . '.students.delete', $student->id) }}"
                                                             onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطالب و جميع الدورات المسجل فيها ؟')"
                                                             role="button">حذف</a>
+                                                        @endif
                                                         {{-- @endif --}}
 
 
