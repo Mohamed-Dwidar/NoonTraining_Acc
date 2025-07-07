@@ -21,6 +21,7 @@
             <th>الباقي</th>
             <th>تم اصدار الشهادة</th>
             <th>استلم الشهادة</th>
+            <th>ملاحظات</th>
         </tr>
     </thead>
     <tbody>
@@ -39,6 +40,7 @@
             <td>{{$student->id_nu}}</td>
             <td>{{$student->qualification}}</td>
             <td>{{$student->occupation}}</td>
+            <td>{{$student->notes}}</td>
         </tr>
 
     </tbody>

@@ -809,7 +809,18 @@
                                                                                         </span>
                                                                                     </div>
 
-
+                                                                                    <div class="col-md-12">
+                                                                                        <label>
+                                                                                            ملاحظات
+                                                                                        </label>
+                                                                                        <span>
+                                                                                            @if ($reg->student->notes)
+                                                                                                    {{ $reg->student->notes }}
+                                                                                                @else
+                                                                                                    ---
+                                                                                                @endif
+                                                                                        </span>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>

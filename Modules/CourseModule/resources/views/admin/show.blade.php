@@ -726,6 +726,21 @@
                                                                                                 @endif
                                                                                             </div>
                                                                                         </div>
+
+                                                                                        <div class="row">
+                                                                                            <div
+                                                                                                class="col-lg-3 col-md-2 col-sm-12 col-xs-12 col label font-bold">
+                                                                                                ملاحظات
+                                                                                            </div>
+                                                                                            <div
+                                                                                                class="col-lg-9 col-md-4 col-sm-12 col-xs-12 col">
+                                                                                                @if ($reg->student->notes)
+                                                                                                    {{ $reg->student->notes }}
+                                                                                                @else
+                                                                                                    ---
+                                                                                                @endif
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>

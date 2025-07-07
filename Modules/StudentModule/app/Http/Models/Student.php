@@ -25,7 +25,8 @@ class Student extends Model
         'birthdate',
         'id_expire_date',
         'nationality',
-        'gender'
+        'gender',
+        'notes'
     ];
 
     function branch()

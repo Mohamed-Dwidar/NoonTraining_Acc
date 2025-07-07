@@ -177,6 +177,19 @@
                                             @endif
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col label">
+                                            ملاحظات
+                                        </div>
+                                        <div class="col-lg-8 col-md-4 col-sm-12 col-xs-12 col">
+                                            @if ($student->notes)
+                                                {{ $student->notes }}
+                                            @else
+                                                ---
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

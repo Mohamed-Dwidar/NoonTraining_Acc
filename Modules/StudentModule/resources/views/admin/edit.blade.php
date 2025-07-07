@@ -171,7 +171,7 @@
                                         <div class="row">
                                             <div class="col-lg-3 col-sm-6 col-xs-6 col-6">
                                                 <label>النوع</label>
-                                                <div class="input-group">
+                                                <div class="form-group">
                                                     <label class="display-inline-block custom-control custom-radio ml-1">
                                                         <input type="radio" name="gender" class="custom-control-input"
                                                             value="male"
@@ -186,6 +186,16 @@
                                                         <span class="custom-control-indicator"></span>
                                                         <span class="custom-control-description ml-0">انثي</span>
                                                     </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-5 col-sm-12 col-xs-12 col-6">
+                                                <label for="notes">ملاحظات</label>
+                                                 <div class="form-group">
+                                                    <textarea class="form-control" id="notes" name="notes"
+                                                        rows="3">{{ old('notes', $student->notes) }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
