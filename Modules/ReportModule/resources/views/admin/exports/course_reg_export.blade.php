@@ -4,8 +4,11 @@
             <th style="font-weight: bold">الطالب</th>
             <th style="font-weight: bold">الدورة</th>
             <th style="font-weight: bold">رقم الهوية</th>
+            <th style="font-weight: bold">تاريخ انتهاء الهوية</th>
             <th style="font-weight: bold">الفرع</th>
             <th style="font-weight: bold">الجوال</th>
+            <th style="font-weight: bold">البريد الإلكتروني</th>
+            <th style="font-weight: bold">تاريخ الميلاد</th>
             <th style="font-weight: bold">السعر</th>
             <th style="font-weight: bold">المدفوع</th>
             <th style="font-weight: bold">الباقي</th>
@@ -31,12 +34,20 @@
                     <label>{{ $reg->student->id_nu }}</label>
                 </td>
                 <td>
+                    <label>{{ $reg->student->id_expire_date ? \Carbon\Carbon::parse($reg->student->id_expire_date)->format('d-m-Y') : '' }}</label>
+                </td>
+                <td>
                     <label>{{ $reg->course->branch->name }}</label>
                 </td>
                 <td>
                     <label>{{ $reg->student->phone1 }}</label>
                 </td>
-
+                <td>
+                    <label>{{ $reg->student->email }}</label>
+                </td>
+                <td>
+                    <label>{{ $reg->student->birth_date ? \Carbon\Carbon::parse($reg->student->birth_date)->format('d-m-Y') : '' }}</label>
+                </td>
                 <td>
                      {{ $reg->price }}
                 </td>

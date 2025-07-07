@@ -22,7 +22,7 @@ class AdminModuleDatabaseSeeder extends Seeder
         DB::table('admins')->truncate();
         $admin = Admin::create([
             'name' => "admin",
-            'email' => 'admin@noon_acc.com',
+            'email' => 'admin@noontraining.com',
             'password' => bcrypt('admin'),
         ]);
     }
