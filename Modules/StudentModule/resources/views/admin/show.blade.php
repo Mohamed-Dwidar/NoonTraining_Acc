@@ -230,7 +230,7 @@
                                         <tr class="head">
                                             <th style="width: 200px">الدورة</th>
                                             <th>تاريخ الدورة</th>
-                                            <th>السعر</th>
+                                            <th>السعر المتفق عليه</th>
                                             <th>المدفوع</th>
                                             <th>الباقي</th>
                                             {{-- <th style="text-align: center">سدد رسوم الاختبار</th> --}}
@@ -367,7 +367,7 @@
 
                                                                                         <div class="row">
                                                                                             <div class="col-md-12">
-                                                                                                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر</div>
+                                                                                                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر المتفق عليه</div>
                                                                                                 <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     @if ($reg->main_price == $reg->price)
                                                                                                     {{ $reg->price }}
@@ -378,10 +378,22 @@
                                                                                                 @endif
                                                                                                 ر.س
                                                                                                 </div>
+                                                                                            </div>
+                                                                                        </div> 
 
-                                                                                                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">نسبة الخصم</div>
+
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-12">
+                                                                                                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر النهائي</div>
                                                                                                 <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ $reg->DiscountAmount }} %
+                                                                                                     {{ $reg->price }}
+                                                                                                ر.س
+                                                                                                </div>
+
+                                                                                                <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">الخصم</div>
+                                                                                                <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                    {{ $reg->DiscountAmount }}
+                                                                                                ر.س
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div> 

@@ -376,6 +376,20 @@ class CourseAdminController extends Controller
         );
     }
 
+     public function UpdateDiscountForOneStudent(Request $request)
+    {
+        $price = $this->courseRegService->updateDiscountForOneStudent($request);
+        $this->courseRegService->checkAndUpdateRegStatus($request->reg_id);
+        return response()->json(
+            array(
+                'success' => "true",
+                'new_price' => $price->price,
+                'new_discount' => $price->discount_amount,
+                'id' => $price->id,
+            )
+        );
+    }
+
     public function ChangeExamPriceForOneStudent(Request $request)
     {
         $price = $this->courseRegService->updateExamPriceForOneStudent($request);

@@ -536,7 +536,7 @@
                                                                                     </div>
                                                                                     <div class="col-md-4">
                                                                                         {{-- @if(in_array('can_manage_money',auth()->user()->privileges_keys())) --}}
-                                                                                        <label>السعر :</label>
+                                                                                        <label>السعر المتفق عليه :</label>
                                                                                         <span>
 
                                                                                             @if($reg->main_price ==

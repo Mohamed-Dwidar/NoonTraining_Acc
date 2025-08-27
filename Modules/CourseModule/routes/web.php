@@ -40,6 +40,7 @@ Route::group(['prefix' => 'admin/courses', 'middleware' => ['auth:admin']], func
 
     Route::post('/print', 'Admin\CourseAdminController@genReceiptPDF')->name('admin.Receipt.gen_pdf');
     Route::post('/changeprice', 'Admin\CourseAdminController@ChangePriceForOneStudent')->name('admin.ChangePriceForOneStudent');
+    Route::post('/UpdateDiscountForOneStudent', 'Admin\CourseAdminController@UpdateDiscountForOneStudent')->name('admin.UpdateDiscountForOneStudent');
     Route::post('/changeExamprice', 'Admin\CourseAdminController@ChangeExamPriceForOneStudent')->name('admin.ChangeExamPriceForOneStudent');
 
     Route::post('assignStudent', 'Admin\CourseAdminController@assignStudentToCourse')->name('admin.courses.assign_student');
@@ -70,6 +71,7 @@ Route::group(['prefix' => 'user/courses', 'middleware' => ['auth:user']], functi
 
     Route::post('/print', 'User\CourseUserController@genReceiptPDF')->name('user.Receipt.gen_pdf');
     Route::post('/changeprice', 'User\CourseUserController@ChangePriceForOneStudent')->name('user.ChangePriceForOneStudent');
+    Route::post('/UpdateDiscountForOneStudent', 'User\CourseUserController@UpdateDiscountForOneStudent')->name('user.UpdateDiscountForOneStudent');
     Route::post('/changeExamprice', 'User\CourseUserController@ChangeExamPriceForOneStudent')->name('user.ChangeExamPriceForOneStudent');
 
     Route::post('assignStudent', 'User\CourseUserController@assignStudentToCourse')->name('user.courses.assign_student');
@@ -86,7 +88,7 @@ Route::group(['prefix' => 'admin/unknown_payment', 'middleware' => ['auth:admin'
     Route::get('/delete/{id}', 'Admin\UnknownPaymentAdminController@destroy')->name('admin.unknown_payment.delete');
     Route::post('/assignPayment', 'Admin\UnknownPaymentAdminController@assignPayment')->name('admin.unknown_payment.assign_payment');
     Route::get('/assignToReg/{id}', 'Admin\UnknownPaymentAdminController@assignToReg')->name('admin.unknown_payment.assign');
-    Route::get('/get-students/{courseId}','Admin\UnknownPaymentAdminController@getStudentsForCourse');
+    Route::get('/get-students/{courseId}', 'Admin\UnknownPaymentAdminController@getStudentsForCourse');
 });
 
 Route::group(['prefix' => 'user/unknown_payment', 'middleware' => ['auth:user']], function () {
@@ -98,5 +100,5 @@ Route::group(['prefix' => 'user/unknown_payment', 'middleware' => ['auth:user']]
     Route::get('/delete/{id}', 'User\UnknownPaymentUserController@destroy')->name('user.unknown_payment.delete');
     Route::post('/assignPayment', 'User\UnknownPaymentUserController@assignPayment')->name('user.unknown_payment.assign_payment');
     Route::get('/assignToReg/{id}', 'User\UnknownPaymentUserController@assignToReg')->name('user.unknown_payment.assign');
-    Route::get('/get-students/{courseId}','User\UnknownPaymentUserController@getStudentsForCourse');
+    Route::get('/get-students/{courseId}', 'User\UnknownPaymentUserController@getStudentsForCourse');
 });

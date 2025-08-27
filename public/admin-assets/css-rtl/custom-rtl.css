@@ -440,7 +440,13 @@ body.vertical-layout.vertical-menu.menu-expanded .navbar .navbar-header {
 .reg-modal a.changePrice,
 .reg-modal a.changeExamPrice,
 .reg-modal a.resetSave,
-.reg-modal a.savePrice {
+.reg-modal a.savePrice,
+.reg-modal button.save-discount-btn,
+.reg-modal button.cancel-discount-btn,
+.reg-modal button.edit-discount-btn,
+.reg-modal a.saveExamPrice,
+.reg-modal a.resetExamSave,
+.reg-modal a.cert {
     padding: 7px 20px;
     -webkit-border-radius: 5px !important;
     -moz-border-radius: 5px !important;

@@ -146,7 +146,7 @@
                                                 <th>الفرع</th>
                                                 <th>الدورة</th>
                                                 <th>الجوال</th>
-                                                <th>السعر</th>
+                                                <th>السعر المتفق عليه</th>
                                                 <th>المدفوع</th>
                                                 <th>الباقي</th>
                                                 <th style="text-align: center">الحالة</th>

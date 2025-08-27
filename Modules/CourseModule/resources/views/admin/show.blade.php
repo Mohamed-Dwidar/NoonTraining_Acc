@@ -270,7 +270,7 @@
                                                 {{-- <th style="padding: 0.75rem 0;width:40px;">&nbsp;</th> --}}
                                                 <th>الطالب</th>
                                                 {{-- <th>تاريخ التقديم</th> --}}
-                                                <th>السعر</th>
+                                                <th>السعر المتفق عليه</th>
                                                 <th>المدفوع</th>
                                                 <th>الباقي</th>
                                                 {{-- <th style="text-align: center">سدد رسوم الاختبار</th> --}}
@@ -436,14 +436,133 @@
                                                                                                     {{ $reg->course->end_at }}
                                                                                                 </div>
                                                                                             </div>
+                                                                                        </div> 
+
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-6">
+                                                                                                <input type="hidden" id="main_price" value="{{$reg->main_price}}" reg_id="{{ $reg->id }}"/>
+                                                                                                <input type="hidden" id="paid_amount" value="{{$reg->coursePaidAmount}}" reg_id="{{ $reg->id }}"/>
+                                                                                                <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر الأساسي</div>
+                                                                                                <div class="col-lg-7 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                    <span>
+                                                                                                         <span>{{ $reg->main_price }}</span>
+                                                                                                        ر.س
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                            <div class="col-md-6 newPrice" style="display: none">
+                                                                                                <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
+                                                                                                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold"> السعر الجديد</div>
+                                                                                                <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                    <span>
+                                                                                                        <input type="text" id="new_price" name="new_price" value="" reg_id="{{ $reg->id }}" style="width: 63px" />
+                                                                                                    </span>
+
+                                                                                                    <a class="btn btn-green savePrice" reg_id="{{ $reg->id }}">حفظ </a>
+                                                                                                    <a class="btn btn-red resetSave">إلغاء التغير </a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            
+                                                                                            <div class="col-md-6 mainCost" reg_id="{{ $reg->id }}">
+                                                                                                <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر المتفق عليه</div>
+                                                                                                <div class="col-lg-7 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                    <span class="student_price">{{ $reg->student_price }}</span>
+                                                                                                    ر.س
+                                                                                                    <a class="btn btn-blue changePrice">تغير السعر</a>
+                                                                                                </div>
+                                                                                            </div>
                                                                                         </div>
 
                                                                                         <div class="row">
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">قيمة الخصم</div>
+                                                                                                <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                    <span class="discount-value-text" reg_id="{{ $reg->id }}">{{ number_format($reg->DiscountAmount ?? 0, 2) }}  ر.س</span>
+                                                                                                   
+                                                                                                    <button type="button" class="btn btn-blue btn-sm edit-discount-btn" reg_id="{{ $reg->id }}">تغيير</button>
+                                                                                                    <span class="discount-edit-group" reg_id="{{ $reg->id }}" style="display:none;">
+                                                                                                        <input type="number" min="0" step="0.01" id="discount-input" class="form-control discount-input" reg_id="{{ $reg->id }}" value="{{ $reg->DiscountAmount ?? 0 }}" style="width: 80px; display: inline-block;" />
+                                                                                                        <button type="button" class="btn btn-green btn-sm save-discount-btn" reg_id="{{ $reg->id }}">حفظ</button>
+                                                                                                        <button type="button" class="btn btn-red btn-sm cancel-discount-btn" reg_id="{{ $reg->id }}">إلغاء</button>
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-6">
+                                                                                                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر النهائي</div>
+                                                                                                <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                    <span class="price" reg_id="{{ $reg->id }}">{{ number_format($reg->price, 2) }}</span>
+                                                                                                    ر.س
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <script>
+                                                                                            document.addEventListener('DOMContentLoaded', function() {
+                                                                                                document.querySelectorAll('.edit-discount-btn').forEach(function(btn) {
+                                                                                                    btn.addEventListener('click', function() {
+                                                                                                        var regId = this.getAttribute('reg_id');
+                                                                                                        document.querySelector('.discount-value-text[reg_id="' + regId + '"]').style.display = 'none';
+                                                                                                        this.style.display = 'none';
+                                                                                                        document.querySelector('.discount-edit-group[reg_id="' + regId + '"]').style.display = 'inline-block';
+                                                                                                    });
+                                                                                                });
+                                                                                                document.querySelectorAll('.cancel-discount-btn').forEach(function(btn) {
+                                                                                                    btn.addEventListener('click', function() {
+                                                                                                        var regId = this.getAttribute('reg_id');
+                                                                                                        document.querySelector('.discount-edit-group[reg_id="' + regId + '"]').style.display = 'none';
+                                                                                                        document.querySelector('.discount-value-text[reg_id="' + regId + '"]').style.display = 'inline';
+                                                                                                        document.querySelector('.edit-discount-btn[reg_id="' + regId + '"]').style.display = 'inline-block';
+                                                                                                    });
+                                                                                                });
+                                                                                                document.querySelectorAll('.save-discount-btn').forEach(function(btn) {
+                                                                                                    btn.addEventListener('click', function() {
+                                                                                                        var regId = this.getAttribute('reg_id');
+                                                                                                        var input = document.querySelector('.discount-input[reg_id="' + regId + '"]');
+                                                                                                        var value = parseFloat(input.value) || 0;
+                                                                                                        document.querySelector('.discount-value-text[reg_id="' + regId + '"]').textContent = value.toFixed(2);
+                                                                                                        document.querySelector('.discount-edit-group[reg_id="' + regId + '"]').style.display = 'none';
+                                                                                                        document.querySelector('.discount-value-text[reg_id="' + regId + '"]').style.display = 'inline';
+                                                                                                        document.querySelector('.edit-discount-btn[reg_id="' + regId + '"]').style.display = 'inline-block';
+                                                                                                        // تحديث السعر النهائي
+                                                                                                        var priceElem = document.querySelector('.mainCost[reg_id="' + regId + '"] .student_price');
+                                                                                                        var finalPriceElem = document.querySelector('.price[reg_id="' + regId + '"]');
+                                                                                                        var price = priceElem ? parseFloat(priceElem.textContent) : 0;
+                                                                                                        var finalPrice = price - value;
+                                                                                                        if(finalPriceElem) {
+                                                                                                            finalPriceElem.textContent = finalPrice.toFixed(2);
+                                                                                                        }
+                                                                                                    });
+                                                                                                });
+                                                                                            });
+                                                                                        </script>
+                                                                                        <script>
+                                                                                            document.addEventListener('DOMContentLoaded', function() {
+                                                                                                document.querySelectorAll('.discount-input').forEach(function(input) {
+                                                                                                    input.addEventListener('input', function() {
+                                                                                                        var regId = this.getAttribute('reg_id');
+                                                                                                        var priceElem = document.querySelector('.mainCost[reg_id="' + regId + '"] .price');
+                                                                                                        var finalPriceElem = document.querySelector('.price[reg_id="' + regId + '"]');
+                                                                                                        var price = priceElem ? parseFloat(priceElem.textContent) : 0;
+                                                                                                        var discount = parseFloat(this.value) || 0;
+                                                                                                        var finalPrice = price - (price * discount / 100);
+                                                                                                        if(finalPriceElem) {
+                                                                                                            finalPriceElem.textContent = finalPrice.toFixed(2);
+                                                                                                        }
+                                                                                                    });
+                                                                                                });
+                                                                                            });
+                                                                                        </script>
+
+
+
+                                                                                        
+                                                                                        <?php /*
+                                                                                        <div class="row">
                                                                                             <div class="col-md-6 mainCost" reg_id="{{ $reg->id }}">
-                                                                                                <input type="hidden" id="main_price" value="{{$reg->main_price}}" reg_id="{{ $reg->id }}"/>
-                                                                                                <input type="hidden" id="paid_amount" value="{{$reg->coursePaidAmount}}" reg_id="{{ $reg->id }}"/>
+                                                                                                {{-- <input type="hidden" id="main_price" value="{{$reg->main_price}}" reg_id="{{ $reg->id }}"/>
+                                                                                                <input type="hidden" id="paid_amount" value="{{$reg->coursePaidAmount}}" reg_id="{{ $reg->id }}"/> --}}
                                                                                                 <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    السعر</div>
+                                                                                                    السعر المتفق عليه</div>
                                                                                                 <div
                                                                                                     class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     <span>
@@ -459,7 +578,7 @@
                                                                                                     <a class="btn btn-blue changePrice">تغير السعر</a>
                                                                                                 </div>
                                                                                             </div>
-
+                                                                                            
                                                                                             <div class="col-md-6 newPrice" style="display: none">
                                                                                                 <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
                                                                                                 <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold"> السعر الجديد</div>
@@ -483,6 +602,7 @@
                                                                                                 %
                                                                                             </div>
                                                                                         </div>
+                                                                                        */ ?>
 
                                                                                         <div class="row">
                                                                                             <div class="col-md-8 mainExamFees" reg_id="{{ $reg->id }}">
@@ -776,7 +896,7 @@
                                                                                         <div class="row">
                                                                                             <div class="col-md-4">
                                                                                                 <label><b>سعر الدورة :</b></label>
-                                                                                                <span class="final-price">
+                                                                                                <span class="price">
                                                                                                     <span class="regprice" reg_id="{{ $reg->id }}">{{ number_format($reg->price, 2) }}</span>                                                                                                    
                                                                                                     ر.س
                                                                                                 </span>
@@ -812,7 +932,7 @@
                                                                                         <div class="row">
                                                                                             <div class="col-md-4">
                                                                                                 <label><b>رسوم الاختبار :</b></label>
-                                                                                                <span class="final-price">
+                                                                                                <span class="price">
                                                                                                     <span class="regexamprice" reg_id="{{ $reg->id }}">{{ number_format($reg->exam_fees, 2) }}</span>
                                                                                                     ر.س
                                                                                                 </span>
@@ -1138,7 +1258,63 @@
                 });
                 ///////////////////////////
 
+
+                //update discount
+                $('.reg-modal .edit-discount-btn').click(function() {
+                    $('#reg-' + actvRegID + '-info .discount-value-text').hide();
+                    $('#reg-' + actvRegID + '-info .edit-discount-btn').hide();
+                    $('#reg-' + actvRegID + '-info .discount-input').show();
+                    $('#reg-' + actvRegID + '-info .save-discount-btn').show();
+                    $('#reg-' + actvRegID + '-info .cancel-discount-btn').show();
+                    $('#reg-' + actvRegID + '-info #new_discount').val();
+                });
+                
+                $('.reg-modal .save-discount-btn').on('click', function() {
+                    var reg_id = $(this).attr('reg_id');
+                    var new_discount = $(`#discount-input[reg_id="${reg_id}"]`).val();
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route(Auth::getDefaultDriver().'.UpdateDiscountForOneStudent') }}',
+                        data: {
+                            'new_discount': new_discount,
+                            'reg_id': reg_id,
+                            '_token': '<?php echo csrf_token(); ?>'
+                        },
+                        success: (result) => {
+                            // console.log(result)
+                            $('#reg-' + actvRegID + '-info .discount-value-text').show();
+                            $('#reg-' + actvRegID + '-info .edit-discount-btn').show();
+                            $('#reg-' + actvRegID + '-info .discount-input').hide();
+                            $('#reg-' + actvRegID + '-info .save-discount-btn').hide();
+                            $('#reg-' + actvRegID + '-info .cancel-discount-btn').hide();
+                            $(`.discount-value-text[reg_id="${reg_id}"]`).text(new_discount);
+                            // تحديث السعر النهائي
+                            var priceElem = document.querySelector('.mainCost[reg_id="' + reg_id + '"] .student_price');
+                            var finalPriceElem = document.querySelector('.price[reg_id="' + reg_id + '"]');
+                            var price = priceElem ? parseFloat(priceElem.textContent) : 0;
+                            var finalPrice = price - new_discount;
+                            if (finalPriceElem) {
+                                finalPriceElem.textContent = finalPrice.toFixed(2);
+                            }
+                            // تحديث المتبقي
+                            var paidAmountElem = document.querySelector('.paid_amount[reg_id="' + reg_id + '"]');
+                            var remainingAmountElem = document.querySelector('.remaining_amount[reg_id="' + reg_id + '"]');
+                            var paidAmount = paidAmountElem ? parseFloat(paidAmountElem.textContent) : 0;
+                            var remainingAmount = finalPrice - paidAmount;
+                            if (remainingAmountElem) {
+                                remainingAmountElem.textContent = remainingAmount.toFixed(2);
+                            }
+                        },
+                        error: function(jqXHR, exception) {
+                            console.log('Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    });
+                    return false;
+                });
+
+                
                 /////////////////
+                
                 //changeExamPrice
                 $('.reg-modal .changeExamPrice').click(function() {
                     $('#reg-' + actvRegID + '-info .mainExamFees').hide();
@@ -1426,7 +1602,7 @@
                         const studentNameElement = document.querySelector('#modal-reg-'+regId+' .student-name');
                         const idNumberElement = document.querySelector('#modal-reg-'+regId+' .id-number');
                         const phoneElement = document.querySelector('#modal-reg-'+regId+' .phone');
-                        const totalAmountElement = document.querySelector('#modal-pay-'+regId+' .final-price');
+                        const totalAmountElement = document.querySelector('#modal-pay-'+regId+' .price');
                         const paidAmountElement = document.querySelector('#modal-pay-'+regId+' .paid_amount');
                         const remainingAmountElement = document.querySelector('#modal-pay-'+regId+' .remaining_amount');
                         const statusElement = document.querySelector('#reg'+regId+' .paid_status_id');

@@ -112,7 +112,8 @@ class CourseReg extends Model
 
     public function getDiscountAmountAttribute()
     {
-        return $this->attributes['main_price'] ==  $this->attributes['price'] ? 0 : round(100 - ($this->attributes['price'] / $this->attributes['main_price'] * 100));
+        return $this->attributes['student_price'] - $this->attributes['price'];
+        //return $this->attributes['student_price'] ==  $this->attributes['price'] ? 0 : round(100 - ($this->attributes['price'] / $this->attributes['student_price'] * 100));
     }
 
     public function getCoursePaidAmountAttribute()

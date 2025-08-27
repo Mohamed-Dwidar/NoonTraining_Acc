@@ -104,11 +104,10 @@ class CourseRegPaymentService
         $this->courseRegPaymentRepository->create($date_data);
 
         $reg = $this->courseRegRepository->find($data['id']);
-        // dd($reg);
         $reg->update(
             [
                 'is_course_paid' => ($reg->coursePaidAmount >= $reg->price) ? 1 : 0,
-                'is_exam_paid' => ($reg->examPaidAmount >= $reg->course->exam_fees) ? 1 : 0,
+                'is_exam_paid' => ($reg->examPaidAmount >= $reg->exam_fees) ? 1 : 0,
             ]
         );
         return $reg;

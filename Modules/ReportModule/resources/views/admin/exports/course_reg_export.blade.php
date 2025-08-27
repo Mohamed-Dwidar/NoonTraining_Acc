@@ -9,7 +9,7 @@
             <th style="font-weight: bold">الجوال</th>
             <th style="font-weight: bold">البريد الإلكتروني</th>
             <th style="font-weight: bold">تاريخ الميلاد</th>
-            <th style="font-weight: bold">السعر</th>
+            <th style="font-weight: bold">السعر المتفق عليه</th>
             <th style="font-weight: bold">المدفوع</th>
             <th style="font-weight: bold">الباقي</th>
             <th style="font-weight: bold; text-align: center">الحالة</th>

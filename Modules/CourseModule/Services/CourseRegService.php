@@ -179,11 +179,26 @@ class CourseRegService
 
     public function updatePriceForOneStudent($data)
     {
-        $reg = $this->courseRegRepository->update(['price' => $data->new_price], $data->reg_id);
+        $reg = $this->courseRegRepository->update(['student_price' => $data->new_price], $data->reg_id);
         $reg->update(
             [
                 'is_course_paid' => ($reg->coursePaidAmount >= $reg->price) ? 1 : 0,
                 'is_exam_paid' => ($reg->examPaidAmount >= $reg->course->exam_fees) ? 1 : 0
+            ]
+        );
+        return $reg;
+    }
+
+    public function updateDiscountForOneStudent($data)
+    {
+        $regObj = $this->courseRegRepository->find($data->reg_id);
+        //$new_price = round($data->student_price - ($data->student_price * ($data->new_discount / 100)));
+        $new_price = $regObj->student_price - $data->new_discount;
+        $reg = $this->courseRegRepository->update(['price' => $new_price], $data->reg_id);
+        $reg->update(
+            [
+                'is_course_paid' => ($reg->coursePaidAmount >= $reg->price) ? 1 : 0,
+                'is_exam_paid' => ($reg->examPaidAmount >= $reg->exam_fees) ? 1 : 0
             ]
         );
         return $reg;
