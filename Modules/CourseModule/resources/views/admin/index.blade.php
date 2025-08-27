@@ -163,10 +163,12 @@
                                                             href="{{ route(Auth::getDefaultDriver() . '.courses.edit', $course->id) }}"
                                                             role="button">تعديل</a>
 
+                                                        @if(Auth::guard('admin')->check())
                                                         <a class="btn btn-danger"
                                                             href="{{ route(Auth::getDefaultDriver() . '.courses.delete', $course->id) }}"
                                                             onclick="return confirm('هل انت متأكد انك تريد حذف هذه الدورة ؟')"
                                                             role="button">حذف</a>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach

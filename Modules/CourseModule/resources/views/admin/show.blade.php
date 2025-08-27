@@ -350,11 +350,12 @@
                                                         data-target="#modal-status-{{ $reg->id }}">تغيير حالة الدفع</a>
                                                         
                                                         {{-- @if (in_array('can_del_students', auth()->user()->privileges_keys())) --}}
+                                                        @if(Auth::guard('admin')->check())
                                                         <a class="btn-sm btn-danger"
                                                             href="{{ route(Auth::getDefaultDriver().'.courses.delete_reg', $reg->id) }}"
                                                             onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطلب ؟')"
                                                             role="button">حذف</a>
-                                                        {{-- @endif --}}
+                                                        @endif
                                                     </td>
                                                 </tr>
 
