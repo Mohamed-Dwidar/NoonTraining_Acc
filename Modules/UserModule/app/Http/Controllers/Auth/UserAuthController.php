@@ -25,8 +25,11 @@ class UserAuthController extends Controller
     public function loginForm()
     {
         if (Auth::guard('user')->check()) {
-            // Log 
-            $this->logService->recordLog(Auth::guard('user')->user());
+            // $user = Auth::guard('user')->user();
+            // //Add Log
+            // $action = 'تسجيل دخول';
+            // $description = 'تم تسجيل الدخول بواسطة المستخدم ' . $user->name;
+            // $this->logService->recordLog($action, $description, $user->id, null, 'Modules\\UserModule\\app\\Http\\Models\\User');
             return redirect()->route('user.courses');
         } else {
             return view('usermodule::login');
@@ -43,7 +46,11 @@ class UserAuthController extends Controller
             ],
             $rememberme
         )) {
-
+            $user = auth('user')->user();
+            //Add Log
+            $action = 'تسجيل دخول';
+            $description = 'تم تسجيل الدخول بواسطة المستخدم ' . $user->name;
+            $this->logService->recordLog($action, $description, $user->id, $user->id, get_class($user));
             return redirect()->intended('user');
         }
         return redirect()->back()->withErrors(['error' => 'البريد الأليكتروني او كلمة المرور ']);
@@ -74,7 +81,7 @@ class UserAuthController extends Controller
         if (Hash::check($request->old_password, $user->password)) {
             $this->userService->updatePassword($request);
 
-            return redirect()->route(Auth::getDefaultDriver().'.changePassword')
+            return redirect()->route(Auth::getDefaultDriver() . '.changePassword')
                 ->with('success', 'تم تغيير كلمة المرور بنجاح');
         } else {
             return back()

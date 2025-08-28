@@ -22,6 +22,11 @@ class AdminService
          return $this->adminRepository->update(['password' => $new_password], $data->id);  
     }
 
+    public function findAll()
+    {
+        return $this->adminRepository->get();;
+    }
+
    
    
 }

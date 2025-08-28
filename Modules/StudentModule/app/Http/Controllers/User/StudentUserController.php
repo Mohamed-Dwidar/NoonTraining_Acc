@@ -15,7 +15,7 @@ use Modules\StudentModule\Exports\StudentExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Modules\CourseModule\Services\CourseService;
 use Illuminate\Validation\Rule;
-
+use Modules\LogModule\Services\LogService;
 
 class StudentUserController extends Controller
 {
@@ -23,13 +23,15 @@ class StudentUserController extends Controller
     private $branchService;
     private $cityService;
     private $courseService;
+    private $logService;
 
-    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService)
+    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService)
     {
         $this->studentService = $studentService;
         $this->branchService = $branchService;
         $this->cityService = $cityService;
         $this->courseService = $courseService;
+        $this->logService = $logService;
     }
 
     public function add()
@@ -82,6 +84,12 @@ class StudentUserController extends Controller
 
 
         $student = $this->studentService->create($request);
+
+        //Add Log
+        $action = 'إضافة طالب';
+        $description = 'تم إضافة الطالب ' . $student->name . ' برقم هوية ' . $student->id_nu;
+        $this->logService->recordLog($action, $description, url()->current());
+        //
 
         return redirect()->route(Auth::getDefaultDriver() . '.students.view', $student->id)
             ->with('success', 'تم الاضافه بنجاح ...');
@@ -176,7 +184,13 @@ class StudentUserController extends Controller
         }
 
 
-        $this->studentService->update($request);
+        $student = $this->studentService->update($request);
+
+        //Add Log
+        $action = 'تعديل بيانات طالب';
+        $description = 'تم تعديل بيانات الطالب ' . $student->name ;
+        $this->logService->recordLog($action, $description, url()->current());
+        //
 
         return redirect()->route(Auth::getDefaultDriver() . '.students.view', $request->id)
             ->with('success', 'تم التعديل بنجاح.');
@@ -184,10 +198,16 @@ class StudentUserController extends Controller
 
     public function destroy($id)
     {
-        // if (!in_array('can_del_students', auth('admin')->user()->privileges_keys()))
-        //     return back()->withErrors('لا يمكن اتمام هذه العمليه');
+        $student = $this->studentService->findOne($id);
+        if (!$student)
+            return back()
+                ->withErrors('الطالب غير موجود في قائمة الطلاب');  
 
-        $this->studentService->deleteOne($id);
+        //Add Log
+        $action = 'حذف طالب';
+        $description = 'تم حذف الطالب ' . $student->name . ' برقم هوية ' . $student->id_nu;
+        $this->logService->recordLog($action, $description, url()->current());
+        //
         return redirect()->route(Auth::getDefaultDriver() . '.students')
             ->with('success', 'تم الحذف بنجاح.');
     }

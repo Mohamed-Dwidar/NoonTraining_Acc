@@ -179,7 +179,7 @@ class CourseRegService
 
     public function updatePriceForOneStudent($data)
     {
-        $reg = $this->courseRegRepository->update(['student_price' => $data->new_price], $data->reg_id);
+        $reg = $this->courseRegRepository->update(['student_price' => $data->new_price, 'price' => $data->new_price], $data->reg_id);
         $reg->update(
             [
                 'is_course_paid' => ($reg->coursePaidAmount >= $reg->price) ? 1 : 0,
@@ -224,7 +224,8 @@ class CourseRegService
     {
         if ($data->status == 'normal') {  //الدورة افتراضي
             $this->courseRegRepository->update(['is_free' => 0], $data->reg_id);
-        } if ($data->status == 'free') {  //الدورة مجانا
+        }
+        if ($data->status == 'free') {  //الدورة مجانا
             $this->courseRegRepository->update(['is_free' => 1], $data->reg_id);
         } elseif ($data->status == 'nopaying') {    //لا يرغب في السداد
             $this->courseRegRepository->update(['status_id' => 10, 'is_free' => 0], $data->reg_id);

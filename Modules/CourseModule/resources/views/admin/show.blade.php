@@ -476,11 +476,11 @@
                                                                                         </div>
 
                                                                                         <div class="row">
-                                                                                            <div class="col-md-6">
+                                                                                            <div class="col-md-6 discountPrice" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">قيمة الخصم</div>
                                                                                                 <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     <span class="discount-value-text" reg_id="{{ $reg->id }}">{{ number_format($reg->DiscountAmount ?? 0, 2) }}  ر.س</span>
-                                                                                                   
+                                                                                                    ر.س
                                                                                                     <button type="button" class="btn btn-blue btn-sm edit-discount-btn" reg_id="{{ $reg->id }}">تغيير</button>
                                                                                                     <span class="discount-edit-group" reg_id="{{ $reg->id }}" style="display:none;">
                                                                                                         <input type="number" min="0" step="0.01" id="discount-input" class="form-control discount-input" reg_id="{{ $reg->id }}" value="{{ $reg->DiscountAmount ?? 0 }}" style="width: 80px; display: inline-block;" />
@@ -489,7 +489,7 @@
                                                                                                     </span>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div class="col-md-6">
+                                                                                            <div class="col-md-6 finalPrice" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر النهائي</div>
                                                                                                 <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     <span class="price" reg_id="{{ $reg->id }}">{{ number_format($reg->price, 2) }}</span>
@@ -553,57 +553,6 @@
                                                                                                 });
                                                                                             });
                                                                                         </script>
-
-
-
-                                                                                        
-                                                                                        <?php /*
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-6 mainCost" reg_id="{{ $reg->id }}">
-                                                                                                {{-- <input type="hidden" id="main_price" value="{{$reg->main_price}}" reg_id="{{ $reg->id }}"/>
-                                                                                                <input type="hidden" id="paid_amount" value="{{$reg->coursePaidAmount}}" reg_id="{{ $reg->id }}"/> --}}
-                                                                                                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    السعر المتفق عليه</div>
-                                                                                                <div
-                                                                                                    class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    <span>
-                                                                                                        @if ($reg->main_price == $reg->price)
-                                                                                                            <span class="price">{{ $reg->price }}</span>
-                                                                                                        @else
-                                                                                                            &nbsp;
-                                                                                                            <span class="small" style="text-decoration: line-through">{{ $reg->main_price }}</span>
-                                                                                                            <span class="price">{{ $reg->price }}</span>
-                                                                                                        @endif
-                                                                                                        ر.س
-                                                                                                    </span>
-                                                                                                    <a class="btn btn-blue changePrice">تغير السعر</a>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            
-                                                                                            <div class="col-md-6 newPrice" style="display: none">
-                                                                                                <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
-                                                                                                <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold"> السعر الجديد</div>
-                                                                                                <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    <span>
-                                                                                                        <input type="text" id="new_price" name="new_price" value="" reg_id="{{ $reg->id }}" style="width: 63px" />
-                                                                                                    </span>
-
-                                                                                                    <a class="btn btn-green savePrice"
-                                                                                                        reg_id="{{ $reg->id }}">
-                                                                                                        حفظ </a>
-                                                                                                    <a class="btn btn-red resetSave">إلغاء التغير </a>
-                                                                                                </div>
-                                                                                            </div>
-
-                                                                                            <div
-                                                                                                class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                نسبة الخصم</div>
-                                                                                            <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col" >
-                                                                                                <span class="desc_perc" reg_id="{{ $reg->id }}">{{ $reg->DiscountAmount }}</span>
-                                                                                                %
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        */ ?>
 
                                                                                         <div class="row">
                                                                                             <div class="col-md-8 mainExamFees" reg_id="{{ $reg->id }}">
@@ -1233,10 +1182,11 @@
                             $('#reg-' + actvRegID + '-info .changePrice').show();
                             $('#reg-' + actvRegID + '-info .newPrice').hide();
                             //console.log($(`.mainCost[reg_id="${$('#reg_id').val()}"] .price`).length,$('#reg_id').val(),`.mainCost[reg_id="${$('#reg_id').val()}"] .price`);
-                            $(`.mainCost[reg_id="${reg_id}"] .price`).text(result['new_price']);
+                            $(`.mainCost[reg_id="${reg_id}"] .student_price`).text(result['new_price']);
+                            $(`.finalPrice[reg_id="${reg_id}"] .price`).text(result['new_price']);
+                            $(`.discountPrice[reg_id="${reg_id}"] .discount-value-text`).text(0)
                             $(`.regprice[reg_id="${reg_id}"]`).text(result['new_price']);
                             $(`.remaining_amount[reg_id="${reg_id}"]`).text(remain_amount);
-                            $(`.desc_perc[reg_id="${reg_id}"]`).text(disc_perc);
 
                         },
                         error: function(jqXHR, exception) {

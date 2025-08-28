@@ -51,7 +51,7 @@ $(document).ready(function () {
 
     $('#export-excel').click(function(){
         searchSortFilterParams = collectSearchSortFilterParams();
-        //alert(url + searchSortFilterParams);
+        // alert(url + searchSortFilterParams);
         if(searchSortFilterParams != ''){
             document.location.href = url + searchSortFilterParams + '&export=yes';
         }else{

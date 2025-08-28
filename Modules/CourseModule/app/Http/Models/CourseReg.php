@@ -15,6 +15,7 @@ class CourseReg extends Model
         'student_id',
         'status_id',
         'main_price',
+        'student_price',
         'price',
         'exam_fees',
         'is_free',

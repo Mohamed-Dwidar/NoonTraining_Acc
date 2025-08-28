@@ -2,6 +2,7 @@
 
 namespace Modules\ReportModule\app\Http\Controllers\Admin;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -9,11 +10,13 @@ use Modules\CourseModule\Services\CourseRegService;
 use Modules\CourseModule\Services\CourseService;
 use Modules\StudentModule\Services\StudentService;
 use Maatwebsite\Excel\Facades\Excel;
+use Modules\AdminModule\Services\AdminService;
 use Modules\BranchModule\Services\BranchService;
 use Modules\LogModule\Services\LogService;
 use Modules\ReportModule\Exports\CourseExport;
 use Modules\ReportModule\Exports\CourseRegExport;
 use Modules\ReportModule\Exports\LogExport;
+use Modules\UserModule\Services\UserService;
 
 class ReportAdminController extends Controller
 {
@@ -21,13 +24,17 @@ class ReportAdminController extends Controller
     private $courseService;
     private $logService;
     private $branchService;
+    private $userService;
+    private $adminService;
 
-    public function __construct(CourseRegService $courseRegService, CourseService $courseService, LogService $logService, BranchService $branchService)
+    public function __construct(CourseRegService $courseRegService, CourseService $courseService, LogService $logService, BranchService $branchService, UserService $userService,AdminService $adminService)
     {
         $this->courseRegService = $courseRegService;
         $this->courseService = $courseService;
         $this->logService = $logService;
         $this->branchService = $branchService;
+        $this->userService = $userService;
+        $this->adminService = $adminService;
     }
 
     public function index()
@@ -59,11 +66,11 @@ class ReportAdminController extends Controller
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['all'] = 1;
-        
+
         //filter Branch
         if ($request->brnch)
             $request['branch'] = $request->brnch;
-        
+
         $courses = $this->courseService->findAllWithFilter($request->all())
             ->orderBy('courses.name', 'ASC')
             ->orderBy('courses.group_nu', 'ASC')
@@ -228,12 +235,16 @@ class ReportAdminController extends Controller
     public function usersLog(Request $request)
     {
         $export = $request->export;
+
         if ($request->export == 'yes') {
-            $logs = $this->logService->findAll()->get();
+            $logs = $this->logService->findAllWithFilter($request->all())->get();
             return Excel::download(new LogExport($logs), 'تقرير بالزيارات للمستخدمين.xlsx');
         } else {
-            $logs = $this->logService->findAll()->paginate(20);
-            return view('reportmodule::admin.log_users', compact('logs'));
+            $logs = $this->logService->findAllWithFilter($request->all())->paginate(50);
+            $users = $this->userService->findAll();
+            $admins = $this->adminService->findAll();
+            $branches = $this->branchService->findAll();
+            return view('reportmodule::admin.log_users', compact('logs', 'users', 'admins', 'branches'));
         }
     }
 }

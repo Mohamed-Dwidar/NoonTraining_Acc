@@ -13,14 +13,11 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            // $table->morphs('logable');
-            // $table->string('guard')->nullable();
-            // $table->foreignId('user_id');
-            // $table->text('message');
-
-            $table->unsignedBigInteger('loggable_id');
-            $table->string('loggable_type');
-            $table->timestamp('login_time');
+            $table->string('action');
+            $table->string('description')->nullable();
+            $table->string('url')->nullable();
+            $table->unsignedBigInteger('userable_id');
+            $table->string('userable_type');
             $table->timestamps();
         });
     }

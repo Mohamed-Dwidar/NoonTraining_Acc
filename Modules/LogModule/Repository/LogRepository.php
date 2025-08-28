@@ -13,10 +13,8 @@ class  LogRepository extends BaseRepository
         return Log::class;
     }
 
-    public function createLog($model)
+    public function filter(array $request)
     {
-        return $model->logs()->create([
-            'login_time' => now()
-        ]);
+        return Log::filter($request);
     }
 }
