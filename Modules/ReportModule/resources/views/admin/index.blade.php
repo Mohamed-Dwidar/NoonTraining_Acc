@@ -167,7 +167,7 @@
                                     <div class="media">
                                         <div class="media-body text-xs-center">
                                             <h3 class="teal"> </h3>
-                                            <h5>تقرير بالزيارات للمستخدمين</h5>
+                                        <h5>تقرير بالعمليات للمستخدمين</h5>
                                         </div>
                                     </div>
                                 </div>
