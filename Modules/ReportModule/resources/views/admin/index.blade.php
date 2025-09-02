@@ -25,7 +25,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_all') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_all') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -42,7 +42,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.courses') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.courses') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -59,7 +59,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_not_paid') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_not_paid') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -76,7 +76,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_installment_pay') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_installment_pay') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -93,7 +93,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_exam_mot_paid') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_exam_mot_paid') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -110,7 +110,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_paid') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_paid') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -127,7 +127,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_recive_cert') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_recive_cert') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -144,7 +144,7 @@
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_not_recive_cert') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_not_recive_cert') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
@@ -159,28 +159,28 @@
                 </div>
 
                 @if (Auth::guard('admin')->check())
-                <div class="col-xl-3 col-lg-6 col-xs-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.users_log') }}">
-                                <div class="card-block">
-                                    <div class="media">
-                                        <div class="media-body text-xs-center">
-                                            <h3 class="teal"> </h3>
-                                        <h5>تقرير بالعمليات للمستخدمين</h5>
+                    <div class="col-xl-3 col-lg-6 col-xs-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <a href="{{ route(Auth::getDefaultDriver() . '.reports.users_log') }}">
+                                    <div class="card-block">
+                                        <div class="media">
+                                            <div class="media-body text-xs-center">
+                                                <h3 class="teal"> </h3>
+                                                <h5>تقرير بالعمليات للمستخدمين</h5>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endif
 
                 <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">
-                            <a href="{{ route(Auth::getDefaultDriver().'.reports.students_leave') }}">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_leave') }}">
                                 <div class="card-block">
                                     <div class="media">
                                         <div class="media-body text-xs-center">
