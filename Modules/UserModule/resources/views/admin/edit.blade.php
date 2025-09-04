@@ -82,15 +82,35 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-lg-4 col-sm-12 col-xs-12 col-6">
+                                            <div class="col-lg-6 col-sm-12 col-xs-12 col-6">
                                                 <label><b>الصلاحيات</b></label>
                                                 <div class="form-group">
                                                     <div class="form-check">
                                                         {{-- @foreach ($permissions as $permission) --}}
-                                                        <input type="checkbox" name="permissions[]" id="permission_1"
-                                                            value="1"
-                                                            {{ in_array('Show Reports', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
-                                                        <label for="permission_1">استعراض التقارير</label>
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="show_reports" value="1"
+                                                                {{ in_array('show_reports', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
+                                                            <label for="show_reports">استعراض التقارير</label>
+                                                        </div>
+
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="view_only" value="4"
+                                                                {{ in_array('view_only', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
+                                                            <label for="view_only">المشاهده فقط</label>
+                                                        </div>
+
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="can_edit" value="3"
+                                                                {{ in_array('can_edit', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
+                                                            <label for="can_edit">امكانية التعديل</label>
+                                                        </div>
+
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="can_delete" value="2"
+                                                                {{ in_array('can_delete', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
+                                                            <label for="can_delete">امكانية الحذف</label>
+                                                        </div>
+
                                                         {{-- @endforeach --}}
                                                     </div>
                                                 </div>
@@ -116,8 +136,19 @@
     @push('scripts')
         <script type="text/javascript">
             $(document).ready(function() {
-
-
+                function updatePermissions() {
+                    if ($('#view_only').is(':checked')) {
+                        $('#can_delete').prop('checked', false).prop('disabled', true);
+                        $('#can_edit').prop('checked', false).prop('disabled', true);
+                    } else {
+                        $('#can_delete').prop('disabled', false);
+                        $('#can_edit').prop('disabled', false);
+                    }
+                }
+                // Check status on page load
+                updatePermissions();
+                // Listen for changes
+                $('#view_only').on('change', updatePermissions);
             });
         </script>
     @endpush

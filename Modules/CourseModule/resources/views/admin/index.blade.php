@@ -51,22 +51,25 @@
                                             </div>
                                         </div> --}}
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
-                                        <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />
+                                        <input type="hidden" id="fltr_brnch_val"
+                                            value="@if (app('request')->brnch != null) {{ app('request')->brnch }} @endif" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                                             aria-expanded="false">
                                             <i class="icon-sort"></i>
                                             الفرع
                                         </a>
                                         <div class="dropdown-menu arrow dropdown-filter">
-                                            <input type="hidden" id="fltr_brnch" value="@if (app('request')->fltr != null) {{ app('request')->fltr }} @endif" />
+                                            <input type="hidden" id="fltr_brnch"
+                                                value="@if (app('request')->fltr != null) {{ app('request')->fltr }} @endif" />
 
                                             <button class="dropdown-item filter-item-brnch" type="button" data-val="no">
                                                 الكل
                                             </button>
                                             @foreach ($branches as $branch)
-                                            <button class="dropdown-item filter-item-brnch" type="button" data-val="{{$branch->id}}">
-                                                {{$branch->name}}
-                                            </button>
+                                                <button class="dropdown-item filter-item-brnch" type="button"
+                                                    data-val="{{ $branch->id }}">
+                                                    {{ $branch->name }}
+                                                </button>
                                             @endforeach
                                         </div>
                                     </div>
@@ -110,10 +113,12 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                    <a class="btn btn-success round btn-min-width mr-1 mb-1"
-                                        href="{{ route(Auth::getDefaultDriver() . '.courses.add') }}" role="button">أضف
-                                        دورة
-                                        جديدة</a>
+                                    @cannot('view_only')
+                                        <a class="btn btn-success round btn-min-width mr-1 mb-1"
+                                            href="{{ route(Auth::getDefaultDriver() . '.courses.add') }}" role="button">أضف
+                                            دورة
+                                            جديدة</a>
+                                    @endcannot
                                 </div>
                             </div>
                         </div>
@@ -159,16 +164,22 @@
                                                             role="button">
                                                             استعراض </a>
 
-                                                        <a class="btn btn-warning"
-                                                            href="{{ route(Auth::getDefaultDriver() . '.courses.edit', $course->id) }}"
-                                                            role="button">تعديل</a>
+                                                        @cannot('view_only')
+                                                            @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
+                                                                <a class="btn btn-warning"
+                                                                    href="{{ route(Auth::getDefaultDriver() . '.courses.edit', $course->id) }}"
+                                                                    role="button">تعديل</a>
+                                                            @endif
 
-                                                        @if(Auth::guard('admin')->check())
-                                                        <a class="btn btn-danger"
-                                                            href="{{ route(Auth::getDefaultDriver() . '.courses.delete', $course->id) }}"
-                                                            onclick="return confirm('هل انت متأكد انك تريد حذف هذه الدورة ؟')"
-                                                            role="button">حذف</a>
-                                                        @endif
+                                                            @if (Auth::guard('admin')->check() || Auth::user()->can('can_delete'))
+                                                                {{-- @if (Auth::guard('admin')->check()) --}}
+                                                                <a class="btn btn-danger"
+                                                                    href="{{ route(Auth::getDefaultDriver() . '.courses.delete', $course->id) }}"
+                                                                    onclick="return confirm('هل انت متأكد انك تريد حذف هذه الدورة ؟')"
+                                                                    role="button">حذف</a>
+                                                                {{-- @endif --}}
+                                                            @endif
+                                                        @endcannot
                                                     </td>
                                                 </tr>
                                             @endforeach

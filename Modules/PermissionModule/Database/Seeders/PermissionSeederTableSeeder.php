@@ -26,9 +26,11 @@ class PermissionSeederTableSeeder extends Seeder
         // Create roles
         // $role = Role::create(['name' => 'moderator_role', 'guard_name' => $guardName]);
         
-
         // Create permissions
-        $permission = Permission::create(['name' => 'Show Reports', 'guard_name' => $guardName]);
+        $permission = Permission::create(['name' => 'show_reports', 'guard_name' => $guardName]);
+        $permission = Permission::create(['name' => 'can_delete', 'guard_name' => $guardName]);
+        $permission = Permission::create(['name' => 'can_edit', 'guard_name' => $guardName]);
+        $permission = Permission::create(['name' => 'view_only', 'guard_name' => $guardName]);
 
 
         // Assign permissions to the role

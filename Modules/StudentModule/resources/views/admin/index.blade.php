@@ -58,7 +58,8 @@
                                                 Filter
                                             </a>
                                         <div class="dropdown-menu arrow dropdown-filter"> --}}
-                                    <input type="hidden" id="fltr_val" value="@if (app('request')->fltr != null) {{ app('request')->fltr }} @endif" />
+                                    <input type="hidden" id="fltr_val"
+                                        value="@if (app('request')->fltr != null) {{ app('request')->fltr }} @endif" />
 
                                     {{-- <button class="dropdown-item filter-item" type="button" data-val="no">
                                                     No Filer
@@ -73,22 +74,25 @@
                                         </div> --}}
 
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
-                                        <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />
+                                        <input type="hidden" id="fltr_brnch_val"
+                                            value="@if (app('request')->brnch != null) {{ app('request')->brnch }} @endif" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                                             aria-expanded="false">
                                             <i class="icon-sort"></i>
                                             الفرع
                                         </a>
                                         <div class="dropdown-menu arrow dropdown-filter">
-                                            <input type="hidden" id="fltr_brnch" value="@if (app('request')->fltr != null) {{ app('request')->fltr }} @endif" />
+                                            <input type="hidden" id="fltr_brnch"
+                                                value="@if (app('request')->fltr != null) {{ app('request')->fltr }} @endif" />
 
                                             <button class="dropdown-item filter-item-brnch" type="button" data-val="no">
                                                 الكل
                                             </button>
                                             @foreach ($branches as $branch)
-                                            <button class="dropdown-item filter-item-brnch" type="button" data-val="{{$branch->id}}">
-                                                {{$branch->name}}
-                                            </button>
+                                                <button class="dropdown-item filter-item-brnch" type="button"
+                                                    data-val="{{ $branch->id }}">
+                                                    {{ $branch->name }}
+                                                </button>
                                             @endforeach
                                         </div>
                                     </div>
@@ -100,7 +104,8 @@
                                             ترتيب
                                         </a>
                                         <div class="dropdown-menu arrow dropdown-sort">
-                                            <input type="hidden" id="sort_val" value="@if(app('request')->srt != null){{ app('request')->srt }}@endif" />
+                                            <input type="hidden" id="sort_val"
+                                                value="@if (app('request')->srt != null) {{ app('request')->srt }} @endif" />
 
                                             <button class="dropdown-item sort-item" type="button" data-val="no">
                                                 افتراضي
@@ -134,9 +139,11 @@
                                 </div>
 
                                 <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                                    @cannot('view_only')
                                     <a class="btn btn-success round btn-min-width mr-1 mb-1"
                                         href="{{ route(Auth::getDefaultDriver() . '.students.add') }}" role="button">تسجيل
                                         طالب جديد</a>
+                                    @endcannot
 
                                     {{-- <a class="btn btn-danger round btn-min-width mr-1 mb-1"
                                         href="{{route(Auth::getDefaultDriver().'.students.archived')}}" role="button">الأرشيف</a> --}}
@@ -181,19 +188,26 @@
                                                     <td>
                                                         {{ $student->created_at }}
                                                     </td>
-                                                    <td class="action">
+                                                    <td class="action" style="white-space: nowrap; text-align: right;">
                                                         <a class="btn btn-warning"
                                                             href="{{ route(Auth::getDefaultDriver() . '.students.view', $student->id) }}"
                                                             role="button">عرض</a>
 
-                                                        {{-- @if (in_array('can_del_students', auth()->user()->privileges_keys())) --}}
-                                                        @if(Auth::guard('admin')->check())
-                                                        <a class="btn btn-danger"
-                                                            href="{{ route(Auth::getDefaultDriver() . '.students.delete', $student->id) }}"
-                                                            onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطالب و جميع الدورات المسجل فيها ؟')"
-                                                            role="button">حذف</a>
-                                                        @endif
-                                                        {{-- @endif --}}
+                                                        @cannot('view_only')
+                                                            @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
+                                                                <a class="btn btn-primary"
+                                                                    href="{{ route(Auth::getDefaultDriver() . '.students.edit', $student->id) }}"
+                                                                    role="button">تعديل</a>
+                                                            @endif
+
+                                                            @if (Auth::guard('admin')->check() || Auth::user()->can('can_delete'))
+                                                                <a class="btn btn-danger"
+                                                                    href="{{ route(Auth::getDefaultDriver() . '.students.delete', $student->id) }}"
+                                                                    onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطالب و جميع الدورات المسجل فيها ؟')"
+                                                                    role="button">حذف</a>
+                                                            @endif
+                                                        @endcannot
+
 
 
                                                     </td>

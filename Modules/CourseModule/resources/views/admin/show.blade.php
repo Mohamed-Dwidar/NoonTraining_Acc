@@ -339,23 +339,25 @@
                                                             id="{{ $reg->id }}" role="button" data-toggle="modal"
                                                             data-target="#modal-reg-{{ $reg->id }}">التفاصيل</a>
 
-                                                        {{-- @if (in_array('can_manage_money', auth()->user()->privileges_keys())) --}}
                                                         <a class="btn-sm btn-primary one-pay" href="#"
                                                             id="{{ $reg->id }}" role="button" data-toggle="modal"
                                                             data-target="#modal-pay-{{ $reg->id }}">الدفعات</a>
-                                                        {{-- @endif --}}
+                                                         
 
-                                                        <a class="btn-sm btn-warning one-status" href="#"
-                                                        id="{{ $reg->id }}" role="button" data-toggle="modal"
-                                                        data-target="#modal-status-{{ $reg->id }}">تغيير حالة الدفع</a>
-                                                        
-                                                        {{-- @if (in_array('can_del_students', auth()->user()->privileges_keys())) --}}
-                                                        @if(Auth::guard('admin')->check())
-                                                        <a class="btn-sm btn-danger"
-                                                            href="{{ route(Auth::getDefaultDriver().'.courses.delete_reg', $reg->id) }}"
-                                                            onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطلب ؟')"
-                                                            role="button">حذف</a>
-                                                        @endif
+                                                       @cannot('view_only')
+                                                            @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
+                                                                <a class="btn-sm btn-warning one-status" href="#"
+                                                                id="{{ $reg->id }}" role="button" data-toggle="modal"
+                                                                data-target="#modal-status-{{ $reg->id }}">تغيير حالة الدفع</a>
+                                                            @endif
+
+                                                            @if (Auth::guard('admin')->check() || Auth::user()->can('can_delete'))
+                                                                <a class="btn-sm btn-danger"
+                                                                    href="{{ route(Auth::getDefaultDriver().'.courses.delete_reg', $reg->id) }}"
+                                                                    onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطلب ؟')"
+                                                                    role="button">حذف</a>
+                                                            @endif
+                                                        @endcannot
                                                     </td>
                                                 </tr>
 
@@ -470,7 +472,9 @@
                                                                                                 <div class="col-lg-7 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     <span class="student_price">{{ $reg->student_price }}</span>
                                                                                                     ر.س
+                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
                                                                                                     <a class="btn btn-blue changePrice">تغير السعر</a>
+                                                                                                    @endif
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
@@ -481,12 +485,14 @@
                                                                                                 <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     <span class="discount-value-text" reg_id="{{ $reg->id }}">{{ number_format($reg->DiscountAmount ?? 0, 2) }}  ر.س</span>
                                                                                                     ر.س
+                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
                                                                                                     <button type="button" class="btn btn-blue btn-sm edit-discount-btn" reg_id="{{ $reg->id }}">تغيير</button>
                                                                                                     <span class="discount-edit-group" reg_id="{{ $reg->id }}" style="display:none;">
                                                                                                         <input type="number" min="0" step="0.01" id="discount-input" class="form-control discount-input" reg_id="{{ $reg->id }}" value="{{ $reg->DiscountAmount ?? 0 }}" style="width: 80px; display: inline-block;" />
                                                                                                         <button type="button" class="btn btn-green btn-sm save-discount-btn" reg_id="{{ $reg->id }}">حفظ</button>
                                                                                                         <button type="button" class="btn btn-red btn-sm cancel-discount-btn" reg_id="{{ $reg->id }}">إلغاء</button>
                                                                                                     </span>
+                                                                                                    @endif
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="col-md-6 finalPrice" reg_id="{{ $reg->id }}">
@@ -563,7 +569,9 @@
                                                                                                     <span class="exam_fees">{{ $reg->exam_fees }}</span>
                                                                                                     ر.س
                                                                                                 </div>
+                                                                                                @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
                                                                                                 <a class="btn btn-blue changeExamPrice">تغير السعر</a>
+                                                                                                @endif
                                                                                             </div>
                                                                                         </div>
 
@@ -614,6 +622,8 @@
                                                                                                         لا
                                                                                                     @endif
                                                                                                     &nbsp;&nbsp;&nbsp;&nbsp;
+
+                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
                                                                                                     @if ($reg->is_recive_cert == 0)
                                                                                                         <a class="btn btn-blue cert"
                                                                                                             href="{{ route(Auth::getDefaultDriver().'.courses.set_cert_as_delivered', $reg->id) }}">
@@ -627,6 +637,7 @@
                                                                                                             تسجيل عدم استلام
                                                                                                             الشهاده
                                                                                                         </a>
+                                                                                                    @endif
                                                                                                     @endif
                                                                                                 </div>
                                                                                             </div>
@@ -937,7 +948,7 @@
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-
+                                                                                @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
                                                                                 <div class="card-block pay-template" style="margin-bottom: 20px">
                                                                                     <form class="card-form" id="payActionForm" method="POST" action="{{ route(Auth::getDefaultDriver().'.courses.pay_action') }}">
                                                                                         @csrf
@@ -1012,6 +1023,7 @@
                                                                                         </div>
                                                                                     </form>
                                                                                 </div>
+                                                                                @endif
                                                                             </div>
                                                                         </div>
                                                                     </div>

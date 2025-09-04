@@ -34,7 +34,7 @@ Route::group(['prefix' => 'admin/reports', 'middleware' => ['auth:admin']], func
 
 Route::group(['prefix' => 'user/reports', 'middleware' => ['auth:user']], function () {
     Route::group(
-        ['middleware' => ['permission:Show Reports']],
+        ['middleware' => ['permission:show_reports']],
         function () {
             Route::get('/', 'User\ReportUserController@index')->name('user.reports');
             Route::get('ReportStudentsNotPaid', 'User\ReportUserController@reportStudentsNotPaid')->name('user.reports.students_not_paid');

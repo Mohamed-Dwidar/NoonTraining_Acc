@@ -27,7 +27,7 @@
                     </a>
                 </li>
                 
-                @can('Show Reports')
+                @can('show_reports')
                     <li class="nav-item">
                         <a href="{{ route(Auth::getDefaultDriver() . '.reports') }}"
                             class="@if (Request::segment(2) == 'reports') active @endif">
