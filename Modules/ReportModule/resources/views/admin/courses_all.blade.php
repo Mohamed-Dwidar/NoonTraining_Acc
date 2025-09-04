@@ -169,6 +169,7 @@
                                                     @endif
                                                     <td>{{ $course->start_at }}</td>
                                                     <td>{{ $course->end_at }}</td>
+
                                                     {{-- <td>{{ $course->price }} ر.س</td>
                                                     <td>{{ $course->exam_fees }} ر.س</td> --}}
                                                     <td class="align-center">

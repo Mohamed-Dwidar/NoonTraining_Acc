@@ -150,6 +150,7 @@
                                                 <th>المدفوع</th>
                                                 <th>الباقي</th>
                                                 <th style="text-align: center">الحالة</th>
+                                                <th style="text-align: center">مسجل عن طريق</th>
                                                 {{-- <th style="text-align: center">سدد رسوم الاختبار</th> --}}
                                                 <th style="text-align: center">استلم الشهادة</th>
                                             </tr>
@@ -206,7 +207,9 @@
                                                         @endif
                                                         {{ $reg->status->status }}
                                                     </td>
-
+                                                    <td class="align-center">
+                                                           <label> {{ $reg->registered_by }}</label>
+                                                    </td>
                                                     <td class="align-center">
                                                         @if ($reg->is_recive_cert == 0)
                                                             <i class="fa fa-close red list-boolean-icon"></i>

@@ -13,6 +13,7 @@
             <th style="font-weight: bold">المدفوع</th>
             <th style="font-weight: bold">الباقي</th>
             <th style="font-weight: bold; text-align: center">الحالة</th>
+            <th>مسجل عن طريق</th>
             <th style="font-weight: bold; text-align: center">استلم الشهادة</th>
         </tr>
     </thead>
@@ -22,12 +23,14 @@
             <tr>
                 <td class="strong">
                     <label for="{{ $reg->id }}">
-                        <a href="{{ route(Auth::getDefaultDriver().'.students.view', $reg->student->id) }}">{{ $reg->student->name }}</a>
+                        <a
+                            href="{{ route(Auth::getDefaultDriver() . '.students.view', $reg->student->id) }}">{{ $reg->student->name }}</a>
                     </label>
                 </td>
                 <td class="strong">
                     <label>
-                        <a href="{{ route(Auth::getDefaultDriver().'.students.view', $reg->student->id) }}">{{ $reg->course->FullName }}</a>
+                        <a
+                            href="{{ route(Auth::getDefaultDriver() . '.students.view', $reg->student->id) }}">{{ $reg->course->FullName }}</a>
                     </label>
                 </td>
                 <td>
@@ -49,7 +52,7 @@
                     <label>{{ $reg->student->birth_date ? \Carbon\Carbon::parse($reg->student->birth_date)->format('d-m-Y') : '' }}</label>
                 </td>
                 <td>
-                     {{ $reg->price }}
+                    {{ $reg->price }}
                 </td>
                 <td>{{ number_format($reg->coursePaidAmount, 2) }}</td>
                 <td>
@@ -59,11 +62,14 @@
                         {{ number_format($reg->price - $reg->coursePaidAmount, 2) }}
                     @endif
                 </td>
-                <td class="align-center" style="font-weight:bold; background-color: {{$reg->status->color}} ">
+                <td class="align-center" style="font-weight:bold; background-color: {{ $reg->status->color }} ">
                     @if ($reg->is_leave == 1)
-                    [ مغادر ] &nbsp;&nbsp;&nbsp;
+                        [ مغادر ] &nbsp;&nbsp;&nbsp;
                     @endif
-                    {{$reg->status->status}}
+                    {{ $reg->status->status }}
+                </td>
+                <td>
+                       <label> {{ $reg->registered_by }}</label>
                 </td>
                 <td class="align-center">
                     @if ($reg->is_recive_cert == 0)

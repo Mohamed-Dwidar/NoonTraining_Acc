@@ -148,6 +148,7 @@
                                                 <th>المدفوع</th>
                                                 <th>الباقي</th>
                                                 <th style="text-align: center">الحالة</th>
+                                                <th style="text-align: center">مسجل عن طريق</th>
                                                 {{-- <th style="text-align: center">سدد رسوم الاختبار</th> --}}
                                                 <th style="text-align: center">استلم الشهادة</th>
                                             </tr>
@@ -199,6 +200,9 @@
                                                         [ مغادر ] &nbsp;&nbsp;&nbsp;
                                                         @endif
                                                         {{$reg->status->status}}
+                                                    </td>
+                                                    <td class="align-center">
+                                                           <label> {{ $reg->registered_by }}</label>
                                                     </td>
 
                                                     <td class="align-center">
