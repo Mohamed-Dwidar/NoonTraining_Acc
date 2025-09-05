@@ -43,6 +43,8 @@ Route::group(['prefix' => 'admin/courses', 'middleware' => ['auth:admin']], func
     Route::post('/UpdateDiscountForOneStudent', 'Admin\CourseAdminController@UpdateDiscountForOneStudent')->name('admin.UpdateDiscountForOneStudent');
     Route::post('/changeExamprice', 'Admin\CourseAdminController@ChangeExamPriceForOneStudent')->name('admin.ChangeExamPriceForOneStudent');
 
+    Route::post('/updateRegBy', 'Admin\CourseAdminController@UpdateRegBy')->name('admin.updateRegBy');
+
     Route::post('assignStudent', 'Admin\CourseAdminController@assignStudentToCourse')->name('admin.courses.assign_student');
 });
 
@@ -73,6 +75,9 @@ Route::group(['prefix' => 'user/courses', 'middleware' => ['auth:user']], functi
     Route::post('/changeprice', 'User\CourseUserController@ChangePriceForOneStudent')->name('user.ChangePriceForOneStudent');
     Route::post('/UpdateDiscountForOneStudent', 'User\CourseUserController@UpdateDiscountForOneStudent')->name('user.UpdateDiscountForOneStudent');
     Route::post('/changeExamprice', 'User\CourseUserController@ChangeExamPriceForOneStudent')->name('user.ChangeExamPriceForOneStudent');
+
+    Route::post('/updateRegBy', 'User\CourseUserController@UpdateRegBy')->name('user.updateRegBy');
+
 
     Route::post('assignStudent', 'User\CourseUserController@assignStudentToCourse')->name('user.courses.assign_student');
 });

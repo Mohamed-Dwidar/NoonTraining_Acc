@@ -505,6 +505,25 @@ class CourseUserController extends Controller
         );
     }
 
+    public function UpdateRegBy(Request $request)
+    {
+        $course_reg = $this->courseRegService->updateRegBy($request);
+
+        //Add Log
+        $action = 'تعديل تم التسجيل عن طريق';
+        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي : ' .  $course_reg->reg_by;
+        $this->logService->recordLog($action, $description, url()->current());
+        //
+        return response()->json(
+            array(
+                'success' => "true",
+                'new_reg_by' => $course_reg->reg_by,
+                'id' => $course_reg->id,
+
+            )
+        );
+    }
+
     public function ChangeExamPriceForOneStudent(Request $request)
     {
         $course_reg = $this->courseRegService->updateExamPriceForOneStudent($request);

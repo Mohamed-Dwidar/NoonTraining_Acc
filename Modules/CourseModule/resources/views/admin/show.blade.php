@@ -483,14 +483,13 @@
                                                                                             <div class="col-md-6 discountPrice" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold">قيمة الخصم</div>
                                                                                                 <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    <span class="discount-value-text" reg_id="{{ $reg->id }}">{{ number_format($reg->DiscountAmount ?? 0, 2) }}  ر.س</span>
-                                                                                                    ر.س
+                                                                                                    <span class="discount-value-text" reg_id="{{ $reg->id }}">{{ number_format($reg->DiscountAmount ?? 0, 2) }} ر.س</span>
                                                                                                     @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
                                                                                                     <button type="button" class="btn btn-blue btn-sm edit-discount-btn" reg_id="{{ $reg->id }}">تغيير</button>
                                                                                                     <span class="discount-edit-group" reg_id="{{ $reg->id }}" style="display:none;">
-                                                                                                        <input type="number" min="0" step="0.01" id="discount-input" class="form-control discount-input" reg_id="{{ $reg->id }}" value="{{ $reg->DiscountAmount ?? 0 }}" style="width: 80px; display: inline-block;" />
-                                                                                                        <button type="button" class="btn btn-green btn-sm save-discount-btn" reg_id="{{ $reg->id }}">حفظ</button>
-                                                                                                        <button type="button" class="btn btn-red btn-sm cancel-discount-btn" reg_id="{{ $reg->id }}">إلغاء</button>
+                                                                                                        <input type="number" min="0" step="0.01" id="discount-input" class="discount-input" reg_id="{{ $reg->id }}" value="{{ $reg->DiscountAmount ?? 0 }}" style="width: 80px; display: inline-block;" />
+                                                                                                        <button type="button" class="btn btn-green btn-sm save-discount-btn save-btn" reg_id="{{ $reg->id }}">حفظ</button>
+                                                                                                        <button type="button" class="btn btn-red btn-sm cancel-discount-btn cancel-btn" reg_id="{{ $reg->id }}">إلغاء</button>
                                                                                                     </span>
                                                                                                     @endif
                                                                                                 </div>
@@ -561,47 +560,68 @@
                                                                                         </script>
 
                                                                                         <div class="row">
-                                                                                            <div class="col-md-8 mainExamFees" reg_id="{{ $reg->id }}">
+                                                                                            <div class="col-md-12 mainExamFees" reg_id="{{ $reg->id }}">
                                                                                                 <input type="hidden" id="main_exam_price" value="{{$reg->exam_fees}}" reg_id="{{ $reg->id }}"/>
                                                                                                 <input type="hidden" id="paid_exam_amount" value="{{$reg->examPaidAmount}}" reg_id="{{ $reg->id }}"/>
                                                                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">رسوم الاختبار</div>
-                                                                                                <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
+                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col">
                                                                                                     <span class="exam_fees">{{ $reg->exam_fees }}</span>
                                                                                                     ر.س
+
+
+                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
+                                                                                                    <a class="btn btn-blue changeExamPrice">تغير السعر</a>
+                                                                                                    @endif
                                                                                                 </div>
-                                                                                                @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
-                                                                                                <a class="btn btn-blue changeExamPrice">تغير السعر</a>
-                                                                                                @endif
                                                                                             </div>
-                                                                                        </div>
 
-                                                                                        <div class="col-md-12 newExamPrice" style="display: none">
-                                                                                            <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
-                                                                                            <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold"> الرسوم الجديدة</div>
-                                                                                            <div class="col-lg-8 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                <span>
-                                                                                                    <input type="text" id="new_exam_price" name="new_exam_price" value="" reg_id="{{ $reg->id }}" style="width: 63px" />
-                                                                                                </span>
+                                                                                            <div class="col-md-12 newExamPrice" style="display: none">
+                                                                                                <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
+                                                                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold"> الرسوم الجديدة</div>
+                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col">
+                                                                                                    <span>
+                                                                                                        <input type="text" id="new_exam_price" name="new_exam_price" value="" reg_id="{{ $reg->id }}" style="width: 63px" />
+                                                                                                    </span>
 
-                                                                                                <a class="btn btn-green saveExamPrice" reg_id="{{ $reg->id }}"> حفظ </a>
-                                                                                                <a class="btn btn-red resetExamSave">إلغاء التغير </a>
+                                                                                                    <a class="btn btn-green save-btn saveExamPrice" reg_id="{{ $reg->id }}"> حفظ </a>
+                                                                                                    <a class="btn btn-red cancel-btn resetExamSave">إلغاء التغير </a>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
 
 
                                                                                         <div class="row">
-                                                                                            <div class="col-md-12">
+                                                                                            <div class="col-md-12 regBy" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">
                                                                                                     تم التسجيل عن طريق
                                                                                                 </div>
-                                                                                                <div class="col-lg-3 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    @if ($reg->registered_by)
-                                                                                                        {{ $reg->registered_by }}
-                                                                                                    @else
-                                                                                                        ----
+                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col regByText">
+                                                                                                    <span>
+                                                                                                        @if ($reg->registered_by)
+                                                                                                            {{ $reg->registered_by }}
+                                                                                                        @else
+                                                                                                            ----
+                                                                                                        @endif
+                                                                                                    </span>
+                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
+                                                                                                        <a class="btn btn-blue changeRegBy">تغير</a>
                                                                                                     @endif
                                                                                                 </div>
 
+                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col newRegBy" style="display: none">
+                                                                                                    <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
+                                                                                                    <span>
+                                                                                                        <input type="text" id="reg_by" name="reg_by" value="" reg_id="{{ $reg->id }}" style="width: 160px" />
+                                                                                                    </span>
+
+                                                                                                    <a class="btn btn-green save-btn saveRegBy" reg_id="{{ $reg->id }}"> حفظ </a>
+                                                                                                    <a class="btn btn-red cancel-btn resetRegBy">إلغاء التغير </a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="row">
+                                                                                            <div class="col-md-12 regDate" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">تاريخ التقديم</div>
                                                                                                 <div class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
                                                                                                     {{ \Carbon\Carbon::parse($reg->created_at)->format('d-m-Y') }}
@@ -1196,7 +1216,7 @@
                             //console.log($(`.mainCost[reg_id="${$('#reg_id').val()}"] .price`).length,$('#reg_id').val(),`.mainCost[reg_id="${$('#reg_id').val()}"] .price`);
                             $(`.mainCost[reg_id="${reg_id}"] .student_price`).text(result['new_price']);
                             $(`.finalPrice[reg_id="${reg_id}"] .price`).text(result['new_price']);
-                            $(`.discountPrice[reg_id="${reg_id}"] .discount-value-text`).text(0)
+                            $(`.discountPrice[reg_id="${reg_id}"] .discount-value-text`).text(0 + '  ر.س');
                             $(`.regprice[reg_id="${reg_id}"]`).text(result['new_price']);
                             $(`.remaining_amount[reg_id="${reg_id}"]`).text(remain_amount);
 
@@ -1250,7 +1270,7 @@
                             $('#reg-' + actvRegID + '-info .discount-input').hide();
                             $('#reg-' + actvRegID + '-info .save-discount-btn').hide();
                             $('#reg-' + actvRegID + '-info .cancel-discount-btn').hide();
-                            $(`.discount-value-text[reg_id="${reg_id}"]`).text(new_discount);
+                            $(`.discount-value-text[reg_id="${reg_id}"]`).text(new_discount + '  ر.س');
                             // تحديث السعر النهائي
                             var priceElem = document.querySelector('.mainCost[reg_id="' + reg_id + '"] .student_price');
                             var finalPriceElem = document.querySelector('.price[reg_id="' + reg_id + '"]');
@@ -1319,7 +1339,7 @@
                 });
 
 
-                $('.reg-modal .resetSave').click(function() {
+                $('.reg-modal .resetExamSave').click(function() {
                     $('#reg-' + actvRegID + '-info .newExamPrice').hide();
                     $('#reg-' + actvRegID + '-info .mainExamFees').show();
                     $('#reg-' + actvRegID + '-info .changeExamPrice').show();
@@ -1328,6 +1348,47 @@
 
                 $('input[name=new_exam_price]').change(function(event) {
                     $('#reg-' + actvRegID + '-info .mainExamCost').hide();
+                });
+                ///////////////////////////
+                
+                //changeRegBy
+                $('.reg-modal .changeRegBy').click(function() {
+                    $('#reg-' + actvRegID + '-info .regByText').hide();
+                    $('#reg-' + actvRegID + '-info .newRegBy').show();
+                    $('#reg-' + actvRegID + '-info .newRegBy #reg_by').val('');
+
+                });
+
+                $('.reg-modal .saveRegBy').on('click', function() {
+                    var reg_id = $(this).attr('reg_id');
+                    var reg_by = $(`.newRegBy #reg_by[reg_id="${reg_id}"]`).val();
+                    console.log(reg_id, reg_by);
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route(Auth::getDefaultDriver().'.updateRegBy') }}',
+                        data: {
+                            'reg_by': reg_by,
+                            'reg_id': reg_id,
+                            '_token': '<?php echo csrf_token(); ?>'
+                        },
+                        success: (result) => {
+                            // console.log(result)
+                            $('#reg-' + actvRegID + '-info .regByText').show();
+                            $('#reg-' + actvRegID + '-info .newRegBy').hide();
+                            $(`.regByText span`).text(reg_by);
+                        },
+                        error: function(jqXHR, exception) {
+                            console.log('Uncaught Error.\n' + jqXHR.responseText);
+                        }
+                    });
+                    return false;
+                });
+
+
+                $('.reg-modal .resetRegBy').click(function() {
+                    $('#reg-' + actvRegID + '-info .regByText').show();
+                    $('#reg-' + actvRegID + '-info .newRegBy').hide();
+                    $('#reg-' + actvRegID + '-info .newRegBy #reg_by').val('');
                 });
                 ///////////////////////////
                 

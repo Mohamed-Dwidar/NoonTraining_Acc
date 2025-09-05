@@ -220,6 +220,11 @@ class CourseRegService
         return $this->courseRegRepository->update(['status_id' => $data->status_id], $data->reg_id);
     }
 
+    public function updateRegBy($data)
+    {
+        return $this->courseRegRepository->update(['registered_by' => $data->reg_by], $data->reg_id);
+    }
+
     public function updatePaymentType($data)
     {
         if ($data->status == 'normal') {  //الدورة افتراضي
