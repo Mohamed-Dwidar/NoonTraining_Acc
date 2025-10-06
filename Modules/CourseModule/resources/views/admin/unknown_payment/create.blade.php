@@ -47,7 +47,7 @@
                                             <div class="col-lg-2 col-sm-12 col-xs-12 col-2">
                                                 <label for="amount">المبلغ المحول <span class="hint">*</span></label>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control" id="amount" name="amount"
+                                                    <input type="number" class="form-control" id="amount" name="amount"
                                                         value="{{ old('amount') }}">
                                                 </div>
                                             </div>
