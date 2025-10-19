@@ -203,6 +203,8 @@ class StudentUserController extends Controller
             return back()
                 ->withErrors('الطالب غير موجود في قائمة الطلاب');  
 
+        $this->studentService->deleteOne($id);
+
         //Add Log
         $action = 'حذف طالب';
         $description = 'تم حذف الطالب ' . $student->name . ' برقم هوية ' . $student->id_nu;
