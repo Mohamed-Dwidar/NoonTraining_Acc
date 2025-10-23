@@ -491,7 +491,7 @@ class CourseAdminController extends Controller
 
         //Add Log
         $action = 'تعديل تم التسجيل عن طريق';
-        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي : ' .  $course_reg->reg_by;
+        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي : ' .  $course_reg->registered_by;
         $this->logService->recordLog($action, $description, url()->current());
         //
         return response()->json(

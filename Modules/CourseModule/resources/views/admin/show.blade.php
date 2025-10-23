@@ -1372,7 +1372,7 @@
                             '_token': '<?php echo csrf_token(); ?>'
                         },
                         success: (result) => {
-                            // console.log(result)
+                            console.log(result)
                             $('#reg-' + actvRegID + '-info .regByText').show();
                             $('#reg-' + actvRegID + '-info .newRegBy').hide();
                             $(`.regByText span`).text(reg_by);
