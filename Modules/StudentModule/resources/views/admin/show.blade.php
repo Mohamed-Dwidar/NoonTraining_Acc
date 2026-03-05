@@ -4,6 +4,40 @@
     {{ $student->name }}
 @endsection
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* Allow modal to show dropdown properly */
+        #modal-assign-course .modal-body {
+            overflow: visible !important;
+        }
+
+        #modal-assign-course .card-block {
+            overflow: visible !important;
+        }
+
+        /* Select2 styling */
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container--open .select2-dropdown {
+            z-index: 2000 !important;
+        }
+
+        /* Ensure search input is visible and functional */
+        .select2-search__field {
+            width: 100% !important;
+            padding: 6px !important;
+        }
+
+        .select2-results {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+@endpush
+
 @section('content')
 
 
@@ -716,6 +750,7 @@
                                                             <span>
                                                                 <select class="form-control" id="course_id"
                                                                     name="course_id">
+                                                                    <option value="">اختر دورة...</option>
                                                                     @if (!empty($courses))
                                                                         @foreach ($courses as $course)
                                                                             <option value="{{ $course->id }}"
@@ -794,6 +829,57 @@
     @push('scripts')
         <script>
             $(document).ready(function() {
+                // Initialize Select2 for course search
+                function initSelect2() {
+                    // Destroy existing instance if any
+                    if ($('#course_id').data('select2')) {
+                        $('#course_id').select2('destroy');
+                    }
+
+                    // Initialize Select2 and append dropdown to body
+                    $('#course_id').select2({
+                        placeholder: 'اختر دورة...',
+                        allowClear: true,
+                        width: 'resolve',
+                        dropdownParent: $('#modal-assign-course').find('.modal-body'),
+                        matcher: function (params, data) {
+                            // If there are no search terms, return all of the data
+                            if ($.trim(params.term) === '') {
+                                return data;
+                            }
+
+                            // Do not display the item if there is no 'text' property
+                            if (typeof data.text === 'undefined') {
+                                return null;
+                            }
+
+                            // `params.term` should be the term that is used for searching
+                            // `data.text` is the text that is displayed for the data object
+                            if (data.text.indexOf(params.term) > -1) {
+                                var modifiedData = $.extend({}, data, true);
+                                return modifiedData;
+                            }
+
+                            // Return `null` if the term does not match
+                            return null;
+                        },
+                        tags: false,
+                        selectOnClose: false
+                    });
+                }
+
+                // Initialize on page load
+                setTimeout(function() {
+                    initSelect2();
+                }, 500);
+
+                // Reinitialize when modal is shown
+                $('#modal-assign-course').on('show.bs.modal', function() {
+                    setTimeout(function() {
+                        initSelect2();
+                    }, 300);
+                });
+
                 //$('#modal-pay-1').modal('show');
 
 
@@ -1007,6 +1093,7 @@
 @endsection
 
 @section('vendor-js')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
 
 @section('page-level-js')
