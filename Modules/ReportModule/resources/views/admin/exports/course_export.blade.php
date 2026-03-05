@@ -9,6 +9,8 @@
             <th style="font-weight: bold">الجوال</th>
             <th style="font-weight: bold">البريد الإلكتروني</th>
             <th style="font-weight: bold">تاريخ الميلاد</th>
+            <th style="font-weight: bold">قطاع العمل</th>
+            <th style="font-weight: bold">المؤهل الدراسي</th>
             <th style="font-weight: bold">السعر المتفق عليه</th>
             <th style="font-weight: bold">المدفوع</th>
             <th style="font-weight: bold">الباقي</th>
@@ -48,7 +50,12 @@
                 <td>
                     <label>{{ $reg->student->birthdate ? \Carbon\Carbon::parse($reg->student->birthdate)->format('d-m-Y') : '' }}</label>
                 </td>
-
+                <td>
+                    <label>{{ $reg->student->company}}</label>
+                </td>
+                <td>
+                    <label>{{ $reg->student->academic_qualification }}</label>
+                </td>
                 <td>
                      {{ $reg->price }}
                 </td>
