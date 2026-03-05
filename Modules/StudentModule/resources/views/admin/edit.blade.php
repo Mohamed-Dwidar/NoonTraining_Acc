@@ -190,6 +190,16 @@
                                             </div>
                                         </div>
 
+                                         <div class="row">
+                                            <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                <label for="academic_qualification">المؤهل الدراسي</label>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="academic_qualification" name="academic_qualification"
+                                                        value="{{ old('academic_qualification', $student->academic_qualification) }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col-lg-5 col-sm-12 col-xs-12 col-6">
                                                 <label for="notes">ملاحظات</label>

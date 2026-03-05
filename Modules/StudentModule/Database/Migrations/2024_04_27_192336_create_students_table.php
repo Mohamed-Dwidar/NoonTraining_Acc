@@ -27,7 +27,8 @@ class CreateStudentsTable extends Migration
             $table->string('id_expire_date')->nullable();
             $table->string('nationality')->nullable();
             $table->string('gender',20)->default('male')->nullable();
-            
+            $table->string('note')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

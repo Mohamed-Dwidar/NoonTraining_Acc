@@ -174,6 +174,19 @@
 
                                     <div class="row">
                                         <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col label">
+                                          المؤهل الدراسي
+                                        </div>
+                                        <div class="col-lg-8 col-md-4 col-sm-12 col-xs-12 col">
+                                            @if ($student->academic_qualification)
+                                                {{ $student->academic_qualification }}
+                                            @else
+                                                ---
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col label">
                                             ملاحظات
                                         </div>
                                         <div class="col-lg-8 col-md-4 col-sm-12 col-xs-12 col">
@@ -265,7 +278,7 @@
                                                         @if ($reg->is_exam_paid == 0)
                                                         <i class="fa fa-close red list-boolean-icon"></i>
                                                         @else
-                                                        <i class="fa fa-check green list-boolean-icon"></i>                                                        
+                                                        <i class="fa fa-check green list-boolean-icon"></i>
                                                         @endif
                                                     </td> --}}
                                                     <td class="align-center"
@@ -930,7 +943,7 @@
                     ////Filter Status////
                     var fltrStsVal = $('#fltr_sts_val').val();
                     var filterStsParam = (fltrStsVal != '' && fltrStsVal != 0) ? "fltr_sts=" + fltrStsVal : "";
-                    ////////// 
+                    //////////
 
                     /////Filter Date Range////
                     var dateRngFromVal = $('.fltr-date-range-reg #dateRngFrm').val();

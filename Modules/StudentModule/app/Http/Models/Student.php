@@ -26,6 +26,7 @@ class Student extends Model
         'id_expire_date',
         'nationality',
         'gender',
+        'academic_qualification',
         'notes'
     ];
 

@@ -33,6 +33,7 @@ class StudentService
             'id_expire_date' => $data->id_expire_date,
             'nationality' => $data->nationality,
             'gender' => $data->gender,
+            'academic_qualification' => $data->academic_qualification,
             'notes' => $data->notes ?? null
         ];
         $student = $this->studentRepository->create($student_data);
@@ -54,6 +55,7 @@ class StudentService
             'id_expire_date' => $data->id_expire_date,
             'nationality' => $data->nationality,
             'gender' => $data->gender,
+            'academic_qualification' => $data->academic_qualification,
             'notes' => $data->notes ?? null
         ];
         return $this->studentRepository->update($student_data, $data->id);
