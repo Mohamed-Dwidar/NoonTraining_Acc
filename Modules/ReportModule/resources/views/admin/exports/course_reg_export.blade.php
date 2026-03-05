@@ -49,7 +49,7 @@
                     <label>{{ $reg->student->email }}</label>
                 </td>
                 <td>
-                    <label>{{ $reg->student->birth_date ? \Carbon\Carbon::parse($reg->student->birth_date)->format('d-m-Y') : '' }}</label>
+                    <label>{{ $reg->student->birthdate ? \Carbon\Carbon::parse($reg->student->birthdate)->format('d-m-Y') : '' }}</label>
                 </td>
                 <td>
                     {{ $reg->price }}
