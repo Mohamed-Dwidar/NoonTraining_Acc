@@ -293,7 +293,7 @@
                                                     <td>
                                                         <div>
                                                             <span class="regprice" reg_id="{{ $reg->id }}">{{ $reg->price }}</span>
-                                                            @if ($reg->main_price != $reg->price)                                                            
+                                                            @if ($reg->main_price != $reg->price)
                                                             <br>
                                                             <span class="small" style="text-decoration: line-through">{{ $reg->main_price }}</span>
                                                             @endif
@@ -306,20 +306,20 @@
                                                         @else
                                                         <div>
                                                             <span class="remaining_amount" reg_id="{{ $reg->id }}">{{ number_format($reg->price - $reg->coursePaidAmount, 2) }}</span>
-                                                        </div>                                                        
+                                                        </div>
                                                         @endif
                                                     </td>
                                                     {{-- <td class="align-center">
                                                         @if($reg->is_exam_paid == 0)
                                                         <i class="fa fa-close red list-boolean-icon"></i>
                                                         @else
-                                                        <i class="fa fa-check green list-boolean-icon"></i>                                                        
+                                                        <i class="fa fa-check green list-boolean-icon"></i>
                                                         @endif
                                                     </td> --}}
                                                     <td class="align-center paid_status" style="font-weight:bold; background-color: {{$reg->status->color}} ">
                                                         <div style="display: none" class="paid_status_id">{{$reg->is_course_paid}}</div>
                                                         <div style="display: none" class="paid_exam_id">{{$reg->is_exam_paid}}</div>
-                                                        
+
                                                         @if ($reg->is_leave == 1)
                                                         [ مغادر ] &nbsp;&nbsp;&nbsp;
                                                         @endif
@@ -330,7 +330,7 @@
                                                         @if($reg->is_recive_cert == 0)
                                                         <i class="fa fa-close red list-boolean-icon"></i>
                                                         @else
-                                                        <i class="fa fa-check green list-boolean-icon"></i>                                                        
+                                                        <i class="fa fa-check green list-boolean-icon"></i>
                                                         @endif
                                                     </td>
 
@@ -342,7 +342,7 @@
                                                         <a class="btn-sm btn-primary one-pay" href="#"
                                                             id="{{ $reg->id }}" role="button" data-toggle="modal"
                                                             data-target="#modal-pay-{{ $reg->id }}">الدفعات</a>
-                                                         
+
 
                                                        @cannot('view_only')
                                                             @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
@@ -439,7 +439,7 @@
                                                                                                     {{ $reg->course->end_at }}
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div> 
+                                                                                        </div>
 
                                                                                         <div class="row">
                                                                                             <div class="col-md-6">
@@ -453,7 +453,7 @@
                                                                                                     </span>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            
+
                                                                                             <div class="col-md-6 newPrice" style="display: none">
                                                                                                 <input type="hidden" id="reg_id" name="reg_id" value="{{ $reg->id }}" />
                                                                                                 <div class="col-lg-4 col-md-3 col-sm-12 col-xs-12 col label font-bold"> السعر الجديد</div>
@@ -466,7 +466,7 @@
                                                                                                     <a class="btn btn-red resetSave">إلغاء التغير </a>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            
+
                                                                                             <div class="col-md-6 mainCost" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-5 col-md-3 col-sm-12 col-xs-12 col label font-bold">السعر المتفق عليه</div>
                                                                                                 <div class="col-lg-7 col-md-2 col-sm-12 col-xs-12 col">
@@ -619,7 +619,7 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
-                                                                                        
+
                                                                                         <div class="row">
                                                                                             <div class="col-md-12 regDate" reg_id="{{ $reg->id }}">
                                                                                                 <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">تاريخ التقديم</div>
@@ -878,7 +878,7 @@
                                                                                             <div class="col-md-4">
                                                                                                 <label><b>سعر الدورة :</b></label>
                                                                                                 <span class="price">
-                                                                                                    <span class="regprice" reg_id="{{ $reg->id }}">{{ number_format($reg->price, 2) }}</span>                                                                                                    
+                                                                                                    <span class="regprice" reg_id="{{ $reg->id }}">{{ number_format($reg->price, 2) }}</span>
                                                                                                     ر.س
                                                                                                 </span>
                                                                                             </div>
@@ -895,21 +895,21 @@
                                                                                                 <span style="color:red" class="remaining_amount" reg_id="{{ $reg->id }}">
                                                                                                     @if(in_array($reg->status_id,[8,9]))
                                                                                                     0.00
-                                                                                                
+
                                                                                                     @else
                                                                                                     {{ number_format($reg->price - $reg->coursePaidAmount, 2) }}
-                                                                                                    
+
                                                                                                     @endif
                                                                                                 </span>
                                                                                                 <span style="color:red" >ر.س</span>
                                                                                             </div>
                                                                                             <div class="col-md-1">
                                                                                                 @if($reg->is_course_paid == 1)
-                                                                                                <i class="fa fa-check green list-boolean-icon"></i>                                                        
+                                                                                                <i class="fa fa-check green list-boolean-icon"></i>
                                                                                                 @endif
                                                                                             </div>
                                                                                         </div>
-                                                                                        
+
                                                                                         <div class="row">
                                                                                             <div class="col-md-4">
                                                                                                 <label><b>رسوم الاختبار :</b></label>
@@ -935,20 +935,20 @@
                                                                                             </div>
                                                                                             <div class="col-md-1">
                                                                                                 @if($reg->is_exam_paid == 1)
-                                                                                                <i class="fa fa-check green list-boolean-icon"></i>                                                        
+                                                                                                <i class="fa fa-check green list-boolean-icon"></i>
                                                                                                 @endif
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="card-block pay-template">
                                                                                     <div class="card-text col-md-12">
                                                                                         <div class="row">
                                                                                             <div class="col-md-12">
                                                                                                 <h4 class="card-title" style="float: right;">الدفعات</h4>
                                                                                             </div>
-                                                                                            
+
                                                                                             @if($reg->payments->count() > 0)
                                                                                             @foreach ($reg->payments as $payment)
                                                                                                 <div class="col-md-3">
@@ -980,12 +980,12 @@
                                                                                                 <div class="col-md-12">
                                                                                                     <h4 class="card-title" style="float: right;">تسجيل دفع جديد</h4>
                                                                                                 </div>
-                                                                                                
+
                                                                                                 <div class="col-md-3">
                                                                                                     <label for="pay_type">نوع الدفع :</label>
                                                                                                     <span>
                                                                                                         <select id="pay_type" name="pay_type" class="form-control">
-                                                                                                            @if(!in_array($reg->status_id,[8,9]))       
+                                                                                                            @if(!in_array($reg->status_id,[8,9]))
                                                                                                             <option value="دفعة للدورة">دفعة للدورة</option>
                                                                                                             @endif
                                                                                                             <option value="رسوم الاختبار">رسوم الاختبار</option>
@@ -993,22 +993,22 @@
                                                                                                         </select>
                                                                                                     </span>
                                                                                                 </div>
-                                                                                                
-                                                                                                
+
+
                                                                                                 <div class="col-md-2">
                                                                                                     <label for="amount">القيمة :</label>
                                                                                                     <span>
                                                                                                         <input type="text" id="pay_amount" class="form-control" name="amount" />
                                                                                                     </span>
                                                                                                 </div>
-                                                                                                
+
                                                                                                 <div class="col-md-4">
                                                                                                     <label for="paid_at">تاريخ الدفع :</label>
                                                                                                     <span>
-                                                                                                        <input type="text" id="paid_at" class="form-control hijri-datepicker" name="paid_at" />
+                                                                                                        <input type="date" id="paid_at" class="form-control" name="paid_at" />
                                                                                                     </span>
                                                                                                 </div>
-                                                                                                
+
                                                                                                 <div class="col-md-2">
                                                                                                     <label for="pay_method">طريقة الدفع :</label>
                                                                                                     <span>
@@ -1022,8 +1022,8 @@
                                                                                                             <option value="أخرى">أخرى</option>
                                                                                                         </select>
                                                                                                     </span>
-                                                                                                </div>                                                                                            
-                                                                                                
+                                                                                                </div>
+
                                                                                                 <div class="col-md-1" style="text-align: center">
                                                                                                     <label>&nbsp;</label>
                                                                                                     <span>
@@ -1069,10 +1069,10 @@
                                                                                         {{ $reg->student->name }}
                                                                                     </h4>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="card-block status-template" style="margin-bottom: 20px">
                                                                                     <div class="card-text col-md-12">
-                                                                                        <div class="row">                                                                                                
+                                                                                        <div class="row">
                                                                                             <div class="col-md-6">
                                                                                                 <label for="status">الحالة :</label>
                                                                                                 <span>
@@ -1087,7 +1087,7 @@
                                                                                                     </select>
                                                                                                 </span>
                                                                                             </div>
-                                                                                            
+
                                                                                             <div class="col-md-12" style="text-align: center">
                                                                                                 <label>&nbsp;</label>
                                                                                                 <span>
@@ -1251,7 +1251,7 @@
                     $('#reg-' + actvRegID + '-info .cancel-discount-btn').show();
                     $('#reg-' + actvRegID + '-info #new_discount').val();
                 });
-                
+
                 $('.reg-modal .save-discount-btn').on('click', function() {
                     var reg_id = $(this).attr('reg_id');
                     var new_discount = $(`#discount-input[reg_id="${reg_id}"]`).val();
@@ -1295,9 +1295,9 @@
                     return false;
                 });
 
-                
+
                 /////////////////
-                
+
                 //changeExamPrice
                 $('.reg-modal .changeExamPrice').click(function() {
                     $('#reg-' + actvRegID + '-info .mainExamFees').hide();
@@ -1350,7 +1350,7 @@
                     $('#reg-' + actvRegID + '-info .mainExamCost').hide();
                 });
                 ///////////////////////////
-                
+
                 //changeRegBy
                 $('.reg-modal .changeRegBy').click(function() {
                     $('#reg-' + actvRegID + '-info .regByText').hide();
@@ -1391,7 +1391,7 @@
                     $('#reg-' + actvRegID + '-info .newRegBy #reg_by').val('');
                 });
                 ///////////////////////////
-                
+
 
                 //Pay
                 $('.one-pay').click(function() {
@@ -1406,7 +1406,7 @@
                     var payDate = $('#pay-' + actvRegID + '-info #paid_at').val();
                     //  console.log();
                     //  return false;
-                    
+
                     if($('#pay-' + actvRegID + '-info #pay_amount').val() == ''){
                         showPayAlert('يجب ادخال القيمة المدفوعة');
                         return false;
@@ -1429,8 +1429,8 @@
                 });
 
                 function showPayAlert(msg){
-                    $('#pay-' + actvRegID + '-info .alert li').html(msg); 
-                    $('#pay-' + actvRegID + '-info .alert').show().delay(4000).fadeOut('slow');                    
+                    $('#pay-' + actvRegID + '-info .alert li').html(msg);
+                    $('#pay-' + actvRegID + '-info .alert').show().delay(4000).fadeOut('slow');
                 }
 
                 //Status
@@ -1450,7 +1450,7 @@
                 //Search//
                 $('#srchInput-reg').keypress(function(e) {
                     var key = e.which;
-                    if (key == 13){         // the enter key code                    
+                    if (key == 13){         // the enter key code
                         $('button[class="srch-icon-reg"]').click();
                         return false;
                     }
@@ -1542,7 +1542,7 @@
                     }else{
                         var filterParam = (fltrStsVal != '' && fltrStsVal != 0) ? "fltr_crt=" + (fltrStsVal - 100) : "";
                     }
-                    ////////// 
+                    //////////
 
                     /////Filter Date Range////
                     var dateRngFromVal = $('.fltr-date-range-reg #dateRngFrm').val();
@@ -1632,7 +1632,7 @@
                         const statusElement = document.querySelector('#reg'+regId+' .paid_status_id');
                         const validStatuses = [3, 4, 5, 6, 7, 9];
                         const examPaidStatusElement = document.querySelector('#reg'+regId+' .paid_exam_id');
-                        
+
                         const courseName = courseNameElement ? courseNameElement.innerText : 'N/A';
                         const studentName = studentNameElement ? studentNameElement.innerText : 'N/A';
                         const idNumber = idNumberElement ? idNumberElement.innerText : 'N/A';
@@ -1646,7 +1646,7 @@
                         const copyText =
                             'اسم الدورة: '+courseName+'\nاسم الطالب: '+studentName+'\nرقم الهوية: '+idNumber+'\nرقم الجوال: '+phone+'\nالمبلغ كامل : '+totalAmount+'\nمدفوع  : '+paidAmount+'\nمتبقي :'+remainingAmount+'\nسدد رسوم الاختبار ؟: '+examPaidStatus;
 // console.log(copyText);
-                          
+
                         navigator.clipboard.writeText(copyText).then(() => {
                             alert('تم نسخ المعلومات بنجاح');
                         }).catch(err => {
