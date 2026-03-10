@@ -87,7 +87,7 @@
                                                 <label for="start_at">تاريخ بداية الدورة <span
                                                         class="hint">*</span></label>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control hijri-datepicker"
+                                                    <input type="date" class="form-control"
                                                         id="start_at" name="start_at" value="{{ old('start_at') }}">
                                                 </div>
                                             </div>
@@ -96,7 +96,7 @@
                                                 <label for="end_at">تاريخ انتهاء الدورة <span
                                                         class="hint">*</span></label>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control hijri-datepicker"
+                                                    <input type="date" class="form-control"
                                                         id="end_at" name="end_at" value="{{ old('end_at') }}">
                                                 </div>
                                             </div>

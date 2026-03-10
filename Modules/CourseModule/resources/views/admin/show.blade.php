@@ -242,15 +242,11 @@
                                         <label>الفترة:</label>
                                         من
                                         <input
-                                            value='@if (app('request')->dateRngFrm != null) {{ app('
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    request')->dateRngFrm }} @endif'
-                                            id="dateRngFrm" class="hijri-datepicker" />
+                                            value='@if (app('request')->dateRngFrm != null) {{ app('request')->dateRngFrm }} @endif' id="dateRngFrm" class="hijri-datepicker" />
                                         &nbsp;
                                         الي
                                         <input
-                                            value='@if (app('request')->dateRngTo != null) {{ app('
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    request')->dateRngTo }} @endif'
-                                            id="dateRangTo" class="hijri-datepicker" />
+                                            value='@if (app('request')->dateRngTo != null) {{ app('request')->dateRngTo }} @endif' id="dateRangTo" class="hijri-datepicker" />
 
                                         <button class="drnge-icon-reg">
                                             <i class="icon-search7"></i>

@@ -68,7 +68,7 @@
                                             <div class="col-lg-2 col-sm-12 col-xs-12 col-2">
                                                 <label for="paid_at">تاريخ التحويل <span class="hint">*</span></label>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control hijri-datepicker"
+                                                    <input type="date" class="form-control"
                                                         id="paid_at" name="paid_at"
                                                         value="{{ old('paid_at', $unknown_payment->paid_at) }}">
                                                 </div>

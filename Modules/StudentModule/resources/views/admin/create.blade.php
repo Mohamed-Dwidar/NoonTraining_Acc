@@ -82,7 +82,7 @@
                                             <div class="col-lg-2 col-sm-12 col-xs-12 col-2">
                                                 <label for="id_expire_date">تاريخ الانتهاء</label>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control hijri-datepicker" id="id_expire_date"
+                                                    <input type="date" class="form-control" id="id_expire_date"
                                                         name="id_expire_date" value="{{ old('id_expire_date') }}">
                                                 </div>
                                             </div>
@@ -150,7 +150,7 @@
                                             <div class="col-lg-2 col-sm-12 col-xs-12 col-2">
                                                 <label for="birthdate">تاريخ الميلاد</label>
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control hijri-datepicker" id="birthdate"
+                                                    <input type="date" class="form-control" id="birthdate"
                                                         name="birthdate" value="{{ old('birthdate') }}">
                                                 </div>
                                             </div>

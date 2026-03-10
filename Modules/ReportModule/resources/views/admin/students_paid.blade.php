@@ -80,7 +80,7 @@
                                 </div>
 
                                 <div class="col-lg-5 col-md-6 col-sm-9 col-xs-12">
-                                    
+
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
                                         <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -119,12 +119,12 @@
                                             من
                                             <input
                                                 value='@if (app('request')->dateRngFrm != null) {{ app('request')->dateRngFrm }} @endif'
-                                                id="dateRngFrm" class="form-control hijri-datepicker" />
+                                                id="dateRngFrm" class="form-control" />
                                             &nbsp;
                                             الي
                                             <input
                                                 value='@if (app('request')->dateRngTo != null) {{ app('request')->dateRngTo }} @endif'
-                                                id="dateRangTo" class="form-control hijri-datepicker" />
+                                                id="dateRangTo" class="form-control" />
                                         </div>
                                         <button class="drnge-icon-reg">
                                             <i class="icon-search7"></i>
