@@ -51,7 +51,7 @@
                     <label>{{ $reg->student->email }}</label>
                 </td>
                 <td>
-                    <label>{{ $reg->student->birthdate ? \Carbon\Carbon::parse($reg->student->birthdate)->format('d-m-Y') : '' }}</label>
+                    <label>{{ $reg->student->birthdate ? $reg->student->birthdate : '' }}</label>
                 </td>
                 <td>
                     <label>{{ $reg->student->company}}</label>
