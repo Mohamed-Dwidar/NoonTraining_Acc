@@ -223,6 +223,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    {{ $courses_regs->appends(request()->query())->links('layoutmodule::admin.custom_pagination') }}
                                 </div>
                             </div>
                         @else

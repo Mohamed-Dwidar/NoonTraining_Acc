@@ -80,7 +80,7 @@
                                 </div>
 
                                 <div class="col-lg-5 col-md-6 col-sm-9 col-xs-12">
-                                    
+
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
                                         <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -224,6 +224,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    {{ $courses_regs->appends(request()->query())->links('layoutmodule::admin.custom_pagination') }}
                                 </div>
                             </div>
                         @else

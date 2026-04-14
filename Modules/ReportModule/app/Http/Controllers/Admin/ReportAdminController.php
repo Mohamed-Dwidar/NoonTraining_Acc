@@ -18,8 +18,7 @@ use Modules\ReportModule\Exports\CourseRegExport;
 use Modules\ReportModule\Exports\LogExport;
 use Modules\UserModule\Services\UserService;
 
-class ReportAdminController extends Controller
-{
+class ReportAdminController extends Controller {
     private $courseRegService;
     private $courseService;
     private $logService;
@@ -27,8 +26,7 @@ class ReportAdminController extends Controller
     private $userService;
     private $adminService;
 
-    public function __construct(CourseRegService $courseRegService, CourseService $courseService, LogService $logService, BranchService $branchService, UserService $userService,AdminService $adminService)
-    {
+    public function __construct(CourseRegService $courseRegService, CourseService $courseService, LogService $logService, BranchService $branchService, UserService $userService, AdminService $adminService) {
         $this->courseRegService = $courseRegService;
         $this->courseService = $courseService;
         $this->logService = $logService;
@@ -37,13 +35,11 @@ class ReportAdminController extends Controller
         $this->adminService = $adminService;
     }
 
-    public function index()
-    {
+    public function index() {
         return view('reportmodule::admin.index');
     }
 
-    public function ReportAllStudents(Request $request)
-    {
+    public function ReportAllStudents(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['all'] = 1;
@@ -54,15 +50,14 @@ class ReportAdminController extends Controller
         $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
             ->orderBy('course_regs.course_id', 'DESC')
             ->orderBy('course_regs.created_at', 'ASC')
-            ->get();
+            ->paginate(50);
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بكامل الطلاب.xlsx');
         }
         return view('reportmodule::admin.students_all', compact('courses_regs', 'branches'));
     }
 
-    public function ReportAllCourses(Request $request)
-    {
+    public function ReportAllCourses(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['all'] = 1;
@@ -75,15 +70,14 @@ class ReportAdminController extends Controller
             ->orderBy('courses.name', 'ASC')
             ->orderBy('courses.group_nu', 'ASC')
             ->orderBy('courses.course_org_nu', 'ASC')
-            ->get();
+            ->paginate(50);
         if ($request->export == 'yes') {
             return Excel::download(new CourseExport($courses), 'تقرير بالدورات .xlsx');
         }
         return view('reportmodule::admin.courses_all', compact('courses', 'branches'));
     }
 
-    public function ReportAllCourseStudents(Request $request)
-    {
+    public function ReportAllCourseStudents(Request $request) {
         //$branches = $this->branchService->findAll();
         //$export = $request->export;
         //$request['fltr_sts'] = 1;
@@ -92,7 +86,8 @@ class ReportAdminController extends Controller
         // if ($request->brnch)
         //     $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         $course = $this->courseService->findOne($request->id);
         // dd($courses_regs->toArray());
         // if ($request->export == 'yes') {
@@ -101,8 +96,7 @@ class ReportAdminController extends Controller
         // return view('reportmodule::admin.students_not_paid', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsNotPaid(Request $request)
-    {
+    public function reportStudentsNotPaid(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_sts'] = 1;
@@ -110,7 +104,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب الغير مسددين إطلاقاٌ.xlsx');
@@ -118,8 +113,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_not_paid', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsInstallmentPay(Request $request)
-    {
+    public function reportStudentsInstallmentPay(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_sts'] = [2, 3];
@@ -127,7 +121,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب عليهم أقساط.xlsx');
@@ -135,8 +130,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_installment_pay', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsExamNotPaid(Request $request)
-    {
+    public function reportStudentsExamNotPaid(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_sts'] = [4, 8];  //[1, 2, 4, 8, 10];
@@ -144,7 +138,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب عليهم رسوم الاختبار فقط.xlsx');
@@ -152,8 +147,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_exam_not_paid', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsPaid(Request $request)
-    {
+    public function reportStudentsPaid(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_sts'] = [4, 6, 7];
@@ -161,7 +155,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب المسددين.xlsx');
@@ -169,8 +164,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_paid', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsReciveCert(Request $request)
-    {
+    public function reportStudentsReciveCert(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_crt'] = 1;
@@ -178,7 +172,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب المستلمين للشهادات.xlsx');
@@ -186,8 +181,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_recive_cert', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsNotReciveCert(Request $request)
-    {
+    public function reportStudentsNotReciveCert(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_crt'] = 0;
@@ -195,7 +189,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب الغير مستلمين للشهادات.xlsx');
@@ -203,8 +198,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_not_recive_cert', compact('courses_regs', 'branches'));
     }
 
-    public function reportStudentsLeave(Request $request)
-    {
+    public function reportStudentsLeave(Request $request) {
         $branches = $this->branchService->findAll();
         $export = $request->export;
         $request['fltr_leave'] = 1;
@@ -212,7 +206,8 @@ class ReportAdminController extends Controller
         if ($request->brnch)
             $request['branch'] = $request->brnch;
 
-        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
+        $courses_regs = $this->courseRegService->findAllWithFilter($request->all())
+            ->paginate(50);
         // dd($courses_regs->toArray());
         if ($request->export == 'yes') {
             return Excel::download(new CourseRegExport($courses_regs), 'تقرير بالطلاب المغادرين.xlsx');
@@ -232,8 +227,7 @@ class ReportAdminController extends Controller
         return view('reportmodule::admin.students_by_company', compact('courses_regs'));
     }*/
 
-    public function usersLog(Request $request)
-    {
+    public function usersLog(Request $request) {
         $export = $request->export;
 
         if ($request->export == 'yes') {
