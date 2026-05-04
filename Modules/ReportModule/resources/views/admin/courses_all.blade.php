@@ -80,7 +80,7 @@
                                 </div>
 
                                 <div class="col-lg-5 col-md-6 col-sm-9 col-xs-12">
-                                    
+
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
                                         <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -145,7 +145,7 @@
                                                 <th>اسم الدورة</th>
                                                 @if (Auth::guard('admin')->check())
                                                     <th>الفرع</th>
-                                                @endif                                                
+                                                @endif
                                                 <th>تاريخ بداية الدورة</th>
                                                 <th>تاريخ انتهاء الدورة</th>
                                                 {{-- <th>السعر المتفق عليه</th>
@@ -156,12 +156,12 @@
                                         </thead>
 
                                         <tbody>
-                                            @foreach ($courses as $course)
+                                            @foreach ($courses as $c=>$course)
                                                 <tr>
                                                     {{-- <td class="strong" style="padding: 0.75rem 0;background-color: {{$reg->status->color}} ">&nbsp;</td> --}}
                                                     <td class="strong">
                                                         <label for="{{ $course->id }}">
-                                                            <a href="{{ route(Auth::getDefaultDriver() . '.courses.show', $course->id) }}">{{ $course->fullName }}</a>
+                                                         <a href="{{ route(Auth::getDefaultDriver() . '.courses.show', $course->id) }}">{{ $course->fullName }}</a>
                                                         </label>
                                                     </td>
                                                     @if (Auth::guard('admin')->check())
@@ -183,6 +183,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                    {{ $courses->appends(request()->query())->links('layoutmodule::admin.custom_pagination') }}
                                 </div>
                             </div>
                         @else
