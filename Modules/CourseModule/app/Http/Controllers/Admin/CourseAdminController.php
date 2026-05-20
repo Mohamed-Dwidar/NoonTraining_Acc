@@ -15,8 +15,7 @@ use Modules\CourseModule\Services\CourseService;
 use Modules\LogModule\app\Http\Models\Log;
 use Modules\LogModule\Services\LogService;
 
-class CourseAdminController extends Controller
-{
+class CourseAdminController extends Controller {
     private $courseService;
     private $branchService;
     private $courseRegService;
@@ -24,8 +23,7 @@ class CourseAdminController extends Controller
     private $courseRegStatusService;
     private $logService;
 
-    public function __construct(CourseService $courseService, BranchService $branchService, CourseRegService $courseRegService, CourseRegPaymentService $courseRegPaymentService, CourseRegStatusService $courseRegStatusService, LogService $logService)
-    {
+    public function __construct(CourseService $courseService, BranchService $branchService, CourseRegService $courseRegService, CourseRegPaymentService $courseRegPaymentService, CourseRegStatusService $courseRegStatusService, LogService $logService) {
         $this->courseService = $courseService;
         $this->branchService = $branchService;
         $this->courseRegService = $courseRegService;
@@ -38,8 +36,7 @@ class CourseAdminController extends Controller
      * Display a listing of the resource.
      * @return Response
      */
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         //filter Branch
         if ($request->brnch)
             $request['branch'] = $request->brnch;
@@ -53,8 +50,7 @@ class CourseAdminController extends Controller
      * Show the form for creating a new resource.
      * @return Response
      */
-    public function create()
-    {
+    public function create() {
         $branches = $this->branchService->findAll();
         return view('coursemodule::admin.create', compact('branches'));
     }
@@ -64,8 +60,7 @@ class CourseAdminController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -115,8 +110,7 @@ class CourseAdminController extends Controller
      * @param int $id
      * @return Response
      */
-    public function show(Request $request)
-    {
+    public function show(Request $request) {
         $course_id = $request->id;
         $request['course_id'] = $request->id;
         $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
@@ -136,8 +130,7 @@ class CourseAdminController extends Controller
      * @param int $id
      * @return Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         $branches = $this->branchService->findAll();
         $course = $this->courseService->findOne($id);
         return view('coursemodule::admin.edit', compact('course', 'branches'));
@@ -149,8 +142,7 @@ class CourseAdminController extends Controller
      * @param int $id
      * @return Response
      */
-    public function update(Request $request)
-    {
+    public function update(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -202,8 +194,7 @@ class CourseAdminController extends Controller
      * @param int $id
      * @return Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         $course = $this->courseService->findOne($id);
         $this->courseService->deleteOne($id);
 
@@ -216,14 +207,12 @@ class CourseAdminController extends Controller
             ->with('success', 'حذف الدورة بنجاح.');
     }
 
-    public function indexArchive()
-    {
+    public function indexArchive() {
         $courses = $this->courseService->findAll();
         return view('coursemodule::admin.archive_index', compact('courses'));
     }
 
-    public function assignStudentToCourse(Request $request)
-    {
+    public function assignStudentToCourse(Request $request) {
         // $request['course_id'] = $request->course_id;
         $request['status_id'] = 1;
 
@@ -243,8 +232,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تم الاضافه بنجاح ...');
     }
 
-    public function regAction(Request $request)
-    {
+    public function regAction(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -275,8 +263,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تمت العمليه بنجاح.');
     }
 
-    public function payAction(Request $request)
-    {
+    public function payAction(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -314,8 +301,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تمت العمليه بنجاح.');
     }
 
-    public function updatePaymentType(Request $request)
-    {
+    public function updatePaymentType(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -349,8 +335,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تمت العمليه بنجاح.');
     }
 
-    public function updateRegStatus(Request $request)
-    {
+    public function updateRegStatus(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -374,8 +359,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تمت العمليه بنجاح.');
     }
 
-    public function receiptAction(Request $request)
-    {
+    public function receiptAction(Request $request) {
         $validator = Validator::make(
             $request->all(),
             [
@@ -400,12 +384,9 @@ class CourseAdminController extends Controller
             ->with('success', 'تمت العمليه بنجاح.');
     }
 
-    public function destroyReg($id)
-    {
+    public function destroyReg($id) {
         $course_reg = $this->courseRegService->findOne($id);
-        if (Auth::guard('user')->user()->branch_id != $course_reg->course->branch_id)
-            return back()
-                ->withErrors('الدورة غير موجود في قائمة الدورات');
+
         $this->courseRegService->deleteOne($id);
         //Add Log
         $action = 'حذف تسجيل في دورة';
@@ -416,8 +397,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تم حذف الموعد بنجاح.');
     }
 
-    public function setCertDelivered($id)
-    {
+    public function setCertDelivered($id) {
         $course_reg = $this->courseRegService->updateCertDelivered($id, 1);
         $this->courseRegService->checkAndUpdateRegStatus($id);
 
@@ -431,8 +411,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تم استلام الشهاده بنجاح.');
     }
 
-    public function setCertNotDelivered($id)
-    {
+    public function setCertNotDelivered($id) {
         $course_reg = $this->courseRegService->updateCertDelivered($id, 0);
         $this->courseRegService->checkAndUpdateRegStatus($id);
         //Add Log
@@ -444,8 +423,7 @@ class CourseAdminController extends Controller
             ->with('success', 'تم تعديل عدم استلام الشهاده بنجاح.');
     }
 
-    public function ChangePriceForOneStudent(Request $request)
-    {
+    public function ChangePriceForOneStudent(Request $request) {
         $course_reg = $this->courseRegService->updatePriceForOneStudent($request);
         $this->courseRegService->checkAndUpdateRegStatus($request->reg_id);
 
@@ -464,8 +442,7 @@ class CourseAdminController extends Controller
         );
     }
 
-    public function UpdateDiscountForOneStudent(Request $request)
-    {
+    public function UpdateDiscountForOneStudent(Request $request) {
         $course_reg = $this->courseRegService->updateDiscountForOneStudent($request);
         $this->courseRegService->checkAndUpdateRegStatus($request->reg_id);
 
@@ -485,8 +462,7 @@ class CourseAdminController extends Controller
         );
     }
 
-    public function UpdateRegBy(Request $request)
-    {
+    public function UpdateRegBy(Request $request) {
         $course_reg = $this->courseRegService->updateRegBy($request);
 
         //Add Log
@@ -504,8 +480,7 @@ class CourseAdminController extends Controller
         );
     }
 
-    public function ChangeExamPriceForOneStudent(Request $request)
-    {
+    public function ChangeExamPriceForOneStudent(Request $request) {
         $course_reg = $this->courseRegService->updateExamPriceForOneStudent($request);
         $this->courseRegService->checkAndUpdateRegStatus($request->reg_id);
 

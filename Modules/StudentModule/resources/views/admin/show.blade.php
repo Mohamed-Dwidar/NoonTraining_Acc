@@ -208,7 +208,7 @@
 
                                     <div class="row">
                                         <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col label">
-                                          المؤهل الدراسي
+                                            المؤهل الدراسي
                                         </div>
                                         <div class="col-lg-8 col-md-4 col-sm-12 col-xs-12 col">
                                             @if ($student->academic_qualification)
@@ -341,6 +341,16 @@
                                                         <a class="btn-sm btn-primary one-reg"
                                                             href="{{ route(Auth::getDefaultDriver() . '.courses.show', $reg->course->id) }}">استعراض
                                                             الدورة</a>
+
+
+                                                        @cannot('view_only')
+                                                        @if (Auth::guard('admin')->check() || Auth::user()->can('can_delete'))
+                                                            <a class="btn-sm btn-danger"
+                                                                href="{{ route(Auth::getDefaultDriver() . '.courses.delete_reg', $reg->id) }}"
+                                                                onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطلب ؟')"
+                                                                role="button">حذف</a>
+                                                        @endif
+                                                        @endcannot
 
                                                         {{-- <a class="btn-sm btn-warning one-pay" href="#"
                                                             id="{{ $reg->id }}" role="button" data-toggle="modal"
@@ -842,7 +852,7 @@
                         allowClear: true,
                         width: 'resolve',
                         dropdownParent: $('#modal-assign-course').find('.modal-body'),
-                        matcher: function (params, data) {
+                        matcher: function(params, data) {
                             // If there are no search terms, return all of the data
                             if ($.trim(params.term) === '') {
                                 return data;

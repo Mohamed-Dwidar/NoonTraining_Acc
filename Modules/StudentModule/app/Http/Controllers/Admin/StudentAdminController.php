@@ -183,7 +183,7 @@ class StudentAdminController extends Controller
         $student = $this->studentService->findOne($id);
         if (!$student)
             return back()
-                ->withErrors('الطالب غير موجود في قائمة الطلاب');   
+                ->withErrors('الطالب غير موجود في قائمة الطلاب');
 
         $this->studentService->deleteOne($id);
 
