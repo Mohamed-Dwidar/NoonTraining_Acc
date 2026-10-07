@@ -507,6 +507,7 @@ class CourseUserController extends Controller
 
     public function UpdateRegBy(Request $request)
     {
+        return false;
         $course_reg = $this->courseRegService->updateRegBy($request);
 
         //Add Log

@@ -599,7 +599,7 @@
                                                                                                             ----
                                                                                                         @endif
                                                                                                     </span>
-                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_edit'))
+                                                                                                    @if (Auth::guard('admin')->check())
                                                                                                         <a class="btn btn-blue changeRegBy">تغير</a>
                                                                                                     @endif
                                                                                                 </div>
