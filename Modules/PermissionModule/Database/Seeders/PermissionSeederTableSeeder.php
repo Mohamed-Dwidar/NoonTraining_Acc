@@ -31,6 +31,7 @@ class PermissionSeederTableSeeder extends Seeder
         $permission = Permission::create(['name' => 'can_delete', 'guard_name' => $guardName]);
         $permission = Permission::create(['name' => 'can_edit', 'guard_name' => $guardName]);
         $permission = Permission::create(['name' => 'view_only', 'guard_name' => $guardName]);
+        $permission = Permission::firstOrCreate(['name' => 'can_change_regby', 'guard_name' => $guardName]);
 
 
         // Assign permissions to the role

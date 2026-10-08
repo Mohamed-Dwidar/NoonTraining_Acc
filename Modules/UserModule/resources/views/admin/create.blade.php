@@ -75,7 +75,7 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-lg-6 col-sm-12 col-xs-12 col-6">
+                                            <div class="col-lg-8 col-sm-12 col-xs-12 col-6">
                                                 <label><b>الصلاحيات</b></label>
                                                 <div class="form-group">
                                                     <div class="form-check">
@@ -109,6 +109,12 @@
                                                             <label for="can_delete">امكانية الحذف</label>
                                                         </div>
 
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="can_change_regby" value="5"
+                                                                {{ in_array('can_change_regby', old('permissions', [])) ? 'checked' : '' }}>
+                                                            <label for="can_change_regby">امكانية تعديل التسجيل عن طريق </label>
+                                                        </div>
+
                                                         {{-- @endforeach --}}
                                                     </div>
                                                 </div>
@@ -138,9 +144,11 @@
                     if ($('#view_only').is(':checked')) {
                         $('#can_delete').prop('checked', false).prop('disabled', true);
                         $('#can_edit').prop('checked', false).prop('disabled', true);
+                        $('#can_change_regby').prop('checked', false).prop('disabled', true);
                     } else {
                         $('#can_delete').prop('disabled', false);
                         $('#can_edit').prop('disabled', false);
+                        $('#can_change_regby').prop('disabled', false);
                     }
                 }
                 // Check status on page load

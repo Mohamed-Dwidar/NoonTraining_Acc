@@ -473,7 +473,7 @@ class CourseAdminController extends Controller {
         return response()->json(
             array(
                 'success' => "true",
-                'new_reg_by' => $course_reg->reg_by,
+                'new_reg_by' => $course_reg->registered_by,
                 'id' => $course_reg->id,
 
             )
