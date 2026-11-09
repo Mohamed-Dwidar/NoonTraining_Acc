@@ -8,22 +8,19 @@ use Modules\CourseModule\Repository\CourseRegRepository;
 use Modules\CourseModule\Repository\CourseRepository;
 use Modules\SettingModule\Services\RegByEmployeeService;
 
-class CourseRegService
-{
+class CourseRegService {
     private $courseRepository;
     private $courseRegRepository;
     private $regByEmployeeService;
     use UploaderHelper;
 
-    public function __construct(CourseRepository $courseRepository, CourseRegRepository $courseRegRepository, RegByEmployeeService $regByEmployeeService)
-    {
+    public function __construct(CourseRepository $courseRepository, CourseRegRepository $courseRegRepository, RegByEmployeeService $regByEmployeeService) {
         $this->courseRepository = $courseRepository;
         $this->courseRegRepository = $courseRegRepository;
         $this->regByEmployeeService = $regByEmployeeService;
     }
 
-    public function registerStudentToCourse($data)
-    {
+    public function registerStudentToCourse($data) {
         $course_info = $this->courseRepository->find($data->course_id);
         $new_price = $data->new_price;
 
@@ -40,21 +37,18 @@ class CourseRegService
         return $this->courseRegRepository->create($course_data);
     }
 
-    public function getStudentRegDetails($studen_id, $course_id)
-    {
+    public function getStudentRegDetails($studen_id, $course_id) {
         return $this->courseRegRepository->findWhere([
             'student_id' => $studen_id,
             'course_id' => $course_id
         ])->first();
     }
 
-    public function findAllWithFilter(array $request)
-    {
+    public function findAllWithFilter(array $request) {
         return $this->courseRegRepository->filter($request);
     }
 
-    public function findAllNeedAction($arr_actions = [])
-    {
+    public function findAllNeedAction($arr_actions = []) {
         $actions = [];
         ///Sort///
         $arr_sorts = ['cdate_az', 'cdate_za', 'date_az', 'date_za'];
@@ -132,13 +126,11 @@ class CourseRegService
         return $this->courseRegRepository->findAllWithActions($actions);
     }
 
-    public function findOne($id)
-    {
+    public function findOne($id) {
         return $this->courseRegRepository->find($id);
     }
 
-    public function deleteOne($id)
-    {
+    public function deleteOne($id) {
         // $old_data = $this->courseRegRepository->find($id);
         // if (!empty($old_data)) {
         //     $this->courseRegRepository->delete($id);
@@ -146,8 +138,7 @@ class CourseRegService
         $this->courseRegRepository->removeReg($id);
     }
 
-    public function deleteMany($arr_ids)
-    {
+    public function deleteMany($arr_ids) {
         if (!empty($arr_ids)) {
             foreach ($arr_ids as $id) {
                 return $this->courseRegRepository->delete($id);
@@ -155,8 +146,7 @@ class CourseRegService
         }
     }
 
-    public function takeRegAction($data)
-    {
+    public function takeRegAction($data) {
         $date_data = [];
         if ($data['action'] == 'accept') {
             $date_data['status_id'] = 2;
@@ -170,18 +160,15 @@ class CourseRegService
         return $this->courseRegRepository->update($date_data, $data['id']);
     }
 
-    public function studentCourses($student_id)
-    {
+    public function studentCourses($student_id) {
         return $this->courseRegRepository->findAllToStudent($student_id);
     }
 
-    public function updateCertDelivered($id, $is_delivered)
-    {
+    public function updateCertDelivered($id, $is_delivered) {
         return $this->courseRegRepository->update(['is_recive_cert' => $is_delivered], $id);
     }
 
-    public function updatePriceForOneStudent($data)
-    {
+    public function updatePriceForOneStudent($data) {
         $reg = $this->courseRegRepository->update(['student_price' => $data->new_price, 'price' => $data->new_price], $data->reg_id);
         $reg->update(
             [
@@ -192,8 +179,7 @@ class CourseRegService
         return $reg;
     }
 
-    public function updateDiscountForOneStudent($data)
-    {
+    public function updateDiscountForOneStudent($data) {
         $regObj = $this->courseRegRepository->find($data->reg_id);
         //$new_price = round($data->student_price - ($data->student_price * ($data->new_discount / 100)));
         $new_price = $regObj->student_price - $data->new_discount;
@@ -207,8 +193,7 @@ class CourseRegService
         return $reg;
     }
 
-    public function updateExamPriceForOneStudent($data)
-    {
+    public function updateExamPriceForOneStudent($data) {
         $reg = $this->courseRegRepository->update(['exam_fees' => $data->new_exam_price], $data->reg_id);
         $reg->update(
             [
@@ -218,30 +203,25 @@ class CourseRegService
         return $reg;
     }
 
-    public function updateRegStatus($data)
-    {
+    public function updateRegStatus($data) {
         return $this->courseRegRepository->update(['status_id' => $data->status_id], $data->reg_id);
     }
 
     /** Active names for the "تم التسجيل عن طريق" dropdown (SettingModule list) */
-    public function getRegByEmployees()
-    {
+    public function getRegByEmployees() {
         return $this->regByEmployeeService->findAllActive(['id', 'name']);
     }
 
     /** Active list entry by id, or null */
-    public function findRegByEmployee($id)
-    {
+    public function findRegByEmployee($id) {
         return $this->regByEmployeeService->findActiveOne($id);
     }
 
-    public function updateRegBy($reg_id, $employee)
-    {
+    public function updateRegBy($reg_id, $employee) {
         return $this->courseRegRepository->update(['reg_by_employee_id' => $employee->id], $reg_id);
     }
 
-    public function updatePaymentType($data)
-    {
+    public function updatePaymentType($data) {
         if ($data->status == 'normal') {  //الدورة افتراضي
             $this->courseRegRepository->update(['is_free' => 0], $data->reg_id);
         }
@@ -251,12 +231,13 @@ class CourseRegService
             $this->courseRegRepository->update(['status_id' => 10, 'is_free' => 0], $data->reg_id);
         } elseif ($data->status == 'leave') {    //مغادر
             $this->courseRegRepository->update(['is_leave' => 1], $data->reg_id);
+        } elseif ($data->status == 'lawer') {    //محال إلى القضاء
+            $this->courseRegRepository->update(['is_lawer' => 1], $data->reg_id);
         }
         return $this->checkAndUpdateRegStatus($data->reg_id);
     }
 
-    public function checkAndUpdateRegStatus($reg_id)
-    {
+    public function checkAndUpdateRegStatus($reg_id) {
         $regObj = $this->courseRegRepository->find($reg_id);
         //dd($regObj->coursePaidAmount , $regObj->price, $regObj->is_exam_paid , $regObj->toArray());
         if ($regObj->is_free == 0 && $regObj->status_id == 10) {     //لا يرغب في السداد
@@ -284,14 +265,12 @@ class CourseRegService
         return $this->courseRegRepository->update(['status_id' => $status_id], $regObj->id);
     }
 
-    public function getStudentsForCourse($courseId)
-    {
+    public function getStudentsForCourse($courseId) {
         // Call the repository to get the course registrations with related students
         return $this->courseRegRepository->findWhereWithStudents(['course_id' => $courseId]);
     }
 
-    public function findWhere($arr)
-    {
+    public function findWhere($arr) {
         // Return the query builder instance to allow further query modifications
         return $this->courseRegRepository->findWhere($arr);
     }

@@ -31,7 +31,7 @@ class CourseModuleDatabaseSeeder extends Seeder
 
         DB::table('course_reg_statuses')->insert(['status' => 'الدورة مجانا + لم يسدد رسوم الاختبار', 'color' => '#49b9e5']);
         DB::table('course_reg_statuses')->insert(['status' => 'الدورة مجانا + سدد رسوم الاختبار', 'color' => '#4A86E8']);
-        
+
         DB::table('course_reg_statuses')->insert(['status' => 'لا يرغب في السداد', 'color' => '#000000']);
     }
 }

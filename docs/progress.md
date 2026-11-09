@@ -8,10 +8,10 @@
 
 ## Current status
 - **Branch:** `main` (2026-11-09).
-- **Last done:** "تم التسجيل عن طريق" names list (SettingModule) + admin-only report filter (9f1f921 … a40f3aa); permissions `show_reg_by_in_copy` (d4a2edd) and `show_company_in_reports` (6a92c17); old→new name in `UpdateRegBy` log (ed85d66); student page registrations use the course page's buttons/modals via shared partials (5a2af2d); "طرق الدفع" payment methods list (SettingModule) used by the payments modal, saved as `course_reg_payments.payment_method_id` (uncommitted). All local migrations ran.
+- **Last done:** "تم التسجيل عن طريق" names list (SettingModule) + admin-only report filter (9f1f921 … a40f3aa); permissions `show_reg_by_in_copy` (d4a2edd) and `show_company_in_reports` (6a92c17); old→new name in `UpdateRegBy` log (ed85d66); student page registrations use the course page's buttons/modals via shared partials (5a2af2d); "طرق الدفع" payment methods list (SettingModule) used by the payments modal, saved as `course_reg_payments.payment_method_id` (3b7db54). All committed except this docs checkpoint. All local migrations ran.
 - **Working on:** nothing in progress.
 - **Before deploying:** migrate **SettingModule first**: `php artisan module:migrate SettingModule` then `php artisan module:migrate` — plain `module:migrate` runs modules alphabetically, so CourseModule's data migrations (`000003` reg-by fill, `000006` payment-method fill) would fail because `reg_by_employees` / `payment_methods` don't exist yet. Check `SELECT pay_method, COUNT(*) FROM course_reg_payments GROUP BY 1` (rows whose value isn't one of the 7 enum values stay without `payment_method_id` and show the old text). Also run on production `SELECT TRIM(registered_by), COUNT(*) FROM course_regs GROUP BY 1` and add any new spelling variants to the map in `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` before `php artisan module:migrate`; also enable `SettingModule` (`modules_statuses.json`) and `php artisan optimize:clear`. Create the new permissions: `php artisan tinker --execute="foreach(['show_reg_by_in_copy','show_company_in_reports'] as \$n) Spatie\\Permission\\Models\\Permission::firstOrCreate(['name'=>\$n,'guard_name'=>'user'])"` (the seeder isn't re-runnable), confirm their ids are 6 and 7, then `php artisan permission:cache-reset`.
-- **Next up (feature, ?):** dedicated per-employee summary report; fix all-courses export.
+- **Next up (feature, ?):** dedicated per-employee summary report; fix all-courses export; use the "طرق الدفع" list in unknown payments too (still fixed enum); payment-method filter/column in reports (?).
 - **Next up:** owner to confirm the "(?)" items in CLAUDE.md / this file and the README placeholders (name, planned modules, language), then pick work. Candidates: items under "Known issues", expense/income tracking from README (?).
 - **Known issues:**
   - `receiptAction` (admin + user Course controllers) calls `$this->courseRegReceipteService`, which is never injected, and there is no `course_reg_receipts` migration → receipt upload is broken/unused (?)
@@ -118,7 +118,7 @@
 ### LayoutModule
 - **Last updated:** 2026-11-09 (nav sub-menu support)
 - **Files:** `resources/views/admin/{main,header,nav,footer,flash,modals,custom_pagination,login}.blade.php`, `user/nav.blade.php`
-- **How it works:** single RTL master layout; header/nav switch by active guard. Nav items can have a hover/focus sub-menu: `<li class="has-submenu">` + `<ul class="nav-submenu">` (CSS in `custom-rtl.css`).
+- **How it works:** single RTL master layout; header/nav switch by active guard. Nav items can have a hover/focus sub-menu: `<li class="has-submenu">` + `<ul class="nav-submenu">` (CSS in `custom-rtl.css`). "إعدادات النظام" sub-menu: قائمة تم التسجيل عن طريق, طرق الدفع.
 
 ### Expenses / income tracking — planned (?)
 - **Status:** Not started. Listed in README overview ("income tracking, expense management"); no code exists. Confirm it's still planned.
@@ -131,7 +131,7 @@
 - **Changed:** SettingModule: `payment_methods` table + model/repo/service/admin controller/views (`admin/settings/payment_methods`), settings landing row, nav sub-menu item. CourseModule: migrations `000005` (add `course_reg_payments.payment_method_id`) and `000006` (create the 7 old enum values as methods, fill the id); payments modal (`partials/reg_modals`) lists active methods and posts `payment_method_id`; Course `payAction` (both portals) validates an active method; `CourseRegPaymentService` saves the id; `CourseRegPayment::payment_method_name` for display; unknown-payment assign sets the id by name. Student `show()` (both portals) passes `$paymentMethods`.
 - **Why:** admin manages payment methods instead of a fixed enum; store the id for reports.
 - **Affects:** SettingModule, CourseModule, StudentModule, LayoutModule (nav). Deploy: migrate SettingModule first.
-- **Commit:** (pending)
+- **Commit:** 3b7db54
 
 ### 2026-11-09 — Student page: registration buttons/modals like the course page
 - **Changed:** extracted the course page's registration buttons, 3 modals and their JS into `CourseModule/resources/views/admin/partials/{reg_actions,reg_modals,reg_modals_js}.blade.php`; course page includes them (rendered HTML unchanged); student page now includes them too (old simple details/payments modals and their JS removed).

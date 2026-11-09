@@ -721,6 +721,7 @@
                                                                                                         <option value="free" @if(in_array($reg->status_id,[8,9])) selected @endif>الدورة مجانا</option>
                                                                                                         <option value="nopaying" @if($reg->status_id == 10) selected @endif>ممتنع عن السداد</option>
                                                                                                         <option value="leave" @if($reg->is_leave == 1) selected @endif>مغادر</option>
+                                                                                                        <option value="lawer" @if($reg->is_lawer == 1) selected @endif>محال إلى القضاء</option>
                                                                                                         {{-- @foreach ($statuses as $status)
                                                                                                         <option value="{{$status->id}}" @if($reg->status_id == $status->id) selected @endif>{{$status->status}}</option>
                                                                                                         @endforeach --}}

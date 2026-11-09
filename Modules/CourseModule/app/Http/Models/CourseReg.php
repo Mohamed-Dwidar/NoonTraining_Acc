@@ -21,6 +21,7 @@ class CourseReg extends Model
         'exam_fees',
         'is_free',
         'is_leave',
+        'is_lawer',
         'coupon_id',
         'is_course_paid',
         'is_exam_paid',

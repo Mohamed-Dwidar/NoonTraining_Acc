@@ -312,14 +312,18 @@
                                                         <i class="fa fa-check green list-boolean-icon"></i>
                                                         @endif
                                                     </td> --}}
-                                                    <td class="align-center paid_status" style="font-weight:bold; background-color: {{$reg->status->color}} ">
-                                                        <div style="display: none" class="paid_status_id">{{$reg->is_course_paid}}</div>
-                                                        <div style="display: none" class="paid_exam_id">{{$reg->is_exam_paid}}</div>
 
+
+                                                     <td class="align-center paid_status" style="font-weight:bold; background-color: {{ $reg->is_lawer == 1 ? '#a0670c' : $reg->status->color }} ">
+                                                        <div style="display: none" class="paid_status_id">{{ $reg->is_course_paid }}</div>
+                                                        <div style="display: none" class="paid_exam_id">{{ $reg->is_exam_paid }}</div>
                                                         @if ($reg->is_leave == 1)
-                                                        [ مغادر ] &nbsp;&nbsp;&nbsp;
+                                                            [ مغادر ] &nbsp;&nbsp;&nbsp;
                                                         @endif
-                                                        {{$reg->status->status}}
+                                                        @if ($reg->is_lawer == 1)
+                                                            [ محال إلى القضاء ] &nbsp;&nbsp;&nbsp;
+                                                        @endif
+                                                        {{ $reg->status->status }}
                                                     </td>
 
                                                     <td class="align-center">

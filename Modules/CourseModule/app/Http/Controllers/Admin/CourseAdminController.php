@@ -342,6 +342,8 @@ class CourseAdminController extends Controller {
             $status_text = 'ممتنع عن السداد';
         } elseif ($request->status == 'leave') {
             $status_text = 'مغادر';
+        } elseif ($request->status == 'lawer') {
+            $status_text = 'محال إلى القضاء';
         }
         $action = 'تعديل طريقة الدفع';
         $description = 'تم تعديل طريقة الدفع في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي طريقة الدفع : ' . $status_text;
