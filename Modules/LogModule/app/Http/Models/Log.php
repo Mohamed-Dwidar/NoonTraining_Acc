@@ -36,7 +36,7 @@ class Log extends Model
 
         //Filter By Date From
         if (isset($request['dateRngFrm']) && $request['dateRngFrm'] != null) {
-            $dateFrom = \DateTime::createFromFormat('d-m-Y', $request['dateRngFrm']);
+            $dateFrom = \DateTime::createFromFormat('Y-m-d', $request['dateRngFrm']);
             if ($dateFrom) {
                 $query->whereDate('created_at', '>=', $dateFrom->format('Y-m-d'));
             }
@@ -44,7 +44,7 @@ class Log extends Model
 
         //Filter By Date To
         if (isset($request['dateRngTo']) && $request['dateRngTo'] != null) {
-            $dateTo = \DateTime::createFromFormat('d-m-Y', $request['dateRngTo']);
+            $dateTo = \DateTime::createFromFormat('Y-m-d', $request['dateRngTo']);
             if ($dateTo) {
                 $query->whereDate('created_at', '<=', $dateTo->format('Y-m-d'));
             }

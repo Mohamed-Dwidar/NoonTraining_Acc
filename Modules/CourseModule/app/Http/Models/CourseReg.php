@@ -129,6 +129,20 @@ class CourseReg extends Model
             $query->where('is_leave', $request['fltr_leave']);
         }
 
+        // Date range filter on registration date (dateRngFrm / dateRngTo, yyyy-mm-dd)
+        if (!empty($request['dateRngFrm'])) {
+            $dateFrom = \DateTime::createFromFormat('Y-m-d', $request['dateRngFrm']);
+            if ($dateFrom) {
+                $query->whereDate('course_regs.created_at', '>=', $dateFrom->format('Y-m-d'));
+            }
+        }
+        if (!empty($request['dateRngTo'])) {
+            $dateTo = \DateTime::createFromFormat('Y-m-d', $request['dateRngTo']);
+            if ($dateTo) {
+                $query->whereDate('course_regs.created_at', '<=', $dateTo->format('Y-m-d'));
+            }
+        }
+
         //is_lawer filter (محال إلى القضاء)
         if (isset($request['fltr_lawer'])) {
             $query->where('is_lawer', $request['fltr_lawer']);

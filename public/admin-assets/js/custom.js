@@ -46,7 +46,27 @@ $(document).ready(function () {
         document.location.href = url + searchSortFilterParams;
     });
 
-    
+
+    // Report date range filter (partial reportmodule::admin.partials.date_range_filter)
+    if ($('.rpt-date-range').length && $.fn.pickadate) {
+        $('.rpt-date-range').pickadate({
+            format: 'yyyy-mm-dd',
+            today: false,
+            close: 'Close',
+        });
+    }
+    $('.rpt-drange-apply').click(function (event) {
+        event.preventDefault();
+        searchSortFilterParams = collectSearchSortFilterParams();
+        document.location.href = url + searchSortFilterParams;
+    });
+    $('.rpt-drange-clear').click(function (event) {
+        event.preventDefault();
+        $('#rpt_date_from').val('');
+        $('#rpt_date_to').val('');
+        searchSortFilterParams = collectSearchSortFilterParams();
+        document.location.href = url + searchSortFilterParams;
+    });
 
     $('.sort-item').click(function (event) {
         event.preventDefault();
@@ -95,6 +115,13 @@ $(document).ready(function () {
         var filterRegByParam = (fltrRegByVal != null && fltrRegByVal != '' && fltrRegByVal != 'no') ? "regby=" + fltrRegByVal : "";
         //////////
 
+        ////Filter date range (reports)////
+        var dateFrmVal = $('#rpt_date_from').val();
+        var dateFrmParam = (dateFrmVal != null && dateFrmVal != '') ? "dateRngFrm=" + encodeURIComponent(dateFrmVal) : "";
+        var dateToVal = $('#rpt_date_to').val();
+        var dateToParam = (dateToVal != null && dateToVal != '') ? "dateRngTo=" + encodeURIComponent(dateToVal) : "";
+        //////////
+
 
         var finalParams = "";
         if (srchParam != "") {
@@ -111,6 +138,12 @@ $(document).ready(function () {
         }
         if (filterRegByParam != "") {
             finalParams += (filterRegByParam + "&");
+        }
+        if (dateFrmParam != "") {
+            finalParams += (dateFrmParam + "&");
+        }
+        if (dateToParam != "") {
+            finalParams += (dateToParam + "&");
         }
 
         finalParams = finalParams.replace(/&\s*$/, ""); //remove the last (&)

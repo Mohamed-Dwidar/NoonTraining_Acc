@@ -804,3 +804,15 @@ nav.pagination-nav {
     z-index: 2000;
 }
 
+
+/* Report date range filter (reportmodule::admin.partials.date_range_filter).
+   Look comes from .fltr-date-range-reg / .drnge-icon-reg (same as users log); this only places it inline with .filters */
+.rpt-date-filter {
+    float: right;
+    margin-left: 5px;
+    white-space: nowrap;
+}
+
+.rpt-date-filter label {
+    margin: 0;
+}

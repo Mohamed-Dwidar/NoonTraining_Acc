@@ -239,7 +239,7 @@
 
                 $('.pickadate').pickadate({
                     weekdaysShort: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                    format: 'dd-mm-yyyy',
+                    format: 'yyyy-mm-dd',
                     formatSubmit: 'yyyy-mm-dd',
                     showMonthsShort: true,
                     today: false,

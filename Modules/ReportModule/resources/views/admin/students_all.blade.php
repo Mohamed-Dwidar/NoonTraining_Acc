@@ -79,7 +79,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-5 col-md-6 col-sm-9 col-xs-12">
+                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
 
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
                                         <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />
@@ -135,6 +135,8 @@
                                     </div>
                                     @endif
 
+                                    @include('reportmodule::admin.partials.date_range_filter', ['label' => 'تاريخ التسجيل'])
+
                                     <div class="filters">
                                         <a id="export-excel">
                                             <i class="icon-file-excel"></i>
@@ -143,26 +145,6 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4 col-md-4" style="display: none">
-                                    <div class="fltr-date-range-reg">
-                                        <label>الفترة:</label>
-                                        <div class="form-group">
-                                            من
-                                            <input
-                                                value='@if (app('request')->dateRngFrm != null) {{ app('request')->dateRngFrm }} @endif'
-                                                id="dateRngFrm" class="form-control hijri-datepicker" />
-                                            &nbsp;
-                                            الي
-                                            <input
-                                                value='@if (app('request')->dateRngTo != null) {{ app('request')->dateRngTo }} @endif'
-                                                id="dateRangTo" class="form-control hijri-datepicker" />
-                                        </div>
-                                        <button class="drnge-icon-reg">
-                                            <i class="icon-search7"></i>
-                                        </button>
-                                        <a href="#" class="clear-dateRang">إلغاء</a>
-                                    </div>
-                                </div>
 
                             </div>
                         </div>

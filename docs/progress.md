@@ -86,6 +86,7 @@
 - **How it works:** reports on CourseReg — not paid, instalments, exam not paid, fully paid, cert received / not received, by company, all students, all courses, students of one course, dropouts (leave), referred to court ("تقرير بالمحالين إلى القضاء", `is_lawer = 1`, `fltr_lawer` key, route `{portal}.reports.students_lawer`, view `students_lawer`; 2026-11-09), and users' activity log by date range. Paginated; Excel export. User side scoped to own branch and behind `show_reports`.
 - **Student Excel exports** all render `exports/course_reg_export.blade.php` (8 student reports, per-course students, course page). Column "قطاع العمل" (`students.company`) shown only for admins or users with `show_company_in_reports` (`$showCompany` at top of the view).
 - **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 9 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave, lawer) — **admin only** (views wrap it in `Auth::guard('admin')->check()`; `ReportUserController` strips `regby` from the query). Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
+- **Date range filter** (2026-11-09): partial `reportmodule::admin.partials.date_range_filter` — same look as the users log date filter (`.fltr-date-range-reg`, `.drnge-icon-reg`), placed inline after "تم التسجيل عن طريق" and before "تصدير ملف اكسل" (filters column widened to `col-lg-8`; `.rpt-date-filter` in `custom-rtl.css` only floats it) (pickadate, `yyyy-mm-dd`, inputs `#rpt_date_from` / `#rpt_date_to`) on the 9 student reports + all-courses report, both portals. Query keys `dateRngFrm` / `dateRngTo` (same names as users log). Student reports → `CourseReg::scopeFilter` on `course_regs.created_at` (registration date); all-courses → `Course::scopeFilter` on `start_at` (string column; handles `Y-m-d` and old `d-m-Y`). JS in `custom.js` (`.rpt-drange-apply` / `.rpt-drange-clear`, params added in `collectSearchSortFilterParams` → carried to Excel + pagination). Users log keeps its own date filter (`Log::scopeFilter`, also `yyyy-mm-dd` since 2026-11-09).
 - **Pending:** README asks for colour-coding per report type — not checked (?); all-courses export broken (Known issues)
 
 ### LogModule
@@ -126,6 +127,12 @@
 ---
 
 ## Session log
+
+### 2026-11-09 — Date range filter on all reports
+- **Changed:** new partial `admin/partials/date_range_filter.blade.php` replaces the hidden date blocks in 10 report views; `CourseReg::scopeFilter` (registration date) and `Course::scopeFilter` (course `start_at`) handle `dateRngFrm` / `dateRngTo`; `custom.js` sends them (also to Excel export).
+- **Why:** filter every report by a period.
+- **Affects:** ReportModule, CourseModule (models — course page/student lists don't send these params), `custom.js`
+- **Commit:** (pending)
 
 ### 2026-11-09 — Report "تقرير بالمحالين إلى القضاء"
 - **Changed:** `CourseReg::scopeFilter` `fltr_lawer`; `reportLawer` in Admin + User report controllers; routes `ReportStudentsLawer`; view `students_lawer.blade.php` (copy of leave report, status cell shows "[ محال إلى القضاء ]"); card on reports index.

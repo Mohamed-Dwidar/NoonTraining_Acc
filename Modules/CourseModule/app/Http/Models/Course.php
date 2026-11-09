@@ -67,6 +67,23 @@ class Course extends Model
             });
         }
 
+        // Date range filter on course start date (dateRngFrm / dateRngTo, yyyy-mm-dd).
+        // start_at is a string column: mostly Y-m-d, some old rows d-m-Y.
+        $startAtSql = "(CASE WHEN courses.start_at REGEXP '^[0-9]{4}-' THEN courses.start_at "
+            . "ELSE DATE_FORMAT(STR_TO_DATE(courses.start_at, '%d-%m-%Y'), '%Y-%m-%d') END)";
+        if (!empty($request['dateRngFrm'])) {
+            $dateFrom = \DateTime::createFromFormat('Y-m-d', $request['dateRngFrm']);
+            if ($dateFrom) {
+                $query->whereRaw($startAtSql . ' >= ?', [$dateFrom->format('Y-m-d')]);
+            }
+        }
+        if (!empty($request['dateRngTo'])) {
+            $dateTo = \DateTime::createFromFormat('Y-m-d', $request['dateRngTo']);
+            if ($dateTo) {
+                $query->whereRaw($startAtSql . ' <= ?', [$dateTo->format('Y-m-d')]);
+            }
+        }
+
         if (isset($request['srch'])) {
             $query->where(function ($subQuery) use ($request) {
                 $subQuery->orWhereRaw('UPPER(name) LIKE "%' . strtoupper($request['srch']) . '%"');
