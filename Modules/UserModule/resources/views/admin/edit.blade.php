@@ -117,6 +117,12 @@
                                                             <label for="can_change_regby">امكانية تعديل التسجيل عن طريق </label>
                                                         </div>
 
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="show_reg_by_in_copy" value="6"
+                                                                {{ in_array('show_reg_by_in_copy', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
+                                                            <label for="show_reg_by_in_copy">عرض التسجيل عن طريق في النسخ</label>
+                                                        </div>
+
                                                         {{-- @endforeach --}}
                                                     </div>
                                                 </div>

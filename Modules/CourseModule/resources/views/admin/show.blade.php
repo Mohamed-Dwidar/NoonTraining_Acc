@@ -1635,6 +1635,9 @@
             }
         </script>
         <script>
+            // "تم التسجيل عن طريق" in copied text: admins, or users with 'show_reg_by_in_copy'
+            const showRegByInCopy = @json(Auth::guard('admin')->check() || Auth::guard('user')->user()?->can('show_reg_by_in_copy'));
+
             document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('[id^="copy-button-"]').forEach(button => {
                     button.addEventListener('click', function() {
@@ -1662,6 +1665,7 @@
                         const statusElement = document.querySelector('#reg'+regId+' .paid_status_id');
                         const validStatuses = [3, 4, 5, 6, 7, 9];
                         const examPaidStatusElement = document.querySelector('#reg'+regId+' .paid_exam_id');
+                        const regByElement = document.querySelector('#modal-reg-'+regId+' .regByName');
 
                         const courseName = courseNameElement ? courseNameElement.innerText : 'N/A';
                         const studentName = studentNameElement ? studentNameElement.innerText : 'N/A';
@@ -1672,10 +1676,12 @@
                         const remainingAmount = remainingAmountElement ? remainingAmountElement.innerText.replace(/\s+/g, ' ').trim() : 'N/A';
                         //const status = validStatuses.includes(Number(statusElement.innerText)) ? 'نعم' : 'لا';
                         const examPaidStatus = examPaidStatusElement.innerText == 1 ? 'نعم' : 'لا';
+                        const regBy = regByElement ? regByElement.innerText.replace(/\s+/g, ' ').trim() : '----';
 
                         const copyText =
-                            'اسم الدورة: '+courseName+'\nاسم الطالب: '+studentName+'\nرقم الهوية: '+idNumber+'\nرقم الجوال: '+phone+'\nالمبلغ كامل : '+totalAmount+'\nمدفوع  : '+paidAmount+'\nمتبقي :'+remainingAmount+'\nسدد رسوم الاختبار ؟: '+examPaidStatus;
-// console.log(copyText);
+                            'اسم الدورة: '+courseName+'\nاسم الطالب: '+studentName+'\nرقم الهوية: '+idNumber+'\nرقم الجوال: '+phone+'\nالمبلغ كامل : '+totalAmount+'\nمدفوع  : '+paidAmount+'\nمتبقي :'+remainingAmount+'\nسدد رسوم الاختبار ؟: '+examPaidStatus
+                            +(showRegByInCopy ? '\nتم التسجيل عن طريق : '+regBy : '');
+                        // console.log(copyText);
 
                         navigator.clipboard.writeText(copyText).then(() => {
                             alert('تم نسخ المعلومات بنجاح');

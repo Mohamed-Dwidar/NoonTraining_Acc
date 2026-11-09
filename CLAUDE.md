@@ -21,7 +21,7 @@ Then suggest a commit message.
 ## Stack
 - Framework: Laravel 10 / PHP ^8.1, modular via `nwidart/laravel-modules` v10
 - Database: MySQL (?) — `DB_CONNECTION` in .env; raw SQL uses MySQL-style `"%...%"` LIKE strings
-- Frontend: Blade + jQuery + Bootstrap RTL admin theme (static files in `public/admin-assets/`). Vite is configured but not used by module views (?)
+- Frontend: Blade + jQuery + Bootstrap RTL admin theme (static files in `public/admin-assets/`). Select2 4.1 from CDN (loaded in `layoutmodule::admin.main`; use `dir: 'rtl'` — native `<select>` options can't be right-aligned on macOS). Report filters/export params are built in `public/admin-assets/js/custom.js`. Vite is configured but not used by module views (?)
 - Auth: custom session guards `admin` (model `AdminModule\...\Admin`, table `admins`) and `user` (model `UserModule\...\User`, table `users`) in `config/auth.php`
 - Permissions: `spatie/laravel-permission` v6, permissions on guard `user` only (admins bypass)
 - Key packages: `prettus/l5-repository` (repositories), `maatwebsite/excel` (exports), `niklasravnsborg/laravel-pdf` (receipt PDF), `geniusts/hijri-dates` (no longer used — Hijri removed), `laravel/sanctum` (unused (?))
@@ -39,7 +39,7 @@ Then suggest a commit message.
   - `app/Http/Controllers/Admin/*AdminController.php` and `User/*UserController.php` — one controller per portal
   - `app/Http/Models/` — Eloquent models (note: models live under `Http/Models`, not `app/Models`)
   - `Services/` — business logic; `Repository/` — prettus `BaseRepository` subclasses
-  - `Database/migrations` or `Database/Migrations` (case is inconsistent), `Database/Seeders/`
+  - `Database/migrations` — **always lowercase**: providers (`loadMigrationsFrom`) and `config/modules.php` read only `Database/migrations`; on Linux `Migrations` is a different folder. Course/Location/Student also have legacy `Database/Migrations` copies in git (identical, unused). `Database/Seeders/`
   - `resources/views/admin/` — views, shared by **both** portals; `routes/web.php`
 - `Modules/LayoutModule/resources/views/admin/` — master layout (`main`), header, nav, flash, modals, pagination; `user/nav.blade.php` for the user portal
 - `Modules/ReportModule/Exports/` — Excel export classes (render Blade views under `admin/exports/`)
@@ -73,12 +73,12 @@ Then suggest a commit message.
 - **AdminModule** ↔ Log; admins manage Users, Branches, everything
 - **BranchModule** ↔ scoping for Users, Students, Courses; filters in Reports and Logs
 - **StudentModule** ↔ Branch, Location (`city_id`), Course (`CourseReg`, payments shown on student page), Log
-- **CourseModule** (courses, registrations, payments, statuses, unknown payments, receipt PDF) ↔ Student, Branch, Log, Permission (`can_edit`, `can_delete`, `can_change_regby`); `CourseReg` fields drive every report
-- **ReportModule** ↔ reads Course/CourseReg/Student/Log; Excel exports in `Exports/`; user side behind `show_reports`
+- **CourseModule** (courses, registrations, payments, statuses, unknown payments, receipt PDF) ↔ Student, Branch, Log, Setting (`reg_by_employee_id`), Permission (`can_edit`, `can_delete`, `can_change_regby`); `CourseReg` fields drive every report; course page Excel uses ReportModule's `CourseRegExport`
+- **ReportModule** ↔ reads Course/CourseReg/Student/Log/Setting; Excel exports in `Exports/` (also used by CourseModule); user side behind `show_reports`; filters go through `Course`/`CourseReg::scopeFilter` + `custom.js`
 - **LogModule** ↔ polymorphic `userable` (Admin | User); written by Course, Student, Auth controllers; viewed in Reports → users log
 - **PermissionModule** ↔ only seeders + model wrappers; permissions assigned per user in UserModule admin create/edit (`UserService` → `permissions()->sync()`)
 - **LocationModule** ↔ cities list for Student forms; no UI of its own
-- **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; dropdown in course page), Log, Layout (nav link); Reports later (?)
+- **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; dropdowns on course + student pages), Report (admin-only `regby` filter), Log, Layout (nav sub-menu)
 - **LayoutModule** ↔ every view (`layoutmodule::admin.main`); nav changes per guard
 - **Expenses / income tracking** (planned (?), mentioned in README) ↔ Branch, Reports
 
