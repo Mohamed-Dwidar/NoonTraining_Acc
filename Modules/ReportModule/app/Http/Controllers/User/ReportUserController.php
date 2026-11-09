@@ -14,17 +14,14 @@ use Modules\LogModule\Services\LogService;
 use Modules\ReportModule\Exports\CourseExport;
 use Modules\ReportModule\Exports\CourseRegExport;
 use Modules\ReportModule\Exports\LogExport;
-use Modules\SettingModule\Services\RegByEmployeeService;
 
 class ReportUserController extends Controller {
     private $courseService;
     private $studentService;
     private $courseRegService;
     private $logService;
-    private $regByEmployeeService;
 
-    public function __construct(StudentService $studentService, CourseService $courseService, CourseRegService $courseRegService, LogService $logService, RegByEmployeeService $regByEmployeeService) {
-        $this->regByEmployeeService = $regByEmployeeService;
+    public function __construct(StudentService $studentService, CourseService $courseService, CourseRegService $courseRegService, LogService $logService) {
         $this->studentService = $studentService;
         $this->courseService = $courseService;
         $this->courseRegService = $courseRegService;
@@ -36,6 +33,7 @@ class ReportUserController extends Controller {
     }
 
     public function ReportAllStudents(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['all'] = 1;
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -49,11 +47,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_all', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_all', compact('courses_regs', 'branches'));
     }
 
     public function ReportAllCourses(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['all'] = 1;
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -68,11 +66,11 @@ class ReportUserController extends Controller {
         }
 
         $courses = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.courses_all', compact('courses', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.courses_all', compact('courses', 'branches'));
     }
 
     public function ReportAllCourseStudents(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['course_id'] = $request->id;
 
         $courses_regs = $this->courseRegService->findAllWithFilter($request->all())->get();
@@ -81,6 +79,7 @@ class ReportUserController extends Controller {
     }
 
     public function reportStudentsNotPaid(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_sts'] = 1;
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -92,11 +91,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_not_paid', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_not_paid', compact('courses_regs', 'branches'));
     }
 
     public function reportStudentsInstallmentPay(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_sts'] = [2, 3];
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -108,11 +107,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_installment_pay', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_installment_pay', compact('courses_regs', 'branches'));
     }
 
     public function reportStudentsExamNotPaid(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_sts'] = [4, 8];
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -124,11 +123,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_exam_not_paid', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_exam_not_paid', compact('courses_regs', 'branches'));
     }
 
     public function reportStudentsPaid(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_sts'] = [4, 6, 7];
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -140,11 +139,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_paid', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_paid', compact('courses_regs', 'branches'));
     }
 
     public function reportStudentsReciveCert(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_crt'] = 1;
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -156,11 +155,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_recive_cert', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_recive_cert', compact('courses_regs', 'branches'));
     }
 
     public function reportStudentsNotReciveCert(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_crt'] = 0;
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -172,11 +171,11 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_not_recive_cert', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_not_recive_cert', compact('courses_regs', 'branches'));
     }
 
     public function reportStudentsLeave(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
         $request['fltr_leave'] = 1;
         $branches = [];
         $request['branch'] = Auth::guard('user')->user()->branch_id;
@@ -188,8 +187,7 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
-        return view('reportmodule::admin.students_leave', compact('courses_regs', 'branches', 'reg_by_employees'));
+        return view('reportmodule::admin.students_leave', compact('courses_regs', 'branches'));
     }
 
     /*public function reportStudentsByCompany(Request $request)

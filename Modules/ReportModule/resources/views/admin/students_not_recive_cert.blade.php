@@ -104,6 +104,7 @@
                                         </div>
                                     </div>
 
+                                    @if (Auth::guard('admin')->check())
                                     <div class="filters">
                                         <input type="hidden" id="fltr_regby_val" value="{{ app('request')->regby }}" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -132,6 +133,7 @@
                                             </button>
                                         </div>
                                     </div>
+                                    @endif
 
                                     <div class="filters">
                                         <a id="export-excel">

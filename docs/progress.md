@@ -77,7 +77,7 @@
 - **Last updated:** 2026-11-09
 - **Files:** `Controllers/{Admin/ReportAdminController,User/ReportUserController}.php`, `Exports/{CourseExport,CourseRegExport,LogExport}.php`, views `admin/*.blade.php`
 - **How it works:** reports on CourseReg — not paid, instalments, exam not paid, fully paid, cert received / not received, by company, all students, all courses, students of one course, dropouts (leave), and users' activity log by date range. Paginated; Excel export. User side scoped to own branch and behind `show_reports`.
-- **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 8 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave), both portals. Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
+- **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 8 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave) — **admin only** (views wrap it in `Auth::guard('admin')->check()`; `ReportUserController` strips `regby` from the query). Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
 - **Pending:** README asks for colour-coding per report type — not checked (?); all-courses export broken (Known issues)
 
 ### LogModule
@@ -122,7 +122,7 @@
 - **Affects:** SettingModule, CourseModule, ReportModule, StudentModule, LayoutModule
 - **Data:** migration `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` builds the list from old text (spelling variants merged: آلاء، نايف، يوسف، إسراء، علي، ساره، رميساء، إنجي، أوصاف) and fills `reg_by_employee_id` (3,618 rows locally). "-", "المعهد", "حوالة", "570", empty stay without an id. Only fills NULL ids; reversible.
 - **Student page:** "تم التسجيل عن طريق" same as course page (change + dropdown + AJAX); assign-to-course form now a required dropdown saving `reg_by_employee_id` (`registerStudentToCourse` no longer writes the text column).
-- **Reports:** filter "تم التسجيل عن طريق" (`regby`) on the 8 student reports + their Excel exports, and on the all-courses report (+ per-course Excel) — both portals. Course page export fixed (was 500: missing `Excel` import, wrong export class) → now `CourseRegExport`, which includes "مسجل عن طريق".
+- **Reports:** filter "تم التسجيل عن طريق" (`regby`) on the 8 student reports + their Excel exports, and on the all-courses report (+ per-course Excel) — admin only. Course page export fixed (was 500: missing `Excel` import, wrong export class) → now `CourseRegExport`, which includes "مسجل عن طريق".
 - **Commit:** (pending)
 
 ### 2026-10-17 — Initial project memory setup
