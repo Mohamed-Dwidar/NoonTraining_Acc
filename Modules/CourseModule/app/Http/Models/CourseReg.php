@@ -4,6 +4,7 @@ namespace Modules\CourseModule\app\Http\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Modules\StudentModule\app\Http\Models\Student;
+use Modules\SettingModule\app\Http\Models\RegByEmployee;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CourseReg extends Model
@@ -27,6 +28,7 @@ class CourseReg extends Model
         'is_recive_cert',
         'need_work_agree',
         'registered_by',
+        'reg_by_employee_id',
     ];
 
     function student()
@@ -52,6 +54,24 @@ class CourseReg extends Model
     function receipts()
     {
         return $this->hasMany(CourseRegReceipt::class);
+    }
+
+    /** "تم التسجيل عن طريق" — name from settings list (kept even if deleted from the list) */
+    function regByEmployee()
+    {
+        return $this->belongsTo(RegByEmployee::class, 'reg_by_employee_id')->withTrashed();
+    }
+
+    /**
+     * Name shown for "تم التسجيل عن طريق":
+     * the selected name from the list, or the old free-text value for legacy rows.
+     */
+    public function getRegisteredByNameAttribute()
+    {
+        if ($this->reg_by_employee_id && $this->regByEmployee) {
+            return $this->regByEmployee->name;
+        }
+        return $this->registered_by;
     }
 
     // Scopes

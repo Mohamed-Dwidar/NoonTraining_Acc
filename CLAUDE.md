@@ -54,7 +54,11 @@ Then suggest a commit message.
 - Controllers reference by string `'Admin\XController@method'` (module RouteServiceProvider namespace)
 - Always use named routes — never hardcoded URLs
 - Validation: inline `Validator::make(...)` in controllers, Arabic error messages; no Form Requests. (proposed) keep inline for consistency
-- Business logic: Services → Repositories; but controllers also query models / do branch checks directly
+- **Layering (required for all new/changed code): Controller → Service → Repository.**
+  - Controllers handle request/validation/auth/response only and call **services** — never query models (`Model::where`, `DB::`) directly.
+  - Services hold business logic and call **repositories** (their own module's, or another module's *service*, e.g. `CourseRegService` → `UserService`).
+  - Repositories (prettus `BaseRepository` in `Modules/<X>/Repository/`) are the only place that queries Eloquent models; add a named repository method for any custom query.
+  - Older code still breaks this (controllers querying models); fix it when you touch that code.
 - Admin + User controllers are near-duplicates: **any change to one usually must be mirrored in the other**
 - Branch scoping (user portal): force `branch_id` / `branch` filter from `Auth::guard('user')->user()->branch_id` and compare ownership in show/edit
 - Permission checks: `$user->can('can_edit')` in controllers, `@can` / `@cannot('view_only')` in Blade, `permission:show_reports` middleware on user reports
@@ -74,6 +78,7 @@ Then suggest a commit message.
 - **LogModule** ↔ polymorphic `userable` (Admin | User); written by Course, Student, Auth controllers; viewed in Reports → users log
 - **PermissionModule** ↔ only seeders + model wrappers; permissions assigned per user in UserModule admin create/edit (`UserService` → `permissions()->sync()`)
 - **LocationModule** ↔ cities list for Student forms; no UI of its own
+- **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; dropdown in course page), Log, Layout (nav link); Reports later (?)
 - **LayoutModule** ↔ every view (`layoutmodule::admin.main`); nav changes per guard
 - **Expenses / income tracking** (planned (?), mentioned in README) ↔ Branch, Reports
 

@@ -6,17 +6,20 @@ use App\Helpers\UploaderHelper;
 use Illuminate\Support\Facades\File;
 use Modules\CourseModule\Repository\CourseRegRepository;
 use Modules\CourseModule\Repository\CourseRepository;
+use Modules\SettingModule\Services\RegByEmployeeService;
 
 class CourseRegService
 {
     private $courseRepository;
     private $courseRegRepository;
+    private $regByEmployeeService;
     use UploaderHelper;
 
-    public function __construct(CourseRepository $courseRepository, CourseRegRepository $courseRegRepository)
+    public function __construct(CourseRepository $courseRepository, CourseRegRepository $courseRegRepository, RegByEmployeeService $regByEmployeeService)
     {
         $this->courseRepository = $courseRepository;
         $this->courseRegRepository = $courseRegRepository;
+        $this->regByEmployeeService = $regByEmployeeService;
     }
 
     public function registerStudentToCourse($data)
@@ -32,7 +35,7 @@ class CourseRegService
             'price' => $new_price,
             'exam_fees' => $course_info->exam_fees,
             'need_work_agree' => key_exists('agree', $data->all()) ? $data->agree : 0,
-            'registered_by' => $data->registered_by,
+            'reg_by_employee_id' => $data->reg_by_employee_id,
         ];
         return $this->courseRegRepository->create($course_data);
     }
@@ -220,9 +223,21 @@ class CourseRegService
         return $this->courseRegRepository->update(['status_id' => $data->status_id], $data->reg_id);
     }
 
-    public function updateRegBy($data)
+    /** Active names for the "تم التسجيل عن طريق" dropdown (SettingModule list) */
+    public function getRegByEmployees()
     {
-        return $this->courseRegRepository->update(['registered_by' => $data->reg_by], $data->reg_id);
+        return $this->regByEmployeeService->findAllActive(['id', 'name']);
+    }
+
+    /** Active list entry by id, or null */
+    public function findRegByEmployee($id)
+    {
+        return $this->regByEmployeeService->findActiveOne($id);
+    }
+
+    public function updateRegBy($reg_id, $employee)
+    {
+        return $this->courseRegRepository->update(['reg_by_employee_id' => $employee->id], $reg_id);
     }
 
     public function updatePaymentType($data)

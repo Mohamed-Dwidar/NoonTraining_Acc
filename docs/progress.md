@@ -7,8 +7,9 @@
 ---
 
 ## Current status
-- **Branch:** `main`, working tree clean apart from these memory files (2026-10-17).
-- **Working on:** permissions for the user portal — latest commits (2026-10-08) added `can_change_regby` and restricted "registered by" (التسجيل عن طريق) edits. Nothing in progress in the working tree.
+- **Branch:** `main` (2026-11-09).
+- **Working on:** new SettingModule — admin manages the "تم التسجيل عن طريق" names list (`reg_by_employees`); course page picks from it via AJAX and saves `course_regs.reg_by_employee_id` — done, not yet committed.
+- **Next up (feature):** reports per registered-by employee.
 - **Next up:** owner to confirm the "(?)" items in CLAUDE.md / this file and the README placeholders (name, planned modules, language), then pick work. Candidates: items under "Known issues", expense/income tracking from README (?).
 - **Known issues:**
   - `receiptAction` (admin + user Course controllers) calls `$this->courseRegReceipteService`, which is never injected, and there is no `course_reg_receipts` migration → receipt upload is broken/unused (?)
@@ -18,6 +19,7 @@
   - `UserService` assigns permissions with `permissions()->sync()` — bypasses spatie cache reset (?)
   - `Course::scopeFilter` interpolates `srch` directly into `whereRaw` → SQL injection risk (CourseReg uses bindings correctly)
   - `GET` routes perform deletes (`/delete/{id}`, `/deleteReg/{id}`) — no CSRF protection
+  - Opening an admin URL without an admin session → 500 "Route [login] not defined" (auth redirect has no `login` route); affects all admin routes
   - `layoutmodule::users.login` is extended somewhere but that view doesn't exist (?)
   - Admin/User controllers duplicated — logic drifts between portals
   - No real tests
@@ -46,14 +48,15 @@
 - **Pending:** `Branch::courses()` relation is an empty stub.
 
 ### StudentModule
-- **Last updated:** 2026-10-17
+- **Last updated:** 2026-11-09
 - **Files:** `Controllers/{Admin/StudentAdminController,User/StudentUserController}.php`, `Services/StudentService.php`, `Repository/StudentRepository.php`, `Models/Student.php`, views `admin/{index,create,edit,show,student_export}`
 - **How it works:** CRUD with soft delete → archive list, restore, permanent delete. User portal locks to own branch. Student page lists registrations/payments and lets staff assign the student to a course. Fields include `academic_qualification` (added 2026-03) and notes.
 - **Decisions:** delete restricted to admin / `can_delete` permission.
+- "تم التسجيل عن طريق" on the student page: registration modal has the same change button + dropdown + AJAX as the course page (`{portal}.updateRegBy`); the assign-to-course form uses a required dropdown `reg_by_employee_id` (validated in `assignStudentToCourse` via `CourseRegService::findRegByEmployee`). List comes from `RegByEmployeeService::findAllActive` in `show()`.
 - **Pending:** `note`/`notes` mismatch; send-mail feature missing (see Known issues).
 
 ### CourseModule (courses, registrations, payments)
-- **Last updated:** 2026-10-17
+- **Last updated:** 2026-11-09
 - **Files:** `Controllers/Admin/{CourseAdminController,UnknownPaymentAdminController}.php` + `User/` twins; `Services/{CourseService,CourseRegService,CourseRegPaymentService,CourseRegStatusService,UnknownPaymentService}.php`; models `Course, CourseReg, CourseRegPayment, CourseRegStatus, CourseRegReceipt, UnknownPayment`; views `admin/{index,show,registers_list,receipt_pdf}`, `admin/unknown_payment/*`
 - **How it works:**
   - `Course`: name, group no., org no., dates (stored as strings), price, exam fees, branch.
@@ -61,8 +64,10 @@
   - Payments (`course_reg_payments`): type (course instalment / exam / re-exam fees), Arabic `pay_method` enum, `paid_at`; paid flags recalculated in `CourseRegService` (?).
   - Unknown payments: transfers from unidentified payers, later assigned to a student's registration.
   - Per-student price / discount / exam-price overrides; receipt PDF generation; certificate delivered toggle.
-  - `registered_by` editable by admin or users with `can_change_regby`.
+  - "Registered by": `course_regs.reg_by_employee_id` → `reg_by_employees` (SettingModule, added 2026-11-09). Course page dropdown lists active names; saved by AJAX through `{portal}.updateRegBy`: controller → `CourseRegService::findRegByEmployee` → `RegByEmployeeService::findActiveOne` → repository; then `CourseRegService::updateRegBy`. Admin or users with `can_change_regby` can change it. `CourseReg::registered_by_name` returns the list name (incl. soft-deleted), or the old text in `registered_by` for older rows; used by reports, Excel export and the student page.
 - **Decisions:**
+  - Old `registered_by` text column kept; existing values mapped to `reg_by_employee_id` by a data migration (variant → name map inside it). New edits write only `reg_by_employee_id`.
+  - Names list is global (not per branch), managed by admin only.
   - Hijri dates removed; `paid_at` is Gregorian — because of commits f3fd3c6 / 270ed05.
   - Payment enums stored in Arabic.
 - **Pending:** receipt upload broken (Known issues); `coupon_id`, `need_work_agree` columns not clearly used (?)
@@ -85,15 +90,22 @@
 - **How it works:** seeds `user`-guard permissions: `show_reports`, `can_delete`, `can_edit`, `view_only`, `can_change_regby`.
 - **Pending:** seeder not idempotent; no UI for roles.
 
+### SettingModule (إعدادات النظام)
+- **Last updated:** 2026-11-09 (new)
+- **Files:** `Controllers/Admin/{SettingAdminController,RegByEmployeeAdminController}.php`, `Models/RegByEmployee.php`, `Services/RegByEmployeeService.php`, `Repository/RegByEmployeeRepository.php`, migration `2026_11_09_000001_create_reg_by_employees_table`, views `admin/index`, `admin/reg_by_employees/{index,edit}`; nav item "إعدادات النظام" (not a link — only opens the sub-menu) with hover sub-menu in `layoutmodule::admin.nav` (CSS `.has-submenu` / `.nav-submenu` in `public/admin-assets/css-rtl/custom-rtl.css`) — add new settings pages as `<li>` in that sub-menu
+- **How it works:** admin-only (`admin/settings`, `auth:admin`). Settings landing page → "قائمة تم التسجيل عن طريق": add (inline), edit name, activate/deactivate (`is_active`), delete (soft delete, POST). List shows registration count per name. Create/update/delete are logged. Only active names appear in the course dropdown.
+- **Decisions:** soft delete so registrations/reports keep the name; unique name among non-deleted rows.
+- **Pending:** reports by employee.
+
 ### LocationModule
 - **Last updated:** 2026-10-17
 - **Files:** `Models/{Country,City,Region}.php`, services/repos
 - **How it works:** reference data; cities feed the student form. Resource route is scaffold only.
 
 ### LayoutModule
-- **Last updated:** 2026-10-17
+- **Last updated:** 2026-11-09 (nav sub-menu support)
 - **Files:** `resources/views/admin/{main,header,nav,footer,flash,modals,custom_pagination,login}.blade.php`, `user/nav.blade.php`
-- **How it works:** single RTL master layout; header/nav switch by active guard.
+- **How it works:** single RTL master layout; header/nav switch by active guard. Nav items can have a hover/focus sub-menu: `<li class="has-submenu">` + `<ul class="nav-submenu">` (CSS in `custom-rtl.css`).
 
 ### Expenses / income tracking — planned (?)
 - **Status:** Not started. Listed in README overview ("income tracking, expense management"); no code exists. Confirm it's still planned.
@@ -101,6 +113,14 @@
 ---
 
 ## Session log
+
+### 2026-11-09 — SettingModule + "registered by" from a names list
+- **Changed:** new `Modules/SettingModule` (reg_by_employees CRUD, settings page, nav item "إعدادات النظام" with sub-menu — CSS in `custom-rtl.css`); migration `2026_11_09_000002_add_reg_by_employee_id_to_course_regs_table`; `CourseReg` (`regByEmployee`, `registered_by_name`); `CourseRegService` (`getRegByEmployees`, `findRegByEmployee`, `updateRegBy`); both Course controllers; course `show` view (select + AJAX); report/export/student views use `registered_by_name`; CLAUDE.md layering rule
+- **Why:** admin-managed list of employee names for "تم التسجيل عن طريق", stored by id for future reports (replaced the earlier users/admins dropdown from the same day, which was never committed)
+- **Affects:** SettingModule, CourseModule, ReportModule, StudentModule, LayoutModule
+- **Data:** migration `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` builds the list from old text (spelling variants merged: آلاء، نايف، يوسف، إسراء، علي، ساره، رميساء، إنجي، أوصاف) and fills `reg_by_employee_id` (3,618 rows locally). "-", "المعهد", "حوالة", "570", empty stay without an id. Only fills NULL ids; reversible.
+- **Student page:** "تم التسجيل عن طريق" same as course page (change + dropdown + AJAX); assign-to-course form now a required dropdown saving `reg_by_employee_id` (`registerStudentToCourse` no longer writes the text column).
+- **Commit:** (pending)
 
 ### 2026-10-17 — Initial project memory setup
 - **Changed:** `CLAUDE.md`, `docs/progress.md` filled in from codebase exploration

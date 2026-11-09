@@ -45,6 +45,21 @@
                     </a>
                 </li>
 
+                <li class="nav-item has-submenu">
+                    <a role="button" tabindex="0" class="submenu-toggle @if (Request::segment(2) == 'settings') active @endif">
+                        <i class="fa fa-cogs"></i>
+                        <span data-i18n="nav.dash.main" class="menu-title">إعدادات النظام</span>
+                    </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="{{ route('admin.settings.reg_by_employees') }}" class="@if (Request::segment(2) == 'settings' && Request::segment(3) == 'reg_by_employees') active @endif">
+                                <i class="fa fa-id-badge"></i>
+                                قائمة تم التسجيل عن طريق
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
         </nav>
     </div>

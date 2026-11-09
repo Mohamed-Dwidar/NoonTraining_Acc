@@ -122,7 +122,10 @@ class CourseAdminController extends Controller {
         }
         // dd($courses_regs[0]->student->payments);
 
-        return view('coursemodule::admin.show', compact('courses_regs', 'course', 'statuses'));
+        // names list for "تم التسجيل عن طريق" (SettingModule)
+        $employees = $this->courseRegService->getRegByEmployees();
+
+        return view('coursemodule::admin.show', compact('courses_regs', 'course', 'statuses', 'employees'));
     }
 
     /**
@@ -219,6 +222,11 @@ class CourseAdminController extends Controller {
         if ($this->courseRegService->getStudentRegDetails($request->student_id, $request->course_id) != null)
             return back()
                 ->withErrors('عفوا... تم التسجيل في هذه الدورة من قبل')
+                ->withInput();
+
+        if (!$this->courseRegService->findRegByEmployee($request->reg_by_employee_id))
+            return back()
+                ->withErrors('يجب اختيار "تم التسجيل عن طريق" من القائمة')
                 ->withInput();
         // dd($request->all());
         $course_reg = $this->courseRegService->registerStudentToCourse($request);
@@ -463,17 +471,37 @@ class CourseAdminController extends Controller {
     }
 
     public function UpdateRegBy(Request $request) {
-        $course_reg = $this->courseRegService->updateRegBy($request);
+        $validator = Validator::make($request->all(), [
+            'reg_id' => 'required',
+            'reg_by' => 'required',
+        ], [
+            'reg_by.required' => 'يجب اختيار الموظف',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => "false", 'message' => $validator->errors()->first()], 422);
+        }
+
+        $course_reg = $this->courseRegService->findOne($request->reg_id);
+        if (!$course_reg) {
+            return response()->json(['success' => "false", 'message' => 'التسجيل غير موجود'], 404);
+        }
+        $employee = $this->courseRegService->findRegByEmployee($request->reg_by);
+        if (!$employee) {
+            return response()->json(['success' => "false", 'message' => 'الاسم غير موجود في القائمة'], 422);
+        }
+
+        $course_reg = $this->courseRegService->updateRegBy($course_reg->id, $employee);
 
         //Add Log
         $action = 'تعديل تم التسجيل عن طريق';
-        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي : ' .  $course_reg->registered_by;
+        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي : ' .  $course_reg->registered_by_name;
         $this->logService->recordLog($action, $description, url()->current());
         //
         return response()->json(
             array(
                 'success' => "true",
-                'new_reg_by' => $course_reg->registered_by,
+                'new_reg_by' => $course_reg->registered_by_name,
+                'new_reg_by_id' => $course_reg->reg_by_employee_id,
                 'id' => $course_reg->id,
 
             )

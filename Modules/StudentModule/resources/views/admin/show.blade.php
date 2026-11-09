@@ -485,21 +485,43 @@
                                                                                         </div>
 
                                                                                         <div class="row">
+                                                                                            <div class="col-md-12 regBy" reg_id="{{ $reg->id }}">
+                                                                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">
+                                                                                                    تم التسجيل عن طريق
+                                                                                                </div>
+                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col regByText">
+                                                                                                    <span class="regByName">
+                                                                                                        @if ($reg->registered_by_name)
+                                                                                                            {{ $reg->registered_by_name }}
+                                                                                                        @else
+                                                                                                            ----
+                                                                                                        @endif
+                                                                                                    </span>
+                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_change_regby'))
+                                                                                                        <a class="btn btn-blue changeRegBy">تغير</a>
+                                                                                                    @endif
+                                                                                                </div>
+
+                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col newRegBy" style="display: none">
+                                                                                                    <span>
+                                                                                                        <select id="reg_by" name="reg_by" reg_id="{{ $reg->id }}" class="regby-select" dir="rtl" style="width: 180px">
+                                                                                                            <option value="">-- اختر الموظف --</option>
+                                                                                                            @foreach ($employees as $employee)
+                                                                                                                <option value="{{ $employee->id }}" @selected($reg->reg_by_employee_id == $employee->id)>{{ $employee->name }}</option>
+                                                                                                            @endforeach
+                                                                                                        </select>
+                                                                                                    </span>
+
+                                                                                                    <a class="btn btn-green save-btn saveRegBy" reg_id="{{ $reg->id }}"> حفظ </a>
+                                                                                                    <a class="btn btn-red cancel-btn resetRegBy">إلغاء التغير </a>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="row">
                                                                                             <div class="col-md-12">
                                                                                                 <div
                                                                                                     class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    تم التسجيل عن طريق
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="col-lg-3 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    @if ($reg->registered_by)
-                                                                                                        {{ $reg->registered_by }}
-                                                                                                    @else
-                                                                                                        ----
-                                                                                                    @endif
-                                                                                                </div>
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
                                                                                                     تاريخ التقديم</div>
                                                                                                 <div
                                                                                                     class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
@@ -802,12 +824,16 @@
 
                                                     <div class="row">
                                                         <div class="col-md-6">
-                                                            <label for="registered_by">تم التسجيل عن طريق :
+                                                            <label for="reg_by_employee_id">تم التسجيل عن طريق :
                                                                 <span class="hint">*</span>
                                                             </label>
                                                             <span>
-                                                                <input class="form-control currency-after" type="text"
-                                                                    id="registered_by" name="registered_by" required />
+                                                                <select class="form-control regby-select" id="reg_by_employee_id" name="reg_by_employee_id" dir="rtl" required>
+                                                                    <option value="">-- اختر الموظف --</option>
+                                                                    @foreach ($employees as $employee)
+                                                                        <option value="{{ $employee->id }}" @selected(old('reg_by_employee_id') == $employee->id)>{{ $employee->name }}</option>
+                                                                    @endforeach
+                                                                </select>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -878,15 +904,36 @@
                     });
                 }
 
+                // "تم التسجيل عن طريق" in assign form → Select2 (RTL)
+                function initAssignRegBySelect() {
+                    var $el = $('#reg_by_employee_id');
+                    if ($el.data('select2')) {
+                        $el.select2('destroy');
+                    }
+                    $el.select2({
+                        dir: 'rtl',
+                        width: 'resolve',
+                        placeholder: '-- اختر الموظف --',
+                        dropdownParent: $('#modal-assign-course').find('.modal-body'),
+                        language: {
+                            noResults: function() {
+                                return 'لا توجد نتائج';
+                            }
+                        }
+                    });
+                }
+
                 // Initialize on page load
                 setTimeout(function() {
                     initSelect2();
+                    initAssignRegBySelect();
                 }, 500);
 
                 // Reinitialize when modal is shown
                 $('#modal-assign-course').on('show.bs.modal', function() {
                     setTimeout(function() {
                         initSelect2();
+                        initAssignRegBySelect();
                     }, 300);
                 });
 
@@ -945,6 +992,76 @@
                     $('#reg-' + actvRegID + '-info #regActionForm').submit();
                     return;
                 });
+
+                //changeRegBy
+                // "تم التسجيل عن طريق" dropdown → Select2 (RTL, searchable)
+                function initRegBySelect($el, $parent) {
+                    if ($el.data('select2')) {
+                        $el.select2('destroy');
+                    }
+                    $el.select2({
+                        dir: 'rtl',
+                        width: 'style',
+                        placeholder: '-- اختر الموظف --',
+                        dropdownParent: $parent,
+                        language: {
+                            noResults: function() {
+                                return 'لا توجد نتائج';
+                            }
+                        }
+                    });
+                }
+
+                $('.reg-modal .changeRegBy').click(function() {
+                    $('#reg-' + actvRegID + '-info .regByText').hide();
+                    $('#reg-' + actvRegID + '-info .newRegBy').show();
+                    initRegBySelect($('#reg-' + actvRegID + '-info .newRegBy #reg_by'), $('#modal-reg-' + actvRegID));
+                });
+
+                $('.reg-modal .saveRegBy').on('click', function() {
+                    var reg_id = $(this).attr('reg_id');
+                    var $select = $('#reg-' + reg_id + '-info .newRegBy #reg_by');
+                    var reg_by = $select.val();
+                    if (!reg_by) {
+                        alert('يجب اختيار الموظف');
+                        return false;
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route(Auth::getDefaultDriver().'.updateRegBy') }}',
+                        data: {
+                            'reg_by': reg_by,
+                            'reg_id': reg_id,
+                            '_token': '<?php echo csrf_token(); ?>'
+                        },
+                        success: (result) => {
+                            var $info = $('#reg-' + reg_id + '-info');
+                            $info.find('.regByName').text(result.new_reg_by || '----');
+                            var $sel = $info.find('.newRegBy #reg_by');
+                            $sel.find('option').removeAttr('selected');
+                            $sel.find('option[value="' + result.new_reg_by_id + '"]').attr('selected', 'selected');
+                            $sel.val(result.new_reg_by_id).trigger('change');
+                            $info.find('.regByText').show();
+                            $info.find('.newRegBy').hide();
+                        },
+                        error: function(jqXHR, exception) {
+                            var msg = (jqXHR.responseJSON && jqXHR.responseJSON.message) ? jqXHR.responseJSON.message : 'حدث خطأ أثناء الحفظ';
+                            alert(msg);
+                        }
+                    });
+                    return false;
+                });
+
+
+                $('.reg-modal .resetRegBy').click(function() {
+                    var $info = $('#reg-' + actvRegID + '-info');
+                    $info.find('.regByText').show();
+                    $info.find('.newRegBy').hide();
+                    // restore the saved employee in the list
+                    var $select = $info.find('.newRegBy #reg_by');
+                    $select.val($select.find('option[selected]').val() || '').trigger('change');
+                });
+                ///////////////////////////
 
 
                 //Pay

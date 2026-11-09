@@ -208,7 +208,7 @@
                                                         {{ $reg->status->status }}
                                                     </td>
                                                     <td class="align-center">
-                                                           <label> {{ $reg->registered_by }}</label>
+                                                           <label> {{ $reg->registered_by_name }}</label>
                                                     </td>
                                                     <td class="align-center">
                                                         @if ($reg->is_recive_cert == 0)

@@ -16,6 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Modules\CourseModule\Services\CourseService;
 use Illuminate\Validation\Rule;
 use Modules\LogModule\Services\LogService;
+use Modules\SettingModule\Services\RegByEmployeeService;
 
 class StudentUserController extends Controller
 {
@@ -24,14 +25,16 @@ class StudentUserController extends Controller
     private $cityService;
     private $courseService;
     private $logService;
+    private $regByEmployeeService;
 
-    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService)
+    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService, RegByEmployeeService $regByEmployeeService)
     {
         $this->studentService = $studentService;
         $this->branchService = $branchService;
         $this->cityService = $cityService;
         $this->courseService = $courseService;
         $this->logService = $logService;
+        $this->regByEmployeeService = $regByEmployeeService;
     }
 
     public function add()
@@ -127,7 +130,10 @@ class StudentUserController extends Controller
         $courses = $this->courseService->findAll()->where('branch_id', Auth::guard('user')->user()->branch_id);
         $today = Date::today();
 
-        return view('studentmodule::admin.show', compact('student', 'courses'));
+        // names list for "تم التسجيل عن طريق" (SettingModule)
+        $employees = $this->regByEmployeeService->findAllActive(['id', 'name']);
+
+        return view('studentmodule::admin.show', compact('student', 'courses', 'employees'));
     }
 
     public function edit($id)

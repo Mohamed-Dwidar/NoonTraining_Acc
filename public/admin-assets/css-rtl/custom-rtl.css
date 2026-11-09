@@ -171,6 +171,61 @@ body.vertical-layout.vertical-menu.menu-expanded .navbar .navbar-header {
     visibility: visible
 }
 
+/* Nav sub-menu (e.g. إعدادات النظام) */
+.top-menu li.has-submenu > a.submenu-toggle {
+    cursor: pointer;
+}
+
+.top-menu li .nav-submenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    min-width: 220px;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    text-align: right;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 2.5px 10px 0 rgba(0, 0, 0, 0.1);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .15s ease, transform .15s ease, visibility .15s;
+}
+
+.top-menu li.has-submenu:hover .nav-submenu,
+.top-menu li.has-submenu:focus-within .nav-submenu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.top-menu li .nav-submenu li {
+    display: block;
+}
+
+.top-menu li .nav-submenu li a {
+    padding: 8px 15px;
+    white-space: nowrap;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.top-menu li .nav-submenu li a i {
+    font-size: 14px;
+    float: none;
+    width: auto;
+    margin-left: 6px;
+}
+
+.top-menu li .nav-submenu li:hover > a,
+.top-menu li .nav-submenu li a.active {
+    background-color: #F3F7F4;
+    color: #1A4A22;
+}
+
 .dropdown-user .dropdown-menu.arrow::after,
 .dropdown-user .dropdown-menu.arrow::before {
     left: 50px;
@@ -730,3 +785,22 @@ nav.pagination-nav {
     justify-content: end;
     /* width: 67%; */
 }
+
+/* "تم التسجيل عن طريق" dropdown (Select2, RTL) */
+.select2-container[dir="rtl"] .select2-selection__rendered,
+.select2-container[dir="rtl"] .select2-results__option,
+.select2-container[dir="rtl"] .select2-search__field {
+    text-align: right;
+    direction: rtl;
+}
+
+.newRegBy .select2-container {
+    width: 180px !important;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.select2-container--open .select2-dropdown {
+    z-index: 2000;
+}
+

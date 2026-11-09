@@ -17,6 +17,7 @@ use Modules\CourseModule\Services\CourseService;
 use Illuminate\Validation\Rule;
 use Modules\LogModule\app\Http\Models\Log;
 use Modules\LogModule\Services\LogService;
+use Modules\SettingModule\Services\RegByEmployeeService;
 
 class StudentAdminController extends Controller
 {
@@ -25,14 +26,16 @@ class StudentAdminController extends Controller
     private $cityService;
     private $courseService;
     private $logService;
+    private $regByEmployeeService;
 
-    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService)
+    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService, RegByEmployeeService $regByEmployeeService)
     {
         $this->studentService = $studentService;
         $this->branchService = $branchService;
         $this->cityService = $cityService;
         $this->courseService = $courseService;
         $this->logService = $logService;
+        $this->regByEmployeeService = $regByEmployeeService;
     }
 
     public function add()
@@ -117,7 +120,10 @@ class StudentAdminController extends Controller
         // if ($request->export == 'yes') {
         //return Excel::download(new StudentExport($student), 'تقرير الطالب - ' . $student->name . '.xlsx');
         // }
-        return view('studentmodule::admin.show', compact('student', 'courses'));
+        // names list for "تم التسجيل عن طريق" (SettingModule)
+        $employees = $this->regByEmployeeService->findAllActive(['id', 'name']);
+
+        return view('studentmodule::admin.show', compact('student', 'courses', 'employees'));
     }
 
     public function edit($id)

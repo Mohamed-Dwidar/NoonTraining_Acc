@@ -8,5 +8,6 @@
     "ReportModule": true,
     "LocationModule": true,
     "LogModule": true,
-    "PermissionModule": true
+    "PermissionModule": true,
+    "SettingModule": true
 }
