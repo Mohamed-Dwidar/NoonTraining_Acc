@@ -126,8 +126,10 @@ class CourseAdminController extends Controller {
 
         // names list for "تم التسجيل عن طريق" (SettingModule)
         $employees = $this->courseRegService->getRegByEmployees();
+        // "طرق الدفع" list for the payments modal (SettingModule)
+        $paymentMethods = $this->courseRegPaymentService->getPaymentMethods();
 
-        return view('coursemodule::admin.show', compact('courses_regs', 'course', 'statuses', 'employees'));
+        return view('coursemodule::admin.show', compact('courses_regs', 'course', 'statuses', 'employees', 'paymentMethods'));
     }
 
     /**
@@ -278,13 +280,13 @@ class CourseAdminController extends Controller {
             $request->all(),
             [
                 'id' => 'required',
-                'pay_method' => 'required',
+                'payment_method_id' => 'required',
                 'amount' => 'required|numeric',
                 'paid_at' => 'required|date',
                 'pay_type' => 'required'
             ],
             [
-                'pay_method.required' => 'يجب اختيار نوع الدفع',
+                'payment_method_id.required' => 'يجب اختيار طريقة الدفع',
                 'amount.required' => 'يجب ادخال قيمة الدفعة',
                 'amount.numeric' => 'يجب ادخال قيمة الدفعة بطريقة صحيحة و ان تكون الارقام باللغة الانجليزية',
                 'paid_at.required' => 'يجب ادخال تاريخ الدفع',
@@ -297,6 +299,10 @@ class CourseAdminController extends Controller {
             return back()
                 ->withErrors($validator)
                 ->withInput();
+        }
+        // must be an active method from the "طرق الدفع" list (SettingModule)
+        if (!$this->courseRegPaymentService->findPaymentMethod($request->payment_method_id)) {
+            return back()->withErrors('طريقة الدفع غير موجودة او غير مفعلة')->withInput();
         }
         $course_reg = $this->courseRegPaymentService->takePayAction($request->all());
 

@@ -8,8 +8,9 @@
 
 ## Current status
 - **Branch:** `main` (2026-11-09).
-- **Last done:** "تم التسجيل عن طريق" as an admin-managed names list (new SettingModule) + admin-only report filter — committed (9f1f921, 80cfb2b, ead253a, a40f3aa, d4a2edd). All local migrations ran. Since then: `show_company_in_reports` permission, old→new name in `UpdateRegBy` log. Uncommitted: student page registrations use the course page's modals (shared partials).
-- **Before deploying:** run on production `SELECT TRIM(registered_by), COUNT(*) FROM course_regs GROUP BY 1` and add any new spelling variants to the map in `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` before `php artisan module:migrate`; also enable `SettingModule` (`modules_statuses.json`) and `php artisan optimize:clear`. Create the new permissions: `php artisan tinker --execute="foreach(['show_reg_by_in_copy','show_company_in_reports'] as \$n) Spatie\\Permission\\Models\\Permission::firstOrCreate(['name'=>\$n,'guard_name'=>'user'])"` (the seeder isn't re-runnable), confirm their ids are 6 and 7, then `php artisan permission:cache-reset`.
+- **Last done:** "تم التسجيل عن طريق" names list (SettingModule) + admin-only report filter (9f1f921 … a40f3aa); permissions `show_reg_by_in_copy` (d4a2edd) and `show_company_in_reports` (6a92c17); old→new name in `UpdateRegBy` log (ed85d66); student page registrations use the course page's buttons/modals via shared partials (5a2af2d); "طرق الدفع" payment methods list (SettingModule) used by the payments modal, saved as `course_reg_payments.payment_method_id` (uncommitted). All local migrations ran.
+- **Working on:** nothing in progress.
+- **Before deploying:** migrate **SettingModule first**: `php artisan module:migrate SettingModule` then `php artisan module:migrate` — plain `module:migrate` runs modules alphabetically, so CourseModule's data migrations (`000003` reg-by fill, `000006` payment-method fill) would fail because `reg_by_employees` / `payment_methods` don't exist yet. Check `SELECT pay_method, COUNT(*) FROM course_reg_payments GROUP BY 1` (rows whose value isn't one of the 7 enum values stay without `payment_method_id` and show the old text). Also run on production `SELECT TRIM(registered_by), COUNT(*) FROM course_regs GROUP BY 1` and add any new spelling variants to the map in `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` before `php artisan module:migrate`; also enable `SettingModule` (`modules_statuses.json`) and `php artisan optimize:clear`. Create the new permissions: `php artisan tinker --execute="foreach(['show_reg_by_in_copy','show_company_in_reports'] as \$n) Spatie\\Permission\\Models\\Permission::firstOrCreate(['name'=>\$n,'guard_name'=>'user'])"` (the seeder isn't re-runnable), confirm their ids are 6 and 7, then `php artisan permission:cache-reset`.
 - **Next up (feature, ?):** dedicated per-employee summary report; fix all-courses export.
 - **Next up:** owner to confirm the "(?)" items in CLAUDE.md / this file and the README placeholders (name, planned modules, language), then pick work. Candidates: items under "Known issues", expense/income tracking from README (?).
 - **Known issues:**
@@ -61,11 +62,11 @@
 
 ### CourseModule (courses, registrations, payments)
 - **Last updated:** 2026-11-09
-- **Files:** `Controllers/Admin/{CourseAdminController,UnknownPaymentAdminController}.php` + `User/` twins; `Services/{CourseService,CourseRegService,CourseRegPaymentService,CourseRegStatusService,UnknownPaymentService}.php`; models `Course, CourseReg, CourseRegPayment, CourseRegStatus, CourseRegReceipt, UnknownPayment`; views `admin/{index,show,registers_list,receipt_pdf}`, `admin/unknown_payment/*`; shared registration partials `admin/partials/{reg_actions,reg_modals,reg_modals_js}` (row buttons, details/payments/status modals for one `$reg` + their JS incl. نسخ البيانات; need `$employees`; rows need `id="reg{id}"` with `.paid_status_id` / `.paid_exam_id`) — used by the course page and the student page; change them once for both
+- **Files:** `Controllers/Admin/{CourseAdminController,UnknownPaymentAdminController}.php` + `User/` twins; `Services/{CourseService,CourseRegService,CourseRegPaymentService,CourseRegStatusService,UnknownPaymentService}.php`; models `Course, CourseReg, CourseRegPayment, CourseRegStatus, CourseRegReceipt, UnknownPayment`; views `admin/{index,show,registers_list,receipt_pdf}`, `admin/unknown_payment/*`; shared registration partials `admin/partials/{reg_actions,reg_modals,reg_modals_js}` (row buttons, details/payments/status modals for one `$reg` + their JS incl. نسخ البيانات; need `$employees` + `$paymentMethods`; rows need `id="reg{id}"` with `.paid_status_id` / `.paid_exam_id`) — used by the course page and the student page; change them once for both
 - **How it works:**
   - `Course`: name, group no., org no., dates (stored as strings), price, exam fees, branch.
   - `CourseReg` (student ↔ course): `main_price` / `student_price` / `price` (discount = `student_price − price`), exam fees, status (`course_reg_statuses`, with color), flags `is_course_paid`, `is_exam_paid`, `is_recive_cert`, `is_leave`, `is_free`; registered-by (below).
-  - Payments (`course_reg_payments`): type (course instalment / exam / re-exam fees), Arabic `pay_method` enum, `paid_at`; paid flags recalculated in `CourseRegService` (?).
+  - Payments (`course_reg_payments`): type (course instalment / exam / re-exam fees), `paid_at`, method `payment_method_id` → `payment_methods` list "طرق الدفع" (SettingModule, 2026-11-09). Payments modal dropdown = active methods (`$paymentMethods`, passed by Course + Student `show()` in both portals via `CourseRegPaymentService::getPaymentMethods` / `PaymentMethodService::findAllActive`); `payAction` requires an active method (`CourseRegPaymentService::findPaymentMethod`) and writes only `payment_method_id` (old enum `pay_method` left NULL — it can't hold new names). Display uses `CourseRegPayment::payment_method_name` (list name incl. soft-deleted, else old `pay_method`); `paymentMethod` is eager-loaded via `$with`. Assigning an unknown payment sets `payment_method_id` by matching name (`PaymentMethodService::findOneByName`). Paid flags recalculated in `CourseRegPaymentService::takePayAction`.
   - Unknown payments: transfers from unidentified payers, later assigned to a student's registration.
   - Per-student price / discount / exam-price overrides; receipt PDF generation; certificate delivered toggle.
   - "Registered by": `course_regs.reg_by_employee_id` → `reg_by_employees` (SettingModule, added 2026-11-09). Course page dropdown lists active names; saved by AJAX through `{portal}.updateRegBy`: controller → `CourseRegService::findRegByEmployee` → `RegByEmployeeService::findActiveOne` → repository; then `CourseRegService::updateRegBy`. Admin or users with `can_change_regby` can change it. Log description includes old and new name (`... - من <old> الي : <new>`; old empty → `----`). `CourseReg::registered_by_name` returns the list name (incl. soft-deleted), or the old text in `registered_by` for older rows; used everywhere it's displayed. Dropdown is Select2 RTL (`initRegBySelect()` in the view, initialised on "تغير" click with `dropdownParent` = the reg modal).
@@ -76,8 +77,8 @@
   - Old `registered_by` text column kept; existing values mapped to `reg_by_employee_id` by a data migration (variant → name map inside it). New edits write only `reg_by_employee_id`.
   - Names list is global (not per branch), managed by admin only.
   - Hijri dates removed; `paid_at` is Gregorian — because of commits f3fd3c6 / 270ed05.
-  - Payment enums stored in Arabic.
-- **Pending:** receipt upload broken (Known issues); `coupon_id`, `need_work_agree` columns not clearly used (?)
+  - `pay_type` stored in Arabic. Old `pay_method` enum column kept for legacy rows; mapped to `payment_method_id` by data migration `2026_11_09_000006_fill_payment_method_id_from_pay_method` (7 enum values → 7 list entries; 6,559 rows locally, 0 unmapped; reversible).
+- **Pending:** receipt upload broken (Known issues); `coupon_id`, `need_work_agree` columns not clearly used (?); unknown payments (`unknown_payments.pay_method`) still use the fixed 7-value enum — new list methods can't be chosen there (?)
 
 ### ReportModule
 - **Last updated:** 2026-11-09
@@ -101,10 +102,12 @@
 
 ### SettingModule (إعدادات النظام)
 - **Last updated:** 2026-11-09 (new)
-- **Files:** `Controllers/Admin/{SettingAdminController,RegByEmployeeAdminController}.php`, `Models/RegByEmployee.php`, `Services/RegByEmployeeService.php`, `Repository/RegByEmployeeRepository.php`, migration `2026_11_09_000001_create_reg_by_employees_table`, views `admin/index`, `admin/reg_by_employees/{index,edit}`; nav item "إعدادات النظام" (not a link — only opens the sub-menu) with hover sub-menu in `layoutmodule::admin.nav` (CSS `.has-submenu` / `.nav-submenu` in `public/admin-assets/css-rtl/custom-rtl.css`) — add new settings pages as `<li>` in that sub-menu
+- **Files:** `Controllers/Admin/{SettingAdminController,RegByEmployeeAdminController,PaymentMethodAdminController}.php`, `Models/{RegByEmployee,PaymentMethod}.php`, `Services/{RegByEmployeeService,PaymentMethodService}.php`, `Repository/{RegByEmployeeRepository,PaymentMethodRepository}.php`, migrations `2026_11_09_000001_create_reg_by_employees_table`, `2026_11_09_000004_create_payment_methods_table`, views `admin/index`, `admin/reg_by_employees/{index,edit}`, `admin/payment_methods/{index,edit}`; nav item "إعدادات النظام" (not a link — only opens the sub-menu) with hover sub-menu in `layoutmodule::admin.nav` (CSS `.has-submenu` / `.nav-submenu` in `public/admin-assets/css-rtl/custom-rtl.css`) — add new settings pages as `<li>` in that sub-menu
 - **How it works:** admin-only (`admin/settings`, `auth:admin`). Settings landing page → "قائمة تم التسجيل عن طريق": add (inline), edit name, activate/deactivate (`is_active`), delete (soft delete, POST). List shows registration count per name. Create/update/delete are logged. Only active names appear in the course dropdown.
+  - "طرق الدفع" (`admin/settings/payment_methods`, routes `admin.settings.payment_methods.*`): same pages/behaviour as the names list (add, edit, activate/deactivate, soft delete, logged); list shows payments count. Active methods appear in the payments modal (course + student pages).
 - **Decisions:** soft delete so registrations/reports keep the name; unique name among non-deleted rows.
-- **Service methods:** `findAll` (admin list + regs count), `findAllActive` (dropdowns), `findActiveOne` (validation), `findAllForFilter` (report filter: non-deleted incl. inactive).
+- **Service methods (PaymentMethodService):** `findAll` (+ payments count), `findAllActive`, `findActiveOne`, `findOne`, `findOneByName` (unknown-payment mapping), `deleteOne`.
+- **Service methods (RegByEmployeeService):** `findAll` (admin list + regs count), `findAllActive` (dropdowns), `findActiveOne` (validation), `findAllForFilter` (report filter: non-deleted incl. inactive).
 - **Pending:** dedicated per-employee summary report (?); names list is global — add `branch_id` if branches need their own lists.
 
 ### LocationModule
@@ -124,11 +127,17 @@
 
 ## Session log
 
+### 2026-11-09 — "طرق الدفع" payment methods list
+- **Changed:** SettingModule: `payment_methods` table + model/repo/service/admin controller/views (`admin/settings/payment_methods`), settings landing row, nav sub-menu item. CourseModule: migrations `000005` (add `course_reg_payments.payment_method_id`) and `000006` (create the 7 old enum values as methods, fill the id); payments modal (`partials/reg_modals`) lists active methods and posts `payment_method_id`; Course `payAction` (both portals) validates an active method; `CourseRegPaymentService` saves the id; `CourseRegPayment::payment_method_name` for display; unknown-payment assign sets the id by name. Student `show()` (both portals) passes `$paymentMethods`.
+- **Why:** admin manages payment methods instead of a fixed enum; store the id for reports.
+- **Affects:** SettingModule, CourseModule, StudentModule, LayoutModule (nav). Deploy: migrate SettingModule first.
+- **Commit:** (pending)
+
 ### 2026-11-09 — Student page: registration buttons/modals like the course page
 - **Changed:** extracted the course page's registration buttons, 3 modals and their JS into `CourseModule/resources/views/admin/partials/{reg_actions,reg_modals,reg_modals_js}.blade.php`; course page includes them (rendered HTML unchanged); student page now includes them too (old simple details/payments modals and their JS removed).
 - **Why:** show التفاصيل / الدفعات / تغيير حالة الدفع on the student page the same as on the course page, without duplicating ~1,100 lines.
 - **Affects:** CourseModule + StudentModule show views (both portals). Backend unchanged (actions use `back()`).
-- **Commit:** pending
+- **Commit:** 5a2af2d
 
 ### 2026-11-09 — "تم التسجيل عن طريق" names list (SettingModule) + report filter
 - **Changed:**
@@ -140,8 +149,8 @@
   - CLAUDE.md: Controller → Service → Repository rule; Select2 note; deps map.
 - **Why:** store the employee who registered the student as an id (for reports) instead of free text.
 - **Affects:** SettingModule, CourseModule, StudentModule, ReportModule, LayoutModule, `custom.js`, `custom-rtl.css`, `modules_statuses.json`
-- **Commit:** 9f1f921, 80cfb2b (migrations folder case), ead253a, a40f3aa; docs checkpoint pending
-- **Later same day:** "نسخ البيانات" includes "تم التسجيل عن طريق" for admins / users with new permission `show_reg_by_in_copy` (seeder + user form checkboxes) — d4a2edd. Then: "قطاع العمل" in student Excel exports only for admins / users with new permission `show_company_in_reports` (id 7) — uncommitted; `UpdateRegBy` log shows old → new name — uncommitted
+- **Commit:** 9f1f921, 80cfb2b (migrations folder case), ead253a, a40f3aa
+- **Later same day:** "نسخ البيانات" includes "تم التسجيل عن طريق" for admins / users with new permission `show_reg_by_in_copy` (seeder + user form checkboxes) — d4a2edd. Then: "قطاع العمل" in student Excel exports only for admins / users with new permission `show_company_in_reports` (id 7) — 6a92c17; `UpdateRegBy` log shows old → new name — ed85d66
 
 ### 2026-10-17 — Initial project memory setup
 - **Changed:** `CLAUDE.md`, `docs/progress.md` filled in from codebase exploration

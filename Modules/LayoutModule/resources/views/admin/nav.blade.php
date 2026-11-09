@@ -57,6 +57,12 @@
                                 قائمة تم التسجيل عن طريق
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.settings.payment_methods') }}" class="@if (Request::segment(2) == 'settings' && Request::segment(3) == 'payment_methods') active @endif">
+                                <i class="fa fa-credit-card"></i>
+                                طرق الدفع
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

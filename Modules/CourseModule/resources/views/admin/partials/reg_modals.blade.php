@@ -1,4 +1,4 @@
-{{-- Registration modals (details / payments / payment status) for one \$reg; needs \$employees. JS: coursemodule::admin.partials.reg_modals_js --}}
+{{-- Registration modals (details / payments / payment status) for one \$reg; needs \$employees and \$paymentMethods. JS: coursemodule::admin.partials.reg_modals_js --}}
                                                 <div class="modal fade text-xs-left reg-modal"
                                                     id="modal-reg-{{ $reg->id }}" tabindex="-1" role="dialog"
                                                     aria-labelledby="myModalLabel90" aria-hidden="true">
@@ -604,7 +604,7 @@
                                                                                                     <b>{{$payment->amount}}  ر.س </b>
                                                                                                 </div>
                                                                                                 <div class="col-md-3">
-                                                                                                    [ {{$payment->pay_method}} ]
+                                                                                                    [ {{$payment->payment_method_name}} ]
                                                                                                 </div>
                                                                                             @endforeach
                                                                                             @endif
@@ -653,17 +653,14 @@
                                                                                                 </div>
 
                                                                                                 <div class="col-md-2">
-                                                                                                    <label for="pay_method">طريقة الدفع :</label>
+                                                                                                    <label for="payment_method_id">طريقة الدفع :</label>
                                                                                                     <span>
-                                                                                                        <select id="pay_method" name="pay_method" class="form-control">
-                                                                                                            <option value="كاش">كاش</option>
-                                                                                                            <option value="تحويل">تحويل</option>
-                                                                                                            <option value="شبكة">شبكة</option>
-                                                                                                            <option value="تابي">تابي</option>
-                                                                                                            <option value="تمارا">تمارا</option>
-                                                                                                            <option value="يور واي">يور واي</option>
-                                                                                                            <option value="أخرى">أخرى</option>
-                                                                                                        </select>
+                                                                                                        <select id="payment_method_id" name="payment_method_id" class="form-control">
+                                                                                                                {{-- "طرق الدفع" list from system settings (SettingModule) --}}
+                                                                                                                @foreach ($paymentMethods as $paymentMethod)
+                                                                                                                    <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
+                                                                                                                @endforeach
+                                                                                                            </select>
                                                                                                     </span>
                                                                                                 </div>
 

@@ -5,18 +5,21 @@ namespace Modules\CourseModule\Services;
 use Modules\CourseModule\Repository\CourseRegPaymentRepository;
 use Modules\CourseModule\Repository\CourseRegRepository;
 use Modules\CourseModule\Repository\UnknownPaymentRepository;
+use Modules\SettingModule\Services\PaymentMethodService;
 
 class UnknownPaymentService
 {
     private $unknownPaymentRepository;
     private $courseRegPaymentRepository;
     private $courseRegRepository;
+    private $paymentMethodService;
 
-    public function __construct(UnknownPaymentRepository $unknownPaymentRepository, CourseRegPaymentRepository $courseRegPaymentRepository, CourseRegRepository $courseRegRepository)
+    public function __construct(UnknownPaymentRepository $unknownPaymentRepository, CourseRegPaymentRepository $courseRegPaymentRepository, CourseRegRepository $courseRegRepository, PaymentMethodService $paymentMethodService)
     {
         $this->unknownPaymentRepository = $unknownPaymentRepository;
         $this->courseRegPaymentRepository = $courseRegPaymentRepository;
         $this->courseRegRepository = $courseRegRepository;
+        $this->paymentMethodService = $paymentMethodService;
     }
 
     public function create($data)
@@ -60,6 +63,8 @@ class UnknownPaymentService
             'course_reg_id' => $reg->id,
             'student_id' => $reg->student_id,
             'pay_method' => $unknown_payment->pay_method,
+            // same-named method from the "طرق الدفع" list (null if none)
+            'payment_method_id' => $this->paymentMethodService->findOneByName($unknown_payment->pay_method)?->id,
             'amount' => $unknown_payment->amount,
             // 'paid_at' => $arr_date[2] . '-' . $arr_date[1] . '-' . $arr_date[0],
             'paid_at' => $unknown_payment->paid_at,

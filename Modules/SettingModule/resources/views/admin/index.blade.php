@@ -37,6 +37,16 @@
                                             <a class="btn btn-primary" href="{{ route('admin.settings.reg_by_employees') }}" role="button">إدارة القائمة</a>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td class="strong">
+                                            <i class="fa fa-credit-card"></i>
+                                            طرق الدفع
+                                        </td>
+                                        <td>طرق الدفع التي تظهر عند تسجيل دفعة للطالب في نافذة "الدفعات"</td>
+                                        <td class="action">
+                                            <a class="btn btn-primary" href="{{ route('admin.settings.payment_methods') }}" role="button">إدارة القائمة</a>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

@@ -17,6 +17,7 @@ use Modules\CourseModule\Services\CourseService;
 use Illuminate\Validation\Rule;
 use Modules\LogModule\app\Http\Models\Log;
 use Modules\LogModule\Services\LogService;
+use Modules\SettingModule\Services\PaymentMethodService;
 use Modules\SettingModule\Services\RegByEmployeeService;
 
 class StudentAdminController extends Controller
@@ -27,8 +28,9 @@ class StudentAdminController extends Controller
     private $courseService;
     private $logService;
     private $regByEmployeeService;
+    private $paymentMethodService;
 
-    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService, RegByEmployeeService $regByEmployeeService)
+    public function __construct(StudentService $studentService, BranchService $branchService, CityService $cityService, CourseService $courseService,LogService $logService, RegByEmployeeService $regByEmployeeService, PaymentMethodService $paymentMethodService)
     {
         $this->studentService = $studentService;
         $this->branchService = $branchService;
@@ -36,6 +38,7 @@ class StudentAdminController extends Controller
         $this->courseService = $courseService;
         $this->logService = $logService;
         $this->regByEmployeeService = $regByEmployeeService;
+        $this->paymentMethodService = $paymentMethodService;
     }
 
     public function add()
@@ -122,8 +125,10 @@ class StudentAdminController extends Controller
         // }
         // names list for "تم التسجيل عن طريق" (SettingModule)
         $employees = $this->regByEmployeeService->findAllActive(['id', 'name']);
+        // "طرق الدفع" list for the payments modal (SettingModule)
+        $paymentMethods = $this->paymentMethodService->findAllActive(['id', 'name']);
 
-        return view('studentmodule::admin.show', compact('student', 'courses', 'employees'));
+        return view('studentmodule::admin.show', compact('student', 'courses', 'employees', 'paymentMethods'));
     }
 
     public function edit($id)

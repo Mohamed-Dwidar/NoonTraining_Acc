@@ -29,7 +29,7 @@ Then suggest a commit message.
 ## Commands
 - Dev server: `php artisan serve` (or local Apache — project has `.htaccess` / `server.php`)
 - Assets: none needed for module views; `npm run dev` only for `resources/` (unused)
-- Migrate: `php artisan module:migrate` (module migrations) + `php artisan migrate` (spatie tables in `database/migrations`)
+- Migrate: `php artisan module:migrate SettingModule` **first**, then `php artisan module:migrate` (module migrations; modules run alphabetically and CourseModule data migrations need SettingModule tables) + `php artisan migrate` (spatie tables in `database/migrations`)
 - Seed: `php artisan module:seed PermissionModule` — seeds `user`-guard permissions
 - Tests: `php artisan test` (only Laravel example tests exist)
 - Clear caches: `php artisan optimize:clear` (+ `php artisan permission:cache-reset` after permission changes)
@@ -65,20 +65,20 @@ Then suggest a commit message.
 - Audit: call `LogService::recordLog($action, $description, $url)` on create/update/delete actions
 - Filtering: model `scopeFilter($query, $request)` with short query keys (`srch`, `srt`, `branch`, `fltr_sts`, `fltr_crt`, `fltr_leave`)
 - Flash: `back()->with('success', 'تمت العمليه بنجاح.')` / `->withErrors(...)`
-- Language / direction: Arabic UI, RTL CSS (`css-rtl/`), though `<html lang="en" data-textdirection="ltr">` in layout. Arabic enum values stored in DB (`pay_method`, `pay_type`)
+- Language / direction: Arabic UI, RTL CSS (`css-rtl/`), though `<html lang="en" data-textdirection="ltr">` in layout. Arabic enum values stored in DB (`pay_type`; old `pay_method` — payments now use `payment_method_id`)
 - Naming: snake_case columns with abbreviations (`id_nu`, `group_nu`, `is_recive_cert`); methods mostly camelCase, some PascalCase (`ReportAllStudents`, `UpdateRegBy`); migrations edited in place historically — don't continue that
 
 ## Dependencies map (what affects what)
 - **UserModule** ↔ Branch (`users.branch_id`), Permission (spatie roles/perms on `user` guard), Log (login/logout logged)
 - **AdminModule** ↔ Log; admins manage Users, Branches, everything
 - **BranchModule** ↔ scoping for Users, Students, Courses; filters in Reports and Logs
-- **StudentModule** ↔ Branch, Location (`city_id`), Course (`CourseReg`, payments shown on student page), Log
-- **CourseModule** (courses, registrations, payments, statuses, unknown payments, receipt PDF) ↔ Student, Branch, Log, Setting (`reg_by_employee_id`), Permission (`can_edit`, `can_delete`, `can_change_regby`); `CourseReg` fields drive every report; course page Excel uses ReportModule's `CourseRegExport`
+- **StudentModule** ↔ Branch, Location (`city_id`), Course (`CourseReg`; student page includes CourseModule's registration partials `coursemodule::admin.partials.{reg_actions,reg_modals,reg_modals_js}` — details / payments / payment status / copy), Log
+- **CourseModule** (courses, registrations, payments, statuses, unknown payments, receipt PDF) ↔ Student, Branch, Log, Setting (`reg_by_employee_id`), Permission (`can_edit`, `can_delete`, `can_change_regby`); `CourseReg` fields drive every report; course page Excel uses ReportModule's `CourseRegExport`; registration buttons/modals/JS live in `resources/views/admin/partials/` and are shared with the student page — test both pages after changing them
 - **ReportModule** ↔ reads Course/CourseReg/Student/Log/Setting; Excel exports in `Exports/` (also used by CourseModule); user side behind `show_reports`; filters go through `Course`/`CourseReg::scopeFilter` + `custom.js`
 - **LogModule** ↔ polymorphic `userable` (Admin | User); written by Course, Student, Auth controllers; viewed in Reports → users log
 - **PermissionModule** ↔ only seeders + model wrappers; permissions assigned per user in UserModule admin create/edit (`UserService` → `permissions()->sync()`)
 - **LocationModule** ↔ cities list for Student forms; no UI of its own
-- **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; dropdowns on course + student pages), Report (admin-only `regby` filter), Log, Layout (nav sub-menu)
+- **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; `course_reg_payments.payment_method_id` → `payment_methods`; dropdowns on course + student pages, unknown-payment assign maps by name), Student (`show()` passes `$employees` + `$paymentMethods`), Report (admin-only `regby` filter), Log, Layout (nav sub-menu)
 - **LayoutModule** ↔ every view (`layoutmodule::admin.main`); nav changes per guard
 - **Expenses / income tracking** (planned (?), mentioned in README) ↔ Branch, Reports
 

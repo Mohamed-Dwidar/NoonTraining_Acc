@@ -4,16 +4,31 @@ namespace Modules\CourseModule\Services;
 
 use Modules\CourseModule\Repository\CourseRegPaymentRepository;
 use Modules\CourseModule\Repository\CourseRegRepository;
+use Modules\SettingModule\Services\PaymentMethodService;
 
 class CourseRegPaymentService
 {
     private $courseRegPaymentRepository;
     private $courseRegRepository;
+    private $paymentMethodService;
 
-    public function __construct(CourseRegPaymentRepository $courseRegPaymentRepository, CourseRegRepository $courseRegRepository)
+    public function __construct(CourseRegPaymentRepository $courseRegPaymentRepository, CourseRegRepository $courseRegRepository, PaymentMethodService $paymentMethodService)
     {
         $this->courseRegPaymentRepository = $courseRegPaymentRepository;
         $this->courseRegRepository = $courseRegRepository;
+        $this->paymentMethodService = $paymentMethodService;
+    }
+
+    /** Active "طرق الدفع" (SettingModule) for the payment form dropdown */
+    public function getPaymentMethods()
+    {
+        return $this->paymentMethodService->findAllActive(['id', 'name']);
+    }
+
+    /** Active payment method or null (validation) */
+    public function findPaymentMethod($id)
+    {
+        return $this->paymentMethodService->findActiveOne($id);
     }
 
     public function findAll($arr_actions = [])
@@ -99,7 +114,7 @@ class CourseRegPaymentService
             'pay_type' => $data['pay_type'],
             'amount' => $data['amount'],
             'paid_at' => $data['paid_at'], //$arr_date[2] . '-' . $arr_date[1] . '-' . $arr_date[0],
-            'pay_method' => $data['pay_method']
+            'payment_method_id' => $data['payment_method_id'] // old enum `pay_method` is no longer written
         ];
         $this->courseRegPaymentRepository->create($date_data);
 
