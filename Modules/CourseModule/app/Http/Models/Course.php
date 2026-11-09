@@ -56,6 +56,17 @@ class Course extends Model
             $query->where('branch_id', $request['branch']);
         }
 
+        // "تم التسجيل عن طريق" filter: courses that have registrations by this employee ('none' = not set)
+        if (!empty($request['regby'])) {
+            $query->whereHas('courses_regs', function ($q) use ($request) {
+                if ($request['regby'] == 'none') {
+                    $q->whereNull('reg_by_employee_id');
+                } else {
+                    $q->where('reg_by_employee_id', $request['regby']);
+                }
+            });
+        }
+
         if (isset($request['srch'])) {
             $query->where(function ($subQuery) use ($request) {
                 $subQuery->orWhereRaw('UPPER(name) LIKE "%' . strtoupper($request['srch']) . '%"');

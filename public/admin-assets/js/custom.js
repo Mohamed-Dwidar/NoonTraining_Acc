@@ -37,6 +37,15 @@ $(document).ready(function () {
         document.location.href = url + searchSortFilterParams;
     });
 
+    // "تم التسجيل عن طريق" filter (reports)
+    $('.filter-item-regby').click(function (event) {
+        event.preventDefault();
+        var e = $(this);
+        $('#fltr_regby_val').val(e.data('val'));
+        searchSortFilterParams = collectSearchSortFilterParams();
+        document.location.href = url + searchSortFilterParams;
+    });
+
     
 
     $('.sort-item').click(function (event) {
@@ -81,6 +90,11 @@ $(document).ready(function () {
         var filterBranchParam = (fltrBranchVal != null && fltrBranchVal != '' && fltrBranchVal != 'no') ? "brnch=" + fltrBranchVal : "";
         ////////// 
 
+        ////Filter "تم التسجيل عن طريق"////
+        var fltrRegByVal = $('#fltr_regby_val').val();
+        var filterRegByParam = (fltrRegByVal != null && fltrRegByVal != '' && fltrRegByVal != 'no') ? "regby=" + fltrRegByVal : "";
+        //////////
+
 
         var finalParams = "";
         if (srchParam != "") {
@@ -94,6 +108,9 @@ $(document).ready(function () {
         }
         if (filterBranchParam != "") {
             finalParams += (filterBranchParam + "&");
+        }
+        if (filterRegByParam != "") {
+            finalParams += (filterRegByParam + "&");
         }
 
         finalParams = finalParams.replace(/&\s*$/, ""); //remove the last (&)

@@ -105,6 +105,35 @@
                                     </div>
 
                                     <div class="filters">
+                                        <input type="hidden" id="fltr_regby_val" value="{{ app('request')->regby }}" />
+                                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i class="icon-sort"></i>
+                                            تم التسجيل عن طريق
+                                            @if (app('request')->regby == 'none')
+                                                : غير محدد
+                                            @elseif (app('request')->regby)
+                                                : {{ optional($reg_by_employees->firstWhere('id', app('request')->regby))->name }}
+                                            @endif
+                                        </a>
+                                        <div class="dropdown-menu arrow dropdown-filter">
+                                            <button class="dropdown-item filter-item-regby" type="button" data-val="no">
+                                                الكل
+                                            </button>
+                                            @foreach ($reg_by_employees as $employee)
+                                                <button class="dropdown-item filter-item-regby" type="button"
+                                                    data-val="{{ $employee->id }}">
+                                                    {{ $employee->name }}
+                                                    @if (!$employee->is_active) (غير مفعل) @endif
+                                                </button>
+                                            @endforeach
+                                            <button class="dropdown-item filter-item-regby" type="button" data-val="none">
+                                                غير محدد
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="filters">
                                         <a id="export-excel">
                                             <i class="icon-file-excel"></i>
                                             تصدير ملف اكسل

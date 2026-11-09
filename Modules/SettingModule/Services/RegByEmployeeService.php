@@ -39,6 +39,11 @@ class RegByEmployeeService
         return $this->regByEmployeeRepository->findAllActive($columns);
     }
 
+    public function findAllForFilter()
+    {
+        return $this->regByEmployeeRepository->findAllForFilter();
+    }
+
     public function findActiveOne($id)
     {
         return $this->regByEmployeeRepository->findActiveOne($id);

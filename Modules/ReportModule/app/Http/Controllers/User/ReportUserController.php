@@ -14,14 +14,17 @@ use Modules\LogModule\Services\LogService;
 use Modules\ReportModule\Exports\CourseExport;
 use Modules\ReportModule\Exports\CourseRegExport;
 use Modules\ReportModule\Exports\LogExport;
+use Modules\SettingModule\Services\RegByEmployeeService;
 
 class ReportUserController extends Controller {
     private $courseService;
     private $studentService;
     private $courseRegService;
     private $logService;
+    private $regByEmployeeService;
 
-    public function __construct(StudentService $studentService, CourseService $courseService, CourseRegService $courseRegService, LogService $logService) {
+    public function __construct(StudentService $studentService, CourseService $courseService, CourseRegService $courseRegService, LogService $logService, RegByEmployeeService $regByEmployeeService) {
+        $this->regByEmployeeService = $regByEmployeeService;
         $this->studentService = $studentService;
         $this->courseService = $courseService;
         $this->courseRegService = $courseRegService;
@@ -46,7 +49,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_all', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_all', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function ReportAllCourses(Request $request) {
@@ -64,7 +68,8 @@ class ReportUserController extends Controller {
         }
 
         $courses = $query->paginate(50);
-        return view('reportmodule::admin.courses_all', compact('courses', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.courses_all', compact('courses', 'branches', 'reg_by_employees'));
     }
 
     public function ReportAllCourseStudents(Request $request) {
@@ -87,7 +92,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_not_paid', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_not_paid', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function reportStudentsInstallmentPay(Request $request) {
@@ -102,7 +108,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_installment_pay', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_installment_pay', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function reportStudentsExamNotPaid(Request $request) {
@@ -117,7 +124,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_exam_not_paid', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_exam_not_paid', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function reportStudentsPaid(Request $request) {
@@ -132,7 +140,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_paid', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_paid', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function reportStudentsReciveCert(Request $request) {
@@ -147,7 +156,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_recive_cert', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_recive_cert', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function reportStudentsNotReciveCert(Request $request) {
@@ -162,7 +172,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_not_recive_cert', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_not_recive_cert', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     public function reportStudentsLeave(Request $request) {
@@ -177,7 +188,8 @@ class ReportUserController extends Controller {
         }
 
         $courses_regs = $query->paginate(50);
-        return view('reportmodule::admin.students_leave', compact('courses_regs', 'branches'));
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_leave', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
     /*public function reportStudentsByCompany(Request $request)

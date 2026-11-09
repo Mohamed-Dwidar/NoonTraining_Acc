@@ -14,6 +14,8 @@ use Modules\CourseModule\Services\CourseRegStatusService;
 use Modules\CourseModule\Services\CourseService;
 use Modules\LogModule\app\Http\Models\Log;
 use Modules\LogModule\Services\LogService;
+use Maatwebsite\Excel\Facades\Excel;
+use Modules\ReportModule\Exports\CourseRegExport;
 
 class CourseAdminController extends Controller {
     private $courseService;
@@ -118,7 +120,7 @@ class CourseAdminController extends Controller {
         $statuses = $this->courseRegStatusService->findAll();
         $course = $this->courseService->findOne($course_id);
         if ($request->export == 'yes') {
-            return Excel::download(new CourseExport($course, $courses_regs), 'تقرير ' . $course->name . '.xlsx');
+            return Excel::download(new CourseRegExport($courses_regs), 'تقرير ' . $course->name . '.xlsx');
         }
         // dd($courses_regs[0]->student->payments);
 

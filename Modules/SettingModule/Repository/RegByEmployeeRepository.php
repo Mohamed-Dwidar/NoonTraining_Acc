@@ -24,6 +24,12 @@ class RegByEmployeeRepository extends BaseRepository
         return RegByEmployee::where('is_active', 1)->orderBy('name')->get($columns);
     }
 
+    /** All non-deleted names incl. inactive (for report filters) */
+    public function findAllForFilter($columns = ['id', 'name', 'is_active'])
+    {
+        return RegByEmployee::orderBy('name')->get($columns);
+    }
+
     public function findActiveOne($id)
     {
         return RegByEmployee::where('is_active', 1)->where('id', $id)->first();

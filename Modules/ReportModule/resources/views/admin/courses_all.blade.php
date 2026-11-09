@@ -104,6 +104,35 @@
                                         </div>
                                     </div>
 
+                                    <div class="filters">
+                                        <input type="hidden" id="fltr_regby_val" value="{{ app('request')->regby }}" />
+                                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            <i class="icon-sort"></i>
+                                            تم التسجيل عن طريق
+                                            @if (app('request')->regby == 'none')
+                                                : غير محدد
+                                            @elseif (app('request')->regby)
+                                                : {{ optional($reg_by_employees->firstWhere('id', app('request')->regby))->name }}
+                                            @endif
+                                        </a>
+                                        <div class="dropdown-menu arrow dropdown-filter">
+                                            <button class="dropdown-item filter-item-regby" type="button" data-val="no">
+                                                الكل
+                                            </button>
+                                            @foreach ($reg_by_employees as $employee)
+                                                <button class="dropdown-item filter-item-regby" type="button"
+                                                    data-val="{{ $employee->id }}">
+                                                    {{ $employee->name }}
+                                                    @if (!$employee->is_active) (غير مفعل) @endif
+                                                </button>
+                                            @endforeach
+                                            <button class="dropdown-item filter-item-regby" type="button" data-val="none">
+                                                غير محدد
+                                            </button>
+                                        </div>
+                                    </div>
+
                                     {{-- <div class="filters">
                                         <a id="export-excel">
                                             <i class="icon-file-excel"></i>
@@ -173,10 +202,18 @@
                                                     {{-- <td>{{ $course->price }} ر.س</td>
                                                     <td>{{ $course->exam_fees }} ر.س</td> --}}
                                                     <td class="align-center">
-                                                        {{ $course->courses_regs->count() }}
+                                                        @if (app('request')->regby)
+                                                            {{-- registrations by the selected employee / all --}}
+                                                            {{ app('request')->regby == 'none'
+                                                                ? $course->courses_regs->whereNull('reg_by_employee_id')->count()
+                                                                : $course->courses_regs->where('reg_by_employee_id', app('request')->regby)->count() }}
+                                                            / {{ $course->courses_regs->count() }}
+                                                        @else
+                                                            {{ $course->courses_regs->count() }}
+                                                        @endif
                                                     </td>
                                                     <td>
-                                                        <a class="btn-sm btn-success one-reg" href="{{ route(Auth::getDefaultDriver().'.reports.course_students', $course->id) }}" role="button"> تقرير الطلاب المسجلين <i class="icon-file-excel"></i></a>
+                                                        <a class="btn-sm btn-success one-reg" href="{{ route(Auth::getDefaultDriver().'.reports.course_students', array_filter(['id' => $course->id, 'regby' => app('request')->regby])) }}" role="button"> تقرير الطلاب المسجلين <i class="icon-file-excel"></i></a>
                                                     </td>
 
                                                 </tr>

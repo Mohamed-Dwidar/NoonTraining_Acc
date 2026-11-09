@@ -86,7 +86,7 @@ class CourseReg extends Model
     public function scopeFilter($query, $request)
     {
         // Join the courses and students tables
-        $query->with(['student', 'course']);
+        $query->with(['student', 'course', 'regByEmployee']);
 
         // Branch filter
         if (!empty($request['branch'])) {
@@ -112,6 +112,15 @@ class CourseReg extends Model
         //certificate filter
         if (isset($request['fltr_crt'])) {
             $query->where('is_recive_cert', $request['fltr_crt']);
+        }
+
+        // "تم التسجيل عن طريق" filter (regby = reg_by_employees.id, or 'none' = not set)
+        if (!empty($request['regby'])) {
+            if ($request['regby'] == 'none') {
+                $query->whereNull('reg_by_employee_id');
+            } else {
+                $query->where('reg_by_employee_id', $request['regby']);
+            }
         }
 
         //is_leave filter

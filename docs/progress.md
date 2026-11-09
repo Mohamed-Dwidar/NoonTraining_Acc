@@ -9,7 +9,7 @@
 ## Current status
 - **Branch:** `main` (2026-11-09).
 - **Working on:** new SettingModule — admin manages the "تم التسجيل عن طريق" names list (`reg_by_employees`); course page picks from it via AJAX and saves `course_regs.reg_by_employee_id` — done, not yet committed.
-- **Next up (feature):** reports per registered-by employee.
+- **Next up (feature):** dedicated per-employee summary report (?)
 - **Next up:** owner to confirm the "(?)" items in CLAUDE.md / this file and the README placeholders (name, planned modules, language), then pick work. Candidates: items under "Known issues", expense/income tracking from README (?).
 - **Known issues:**
   - `receiptAction` (admin + user Course controllers) calls `$this->courseRegReceipteService`, which is never injected, and there is no `course_reg_receipts` migration → receipt upload is broken/unused (?)
@@ -19,6 +19,7 @@
   - `UserService` assigns permissions with `permissions()->sync()` — bypasses spatie cache reset (?)
   - `Course::scopeFilter` interpolates `srch` directly into `whereRaw` → SQL injection risk (CourseReg uses bindings correctly)
   - `GET` routes perform deletes (`/delete/{id}`, `/deleteReg/{id}`) — no CSRF protection
+  - All-courses report export (`ReportAllCourses?export=yes`) → 500: `CourseExport` renders `admin.exports.courses_export`, which doesn't exist (`course_export.blade.php` is a registrations table)
   - Opening an admin URL without an admin session → 500 "Route [login] not defined" (auth redirect has no `login` route); affects all admin routes
   - `layoutmodule::users.login` is extended somewhere but that view doesn't exist (?)
   - Admin/User controllers duplicated — logic drifts between portals
@@ -73,10 +74,11 @@
 - **Pending:** receipt upload broken (Known issues); `coupon_id`, `need_work_agree` columns not clearly used (?)
 
 ### ReportModule
-- **Last updated:** 2026-10-17
+- **Last updated:** 2026-11-09
 - **Files:** `Controllers/{Admin/ReportAdminController,User/ReportUserController}.php`, `Exports/{CourseExport,CourseRegExport,LogExport}.php`, views `admin/*.blade.php`
 - **How it works:** reports on CourseReg — not paid, instalments, exam not paid, fully paid, cert received / not received, by company, all students, all courses, students of one course, dropouts (leave), and users' activity log by date range. Paginated; Excel export. User side scoped to own branch and behind `show_reports`.
-- **Pending:** README asks for colour-coding per report type — not checked (?)
+- **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 8 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave), both portals. Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
+- **Pending:** README asks for colour-coding per report type — not checked (?); all-courses export broken (Known issues)
 
 ### LogModule
 - **Last updated:** 2026-10-17
@@ -120,6 +122,7 @@
 - **Affects:** SettingModule, CourseModule, ReportModule, StudentModule, LayoutModule
 - **Data:** migration `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` builds the list from old text (spelling variants merged: آلاء، نايف، يوسف، إسراء، علي، ساره، رميساء، إنجي، أوصاف) and fills `reg_by_employee_id` (3,618 rows locally). "-", "المعهد", "حوالة", "570", empty stay without an id. Only fills NULL ids; reversible.
 - **Student page:** "تم التسجيل عن طريق" same as course page (change + dropdown + AJAX); assign-to-course form now a required dropdown saving `reg_by_employee_id` (`registerStudentToCourse` no longer writes the text column).
+- **Reports:** filter "تم التسجيل عن طريق" (`regby`) on the 8 student reports + their Excel exports, and on the all-courses report (+ per-course Excel) — both portals. Course page export fixed (was 500: missing `Excel` import, wrong export class) → now `CourseRegExport`, which includes "مسجل عن طريق".
 - **Commit:** (pending)
 
 ### 2026-10-17 — Initial project memory setup
