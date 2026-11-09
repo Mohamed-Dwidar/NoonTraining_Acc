@@ -23,6 +23,7 @@
             <th style="font-weight: bold; text-align: center">الحالة</th>
             <th>مسجل عن طريق</th>
             <th style="font-weight: bold; text-align: center">استلم الشهادة</th>
+            <th style="font-weight: bold">ملاحظات</th>
         </tr>
     </thead>
 
@@ -93,6 +94,9 @@
                     @else
                         نعم
                     @endif
+                </td>
+                <td>
+                    <label>{{ $reg->student->notes }}</label>
                 </td>
 
             </tr>
