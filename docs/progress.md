@@ -68,7 +68,7 @@
   - Payments (`course_reg_payments`): type (course instalment / exam / re-exam fees), Arabic `pay_method` enum, `paid_at`; paid flags recalculated in `CourseRegService` (?).
   - Unknown payments: transfers from unidentified payers, later assigned to a student's registration.
   - Per-student price / discount / exam-price overrides; receipt PDF generation; certificate delivered toggle.
-  - "Registered by": `course_regs.reg_by_employee_id` → `reg_by_employees` (SettingModule, added 2026-11-09). Course page dropdown lists active names; saved by AJAX through `{portal}.updateRegBy`: controller → `CourseRegService::findRegByEmployee` → `RegByEmployeeService::findActiveOne` → repository; then `CourseRegService::updateRegBy`. Admin or users with `can_change_regby` can change it. `CourseReg::registered_by_name` returns the list name (incl. soft-deleted), or the old text in `registered_by` for older rows; used everywhere it's displayed. Dropdown is Select2 RTL (`initRegBySelect()` in the view, initialised on "تغير" click with `dropdownParent` = the reg modal).
+  - "Registered by": `course_regs.reg_by_employee_id` → `reg_by_employees` (SettingModule, added 2026-11-09). Course page dropdown lists active names; saved by AJAX through `{portal}.updateRegBy`: controller → `CourseRegService::findRegByEmployee` → `RegByEmployeeService::findActiveOne` → repository; then `CourseRegService::updateRegBy`. Admin or users with `can_change_regby` can change it. Log description includes old and new name (`... - من <old> الي : <new>`; old empty → `----`). `CourseReg::registered_by_name` returns the list name (incl. soft-deleted), or the old text in `registered_by` for older rows; used everywhere it's displayed. Dropdown is Select2 RTL (`initRegBySelect()` in the view, initialised on "تغير" click with `dropdownParent` = the reg modal).
   - Filters: `CourseReg::scopeFilter` (eager-loads `regByEmployee`; `regby` key) and `Course::scopeFilter` (`regby` → `whereHas courses_regs`).
   - "نسخ البيانات" (copy registration info, course page): adds "تم التسجيل عن طريق : <name>" (read from the modal's `.regByName`) only for admins or users with `show_reg_by_in_copy` (`showRegByInCopy` JS const).
   - Course page Excel (`?export=yes`) → `ReportModule\Exports\CourseRegExport` (fixed 2026-11-09; was 500).
@@ -135,7 +135,7 @@
 - **Why:** store the employee who registered the student as an id (for reports) instead of free text.
 - **Affects:** SettingModule, CourseModule, StudentModule, ReportModule, LayoutModule, `custom.js`, `custom-rtl.css`, `modules_statuses.json`
 - **Commit:** 9f1f921, 80cfb2b (migrations folder case), ead253a, a40f3aa; docs checkpoint pending
-- **Later same day:** "نسخ البيانات" includes "تم التسجيل عن طريق" for admins / users with new permission `show_reg_by_in_copy` (seeder + user form checkboxes) — d4a2edd. Then: "قطاع العمل" in student Excel exports only for admins / users with new permission `show_company_in_reports` (id 7) — uncommitted
+- **Later same day:** "نسخ البيانات" includes "تم التسجيل عن طريق" for admins / users with new permission `show_reg_by_in_copy` (seeder + user form checkboxes) — d4a2edd. Then: "قطاع العمل" in student Excel exports only for admins / users with new permission `show_company_in_reports` (id 7) — uncommitted; `UpdateRegBy` log shows old → new name — uncommitted
 
 ### 2026-10-17 — Initial project memory setup
 - **Changed:** `CLAUDE.md`, `docs/progress.md` filled in from codebase exploration

@@ -492,11 +492,12 @@ class CourseAdminController extends Controller {
             return response()->json(['success' => "false", 'message' => 'الاسم غير موجود في القائمة'], 422);
         }
 
+        $old_reg_by = $course_reg->registered_by_name ?: '----';
         $course_reg = $this->courseRegService->updateRegBy($course_reg->id, $employee);
 
         //Add Log
         $action = 'تعديل تم التسجيل عن طريق';
-        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - الي : ' .  $course_reg->registered_by_name;
+        $description = 'تم تعديل تم التسجيل عن طريق في دورة : ' . $course_reg->course->name . ' - ' . $course_reg->student->name . ' - من ' . $old_reg_by . ' الي : ' . $course_reg->registered_by_name;
         $this->logService->recordLog($action, $description, url()->current());
         //
         return response()->json(
