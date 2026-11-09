@@ -8,8 +8,8 @@
 
 ## Current status
 - **Branch:** `main` (2026-11-09).
-- **Last done:** "تم التسجيل عن طريق" as an admin-managed names list (new SettingModule) + admin-only report filter — committed (9f1f921, 80cfb2b, ead253a, a40f3aa). All local migrations ran. Only docs changes uncommitted.
-- **Before deploying:** run on production `SELECT TRIM(registered_by), COUNT(*) FROM course_regs GROUP BY 1` and add any new spelling variants to the map in `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` before `php artisan module:migrate`; also enable `SettingModule` (`modules_statuses.json`) and `php artisan optimize:clear`. Create the new permission: `php artisan tinker --execute="Spatie\\Permission\\Models\\Permission::firstOrCreate(['name'=>'show_reg_by_in_copy','guard_name'=>'user'])"` (the seeder isn't re-runnable), confirm its id is 6, then `php artisan permission:cache-reset`.
+- **Last done:** "تم التسجيل عن طريق" as an admin-managed names list (new SettingModule) + admin-only report filter — committed (9f1f921, 80cfb2b, ead253a, a40f3aa, d4a2edd). All local migrations ran. Uncommitted: user permission `show_company_in_reports` gating "قطاع العمل" in student Excel exports.
+- **Before deploying:** run on production `SELECT TRIM(registered_by), COUNT(*) FROM course_regs GROUP BY 1` and add any new spelling variants to the map in `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` before `php artisan module:migrate`; also enable `SettingModule` (`modules_statuses.json`) and `php artisan optimize:clear`. Create the new permissions: `php artisan tinker --execute="foreach(['show_reg_by_in_copy','show_company_in_reports'] as \$n) Spatie\\Permission\\Models\\Permission::firstOrCreate(['name'=>\$n,'guard_name'=>'user'])"` (the seeder isn't re-runnable), confirm their ids are 6 and 7, then `php artisan permission:cache-reset`.
 - **Next up (feature, ?):** dedicated per-employee summary report; fix all-courses export.
 - **Next up:** owner to confirm the "(?)" items in CLAUDE.md / this file and the README placeholders (name, planned modules, language), then pick work. Candidates: items under "Known issues", expense/income tracking from README (?).
 - **Known issues:**
@@ -24,7 +24,7 @@
   - Opening an admin URL without an admin session → 500 "Route [login] not defined" (auth redirect has no `login` route); affects all admin routes
   - `layoutmodule::users.login` is extended somewhere but that view doesn't exist (?)
   - Git tracks both `Database/Migrations` and `Database/migrations` for Course/Location/Student (case-only duplicates from 80cfb2b; only lowercase is used). Remove the uppercase copies from the index when convenient (`git rm -r --cached Modules/<X>Module/Database/Migrations`, check on a case-sensitive checkout)
-  - User create/edit permission checkboxes use hard-coded permission ids (`value="1"`…`"6"`) → wrong permission assigned if production ids differ (check `SELECT id,name FROM permissions` before deploy)
+  - User create/edit permission checkboxes use hard-coded permission ids (`value="1"`…`"7"`) → wrong permission assigned if production ids differ (check `SELECT id,name FROM permissions` before deploy)
   - Admin/User controllers duplicated — logic drifts between portals
   - No real tests
 
@@ -83,6 +83,7 @@
 - **Last updated:** 2026-11-09
 - **Files:** `Controllers/{Admin/ReportAdminController,User/ReportUserController}.php`, `Exports/{CourseExport,CourseRegExport,LogExport}.php`, views `admin/*.blade.php`
 - **How it works:** reports on CourseReg — not paid, instalments, exam not paid, fully paid, cert received / not received, by company, all students, all courses, students of one course, dropouts (leave), and users' activity log by date range. Paginated; Excel export. User side scoped to own branch and behind `show_reports`.
+- **Student Excel exports** all render `exports/course_reg_export.blade.php` (8 student reports, per-course students, course page). Column "قطاع العمل" (`students.company`) shown only for admins or users with `show_company_in_reports` (`$showCompany` at top of the view).
 - **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 8 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave) — **admin only** (views wrap it in `Auth::guard('admin')->check()`; `ReportUserController` strips `regby` from the query). Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
 - **Pending:** README asks for colour-coding per report type — not checked (?); all-courses export broken (Known issues)
 
@@ -95,7 +96,7 @@
 ### PermissionModule
 - **Last updated:** 2026-10-17
 - **Files:** `Database/Seeders/PermissionSeederTableSeeder.php`, `app/Http/Models/_*.php`
-- **How it works:** seeds `user`-guard permissions: `show_reports`, `can_delete`, `can_edit`, `view_only`, `can_change_regby`, `show_reg_by_in_copy` (2026-11-09; last two via `firstOrCreate`). User create/edit forms list them as **hard-coded checkboxes whose `value` is the permission id** (1–6) — ids must match the DB.
+- **How it works:** seeds `user`-guard permissions: `show_reports`, `can_delete`, `can_edit`, `view_only`, `can_change_regby`, `show_reg_by_in_copy`, `show_company_in_reports` (2026-11-09; last three via `firstOrCreate`). User create/edit forms list them as **hard-coded checkboxes whose `value` is the permission id** (1–7) — ids must match the DB.
 - **Pending:** seeder not idempotent; no UI for roles.
 
 ### SettingModule (إعدادات النظام)
@@ -134,7 +135,7 @@
 - **Why:** store the employee who registered the student as an id (for reports) instead of free text.
 - **Affects:** SettingModule, CourseModule, StudentModule, ReportModule, LayoutModule, `custom.js`, `custom-rtl.css`, `modules_statuses.json`
 - **Commit:** 9f1f921, 80cfb2b (migrations folder case), ead253a, a40f3aa; docs checkpoint pending
-- **Later same day:** "نسخ البيانات" includes "تم التسجيل عن طريق" for admins / users with new permission `show_reg_by_in_copy` (seeder + user form checkboxes) — uncommitted
+- **Later same day:** "نسخ البيانات" includes "تم التسجيل عن طريق" for admins / users with new permission `show_reg_by_in_copy` (seeder + user form checkboxes) — d4a2edd. Then: "قطاع العمل" in student Excel exports only for admins / users with new permission `show_company_in_reports` (id 7) — uncommitted
 
 ### 2026-10-17 — Initial project memory setup
 - **Changed:** `CLAUDE.md`, `docs/progress.md` filled in from codebase exploration

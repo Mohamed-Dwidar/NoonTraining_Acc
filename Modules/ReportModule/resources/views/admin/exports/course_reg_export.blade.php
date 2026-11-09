@@ -1,3 +1,7 @@
+@php
+    // "قطاع العمل": admins, or users with 'show_company_in_reports'
+    $showCompany = Auth::guard('admin')->check() || Auth::guard('user')->user()?->can('show_company_in_reports');
+@endphp
 <table class="table mb-0">
     <thead>
         <tr class="head">
@@ -9,7 +13,9 @@
             <th style="font-weight: bold">الجوال</th>
             <th style="font-weight: bold">البريد الإلكتروني</th>
             <th style="font-weight: bold">تاريخ الميلاد</th>
-            <th style="font-weight: bold">قطاع العمل</th>
+            @if ($showCompany)
+                <th style="font-weight: bold">قطاع العمل</th>
+            @endif
             <th style="font-weight: bold">المؤهل الدراسي</th>
             <th style="font-weight: bold">السعر المتفق عليه</th>
             <th style="font-weight: bold">المدفوع</th>
@@ -53,9 +59,11 @@
                 <td>
                     <label>{{ $reg->student->birthdate ? $reg->student->birthdate : '' }}</label>
                 </td>
-                <td>
-                    <label>{{ $reg->student->company}}</label>
-                </td>
+                @if ($showCompany)
+                    <td>
+                        <label>{{ $reg->student->company }}</label>
+                    </td>
+                @endif
                 <td>
                     <label>{{ $reg->student->academic_qualification }}</label>
                 </td>

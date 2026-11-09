@@ -123,6 +123,12 @@
                                                             <label for="show_reg_by_in_copy">عرض التسجيل عن طريق في النسخ</label>
                                                         </div>
 
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="show_company_in_reports" value="7"
+                                                                {{ in_array('show_company_in_reports', old('permissions', $user->permissions->pluck('name')->toArray())) ? 'checked' : '' }}>
+                                                            <label for="show_company_in_reports">عرض القطاع في التقارير</label>
+                                                        </div>
+
                                                         {{-- @endforeach --}}
                                                     </div>
                                                 </div>
