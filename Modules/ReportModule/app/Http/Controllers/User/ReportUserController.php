@@ -190,6 +190,22 @@ class ReportUserController extends Controller {
         return view('reportmodule::admin.students_leave', compact('courses_regs', 'branches'));
     }
 
+    public function reportLawer(Request $request) {
+        $request->query->remove('regby'); // "تم التسجيل عن طريق" filter is admin-only
+        $request['fltr_lawer'] = 1;
+        $branches = [];
+        $request['branch'] = Auth::guard('user')->user()->branch_id;
+
+        $query = $this->courseRegService->findAllWithFilter($request->all());
+
+        if ($request->export == 'yes') {
+            return Excel::download(new CourseRegExport($query->get()), 'تقرير بالمحالين إلى القضاء.xlsx');
+        }
+
+        $courses_regs = $query->paginate(50);
+        return view('reportmodule::admin.students_lawer', compact('courses_regs', 'branches'));
+    }
+
     /*public function reportStudentsByCompany(Request $request)
     {
         return view('reportmodule::admin.students_by_company', compact('courses_regs'));

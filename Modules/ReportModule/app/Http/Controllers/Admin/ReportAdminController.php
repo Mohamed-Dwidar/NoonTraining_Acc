@@ -217,6 +217,24 @@ class ReportAdminController extends Controller {
         return view('reportmodule::admin.students_leave', compact('courses_regs', 'branches', 'reg_by_employees'));
     }
 
+    public function reportLawer(Request $request) {
+        $branches = $this->branchService->findAll();
+        $request['fltr_lawer'] = 1;
+
+        if ($request->brnch)
+            $request['branch'] = $request->brnch;
+
+        $query = $this->courseRegService->findAllWithFilter($request->all());
+
+        if ($request->export == 'yes') {
+            return Excel::download(new CourseRegExport($query->get()), 'تقرير بالمحالين إلى القضاء.xlsx');
+        }
+
+        $courses_regs = $query->paginate(50);
+        $reg_by_employees = $this->regByEmployeeService->findAllForFilter();
+        return view('reportmodule::admin.students_lawer', compact('courses_regs', 'branches', 'reg_by_employees'));
+    }
+
     /*public function reportStudentsByCompany(Request $request)
     {
         return view('reportmodule::admin.students_by_company', compact('courses_regs'));

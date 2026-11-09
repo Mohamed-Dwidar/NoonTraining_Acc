@@ -29,6 +29,7 @@ Route::group(['prefix' => 'admin/reports', 'middleware' => ['auth:admin']], func
     Route::get('ReportAllCourses', 'Admin\ReportAdminController@ReportAllCourses')->name('admin.reports.courses');
     Route::get('ReportAllCourseStudents/{id}', 'Admin\ReportAdminController@ReportAllCourseStudents')->name('admin.reports.course_students');
     Route::get('ReportStudentsLeave', 'Admin\ReportAdminController@reportStudentsLeave')->name('admin.reports.students_leave');
+    Route::get('ReportStudentsLawer', 'Admin\ReportAdminController@reportLawer')->name('admin.reports.students_lawer');
     Route::get('ReportUsersLog', 'Admin\ReportAdminController@usersLog')->name('admin.reports.users_log');
 });
 
@@ -48,6 +49,7 @@ Route::group(['prefix' => 'user/reports', 'middleware' => ['auth:user']], functi
             Route::get('ReportAllCourses', 'User\ReportUserController@ReportAllCourses')->name('user.reports.courses');
             Route::get('ReportAllCourseStudents/{id}', 'User\ReportUserController@ReportAllCourseStudents')->name('user.reports.course_students');
             Route::get('ReportStudentsLeave', 'User\ReportUserController@reportStudentsLeave')->name('user.reports.students_leave');
+            Route::get('ReportStudentsLawer', 'User\ReportUserController@reportLawer')->name('user.reports.students_lawer');
             Route::get('ReportUsersLog', 'User\ReportUserController@usersLog')->name('user.reports.users_log');
         }
     );

@@ -83,9 +83,9 @@
 ### ReportModule
 - **Last updated:** 2026-11-09
 - **Files:** `Controllers/{Admin/ReportAdminController,User/ReportUserController}.php`, `Exports/{CourseExport,CourseRegExport,LogExport}.php`, views `admin/*.blade.php`
-- **How it works:** reports on CourseReg — not paid, instalments, exam not paid, fully paid, cert received / not received, by company, all students, all courses, students of one course, dropouts (leave), and users' activity log by date range. Paginated; Excel export. User side scoped to own branch and behind `show_reports`.
+- **How it works:** reports on CourseReg — not paid, instalments, exam not paid, fully paid, cert received / not received, by company, all students, all courses, students of one course, dropouts (leave), referred to court ("تقرير بالمحالين إلى القضاء", `is_lawer = 1`, `fltr_lawer` key, route `{portal}.reports.students_lawer`, view `students_lawer`; 2026-11-09), and users' activity log by date range. Paginated; Excel export. User side scoped to own branch and behind `show_reports`.
 - **Student Excel exports** all render `exports/course_reg_export.blade.php` (8 student reports, per-course students, course page). Column "قطاع العمل" (`students.company`) shown only for admins or users with `show_company_in_reports` (`$showCompany` at top of the view).
-- **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 8 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave) — **admin only** (views wrap it in `Auth::guard('admin')->check()`; `ReportUserController` strips `regby` from the query). Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
+- **Filter "تم التسجيل عن طريق"** (2026-11-09): on the 9 student reports (all, not paid, instalments, exam not paid, paid, cert received / not, leave, lawer) — **admin only** (views wrap it in `Auth::guard('admin')->check()`; `ReportUserController` strips `regby` from the query). Query key `regby` = `reg_by_employees.id` or `none` (not set) → `CourseReg::scopeFilter`. Options from `RegByEmployeeService::findAllForFilter` (non-deleted; inactive labelled "(غير مفعل)"). JS in `public/admin-assets/js/custom.js` (`.filter-item-regby`, `#fltr_regby_val`) → also carried to the Excel export and pagination. All-courses report: same filter via `Course::scopeFilter` (`whereHas courses_regs`); "الطلاب" shows `employee / total`; per-course "تقرير الطلاب المسجلين" Excel link carries `regby`.
 - **Pending:** README asks for colour-coding per report type — not checked (?); all-courses export broken (Known issues)
 
 ### LogModule
@@ -126,6 +126,12 @@
 ---
 
 ## Session log
+
+### 2026-11-09 — Report "تقرير بالمحالين إلى القضاء"
+- **Changed:** `CourseReg::scopeFilter` `fltr_lawer`; `reportLawer` in Admin + User report controllers; routes `ReportStudentsLawer`; view `students_lawer.blade.php` (copy of leave report, status cell shows "[ محال إلى القضاء ]"); card on reports index.
+- **Why:** list registrations with `is_lawer = 1`.
+- **Affects:** ReportModule, CourseModule (model filter)
+- **Commit:** (pending)
 
 ### 2026-11-09 — "طرق الدفع" payment methods list
 - **Changed:** SettingModule: `payment_methods` table + model/repo/service/admin controller/views (`admin/settings/payment_methods`), settings landing row, nav sub-menu item. CourseModule: migrations `000005` (add `course_reg_payments.payment_method_id`) and `000006` (create the 7 old enum values as methods, fill the id); payments modal (`partials/reg_modals`) lists active methods and posts `payment_method_id`; Course `payAction` (both portals) validates an active method; `CourseRegPaymentService` saves the id; `CourseRegPayment::payment_method_name` for display; unknown-payment assign sets the id by name. Student `show()` (both portals) passes `$paymentMethods`.

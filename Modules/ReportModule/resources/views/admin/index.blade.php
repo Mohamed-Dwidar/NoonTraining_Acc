@@ -194,6 +194,23 @@
                     </div>
                 </div>
 
+                <div class="col-xl-3 col-lg-6 col-xs-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <a href="{{ route(Auth::getDefaultDriver() . '.reports.students_lawer') }}">
+                                <div class="card-block">
+                                    <div class="media">
+                                        <div class="media-body text-xs-center">
+                                            <h3 class="teal"> </h3>
+                                            <h5>تقرير بالمحالين إلى القضاء</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 {{-- <div class="col-xl-3 col-lg-6 col-xs-12">
                     <div class="card">
                         <div class="card-body">

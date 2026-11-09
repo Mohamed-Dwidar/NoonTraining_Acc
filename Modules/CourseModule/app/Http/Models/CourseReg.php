@@ -129,6 +129,11 @@ class CourseReg extends Model
             $query->where('is_leave', $request['fltr_leave']);
         }
 
+        //is_lawer filter (محال إلى القضاء)
+        if (isset($request['fltr_lawer'])) {
+            $query->where('is_lawer', $request['fltr_lawer']);
+        }
+
         // Search filter for students' name, phone1, and id_nu
         if (!empty($request['srch'])) {
             $searchTerm = strtoupper($request['srch']);
