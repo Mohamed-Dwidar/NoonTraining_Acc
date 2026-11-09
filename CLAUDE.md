@@ -21,7 +21,7 @@ Then suggest a commit message.
 ## Stack
 - Framework: Laravel 10 / PHP ^8.1, modular via `nwidart/laravel-modules` v10
 - Database: MySQL (?) — `DB_CONNECTION` in .env; raw SQL uses MySQL-style `"%...%"` LIKE strings
-- Frontend: Blade + jQuery + Bootstrap RTL admin theme (static files in `public/admin-assets/`). Select2 4.1 from CDN (loaded in `layoutmodule::admin.main`; use `dir: 'rtl'` — native `<select>` options can't be right-aligned on macOS). Report filters/export params are built in `public/admin-assets/js/custom.js`. Vite is configured but not used by module views (?)
+- Frontend: Blade + jQuery + Bootstrap RTL admin theme (static files in `public/admin-assets/`). Select2 4.1 from CDN (loaded in `layoutmodule::admin.main`; use `dir: 'rtl'` — native `<select>` options can't be right-aligned on macOS). Report filters/export params are built in `public/admin-assets/js/custom.js`. Responsive rules (< 992px tablet, < 768px phone) live in the "Responsive overrides" section at the **end** of `public/admin-assets/css-rtl/custom-rtl.css` — keep it last and add new breakpoint rules there; wide tables scroll inside `.table-responsive` on small screens. Vite is configured but not used by module views (?)
 - Auth: custom session guards `admin` (model `AdminModule\...\Admin`, table `admins`) and `user` (model `UserModule\...\User`, table `users`) in `config/auth.php`
 - Permissions: `spatie/laravel-permission` v6, permissions on guard `user` only (admins bypass)
 - Key packages: `prettus/l5-repository` (repositories), `maatwebsite/excel` (exports), `niklasravnsborg/laravel-pdf` (receipt PDF), `geniusts/hijri-dates` (no longer used — Hijri removed), `laravel/sanctum` (unused (?))
@@ -63,7 +63,7 @@ Then suggest a commit message.
 - Branch scoping (user portal): force `branch_id` / `branch` filter from `Auth::guard('user')->user()->branch_id` and compare ownership in show/edit
 - Permission checks: `$user->can('can_edit')` in controllers, `@can` / `@cannot('view_only')` in Blade, `permission:show_reports` middleware on user reports
 - Audit: call `LogService::recordLog($action, $description, $url)` on create/update/delete actions
-- Filtering: model `scopeFilter($query, $request)` with short query keys (`srch`, `srt`, `branch`, `fltr_sts`, `fltr_crt`, `fltr_leave`)
+- Filtering: model `scopeFilter($query, $request)` with short query keys (`srch`, `srt`, `branch`, `fltr_sts`, `fltr_crt`, `fltr_leave`, `fltr_lawer`, `regby`, `dateRngFrm`/`dateRngTo` as `yyyy-mm-dd`); report date filter UI = partial `reportmodule::admin.partials.date_range_filter`
 - Flash: `back()->with('success', 'تمت العمليه بنجاح.')` / `->withErrors(...)`
 - Language / direction: Arabic UI, RTL CSS (`css-rtl/`), though `<html lang="en" data-textdirection="ltr">` in layout. Arabic enum values stored in DB (`pay_type`; old `pay_method` — payments now use `payment_method_id`)
 - Naming: snake_case columns with abbreviations (`id_nu`, `group_nu`, `is_recive_cert`); methods mostly camelCase, some PascalCase (`ReportAllStudents`, `UpdateRegBy`); migrations edited in place historically — don't continue that

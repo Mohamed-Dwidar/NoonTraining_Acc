@@ -47,6 +47,22 @@ a {
     margin-top: 18px;
 }
 
+.header-user-nav {
+    margin-left: 63px;
+}
+
+/* header + nav rows sit outside a .container, so their -15px margins make the page scroll sideways */
+body > .row,
+.header-navbar .navbar-wrapper > .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Pace's CSS isn't loaded, so its bar is invisible — but the bar still widens the page (horizontal scroll on phones) */
+.pace {
+    display: none;
+}
+
 
 .dropdown-user.nav-item i {
     float: right;
@@ -196,7 +212,8 @@ body.vertical-layout.vertical-menu.menu-expanded .navbar .navbar-header {
 }
 
 .top-menu li.has-submenu:hover .nav-submenu,
-.top-menu li.has-submenu:focus-within .nav-submenu {
+.top-menu li.has-submenu:focus-within .nav-submenu,
+.top-menu li.has-submenu.open .nav-submenu {
     visibility: visible;
     opacity: 1;
     transform: translateY(0);
@@ -574,36 +591,6 @@ body.vertical-layout.vertical-menu.menu-expanded .navbar .navbar-header {
     }
 }
 
-@media (min-width:480px) and (max-width:767px) {
-    .nav-links {
-        text-align: center;
-        margin-top: 50px;
-    }
-
-    .top-menu i {
-        font-size: 20px;
-    }
-
-    .card-form span.country-code {
-        margin-top: 11px;
-    }
-}
-
-@media (max-width:479px) {
-    .nav-links {
-        text-align: center;
-        margin-top: 50px;
-    }
-
-    .top-menu i {
-        font-size: 20px;
-    }
-
-    .card-form span.country-code {
-        margin-top: 11px;
-    }
-}
-
 @media print {
 
     code[class*='language-'],
@@ -815,4 +802,272 @@ nav.pagination-nav {
 
 .rpt-date-filter label {
     margin: 0;
+}
+
+
+/* Responsive overrides — keep at the end of the file so they win over the rules above */
+/* ===== Phones + tablets (< 992px): compact one-line header; tables scroll inside their card instead of widening the page
+   (style-admin.css sets .table-responsive overflow-x: inherit for desktop) ===== */
+@media (max-width:991px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* headers on one line; cells wrap but never shrink to one word per line */
+    .table-responsive .table th {
+        white-space: nowrap;
+    }
+
+    .table-responsive .table td {
+        min-width: 120px;
+    }
+
+    .table-responsive .table td:first-child {
+        min-width: 170px;
+    }
+
+    /* settings sub-menu: its item is the last (left-most) one → open towards the right, inside the screen */
+    .top-menu li .nav-submenu {
+        right: auto;
+        left: 0;
+    }
+
+    /* --- Header: one compact line — logo | branch | user menu --- */
+    .header-navbar .navbar-wrapper > .row {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        min-height: 58px;
+        padding: 0 8px;
+    }
+
+    .header-navbar .navbar-wrapper > .row > [class*="col-"] {
+        float: none;
+        width: auto;
+        padding: 0;
+        flex: 0 0 auto;
+    }
+
+    .header-navbar .navbar-wrapper > .row > [class*="col-"]:first-child {
+        flex: 1 1 auto;
+        min-width: 0;
+        text-align: center;
+    }
+
+    .header-navbar .h-logo {
+        order: -1;
+    }
+
+    .header-navbar .h-logo img.logo {
+        height: 50px;
+        padding: 4px;
+    }
+
+    .header-branch {
+        float: none;
+        width: auto;
+        margin: 0;
+        padding: 0 6px;
+        font-size: 12px;
+    }
+
+    .header-branch span {
+        display: inline-block;
+        max-width: 100%;
+        padding: 4px 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+    }
+
+    .header-navbar .h-info {
+        margin-top: 0;
+    }
+
+    .header-user-nav {
+        margin-left: 0;
+    }
+
+    .header-user {
+        margin: 0;
+        padding: 0 4px;
+        font-size: 13px;
+    }
+
+    .header-navbar .navbar-nav .header-user .nav-link {
+        padding: 6px 8px;
+    }
+
+    .header-user .user-name {
+        display: inline-block;
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .header-user .dropdown-menu {
+        left: 0 !important;
+        right: auto !important;
+    }
+
+    .dropdown-user .dropdown-menu.arrow::after,
+    .dropdown-user .dropdown-menu.arrow::before {
+        left: 20px;
+    }
+
+    .nav-links {
+        margin-top: 6px;
+    }
+}
+
+/* ===== Phones (< 768px) ===== */
+@media (max-width:767px) {
+
+    /* --- Nav: small icons, 4 per row --- */
+    .nav-links {
+        margin-top: 6px;
+        padding: 0 6px;
+    }
+
+    .top-menu {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        position: relative;
+        margin: 0;
+        padding: 0;
+    }
+
+    .top-menu > li {
+        flex: 0 0 25%;
+        max-width: 25%;
+        padding: 2px;
+    }
+
+    .top-menu > li > a {
+        line-height: 1.3;
+        padding: 6px 2px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .top-menu i {
+        font-size: 18px;
+        float: none;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    /* sub-menu opens under the whole nav (full width) instead of off-screen beside its item */
+    .top-menu li.has-submenu {
+        position: static;
+    }
+
+    .top-menu li .nav-submenu {
+        left: 4px;
+        right: 4px;
+        min-width: 0;
+    }
+
+    .top-menu li .nav-submenu li a {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .top-menu li .nav-submenu li a i {
+        display: inline-block;
+        margin-bottom: 0;
+    }
+
+    /* --- Content --- */
+    html body .content .content-wrapper {
+        padding: 8px;
+    }
+
+    .content-header h3 {
+        font-size: 1.15rem;
+    }
+
+    .card-header {
+        padding: 12px;
+    }
+
+    .card-header h4.card-title {
+        float: none !important;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .card-header .row > [class*="col-"] {
+        margin-bottom: 6px;
+    }
+
+    .filters {
+        margin-bottom: 6px;
+    }
+
+    .header-search {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .header-search label {
+        margin: 0;
+    }
+
+    .header-search #srchInput {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .rpt-date-filter {
+        float: none;
+        clear: both;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+        white-space: normal;
+        margin: 6px 0;
+    }
+
+    .fltr-date-range input,
+    .fltr-date-range-reg input {
+        width: 95px;
+    }
+
+    /* course page info card: one item per line */
+    .course-view {
+        margin: 0;
+        line-height: 32px;
+    }
+
+    .course-view .row > [class*="col-"] {
+        width: 100%;
+    }
+
+    .card-form {
+        padding: 0 8px;
+    }
+
+    .card-form span.country-code {
+        margin-top: 11px;
+    }
+
+    .reg-modal select.form-control {
+        width: 100% !important;
+        max-width: 230px;
+    }
+
+    /* fixed footer covers the end of the page on small screens */
+    .footer {
+        position: static;
+    }
 }

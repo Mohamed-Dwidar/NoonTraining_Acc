@@ -152,3 +152,16 @@ $(document).ready(function () {
 
     ////////////////////
 });
+
+// Nav sub-menu (e.g. إعدادات النظام): open on tap — touch screens have no hover
+$(document).on('click', '.top-menu .submenu-toggle', function (e) {
+    e.preventDefault();
+    var $li = $(this).closest('.has-submenu');
+    $('.top-menu .has-submenu').not($li).removeClass('open');
+    $li.toggleClass('open');
+});
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.top-menu .has-submenu').length) {
+        $('.top-menu .has-submenu').removeClass('open');
+    }
+});
