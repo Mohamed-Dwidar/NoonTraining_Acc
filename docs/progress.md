@@ -8,7 +8,7 @@
 
 ## Current status
 - **Branch:** `main` (2026-11-09).
-- **Last done:** "تم التسجيل عن طريق" as an admin-managed names list (new SettingModule) + admin-only report filter — committed (9f1f921, 80cfb2b, ead253a, a40f3aa, d4a2edd). All local migrations ran. Uncommitted: user permission `show_company_in_reports` gating "قطاع العمل" in student Excel exports.
+- **Last done:** "تم التسجيل عن طريق" as an admin-managed names list (new SettingModule) + admin-only report filter — committed (9f1f921, 80cfb2b, ead253a, a40f3aa, d4a2edd). All local migrations ran. Since then: `show_company_in_reports` permission, old→new name in `UpdateRegBy` log. Uncommitted: student page registrations use the course page's modals (shared partials).
 - **Before deploying:** run on production `SELECT TRIM(registered_by), COUNT(*) FROM course_regs GROUP BY 1` and add any new spelling variants to the map in `2026_11_09_000003_fill_reg_by_employee_id_from_registered_by_text` before `php artisan module:migrate`; also enable `SettingModule` (`modules_statuses.json`) and `php artisan optimize:clear`. Create the new permissions: `php artisan tinker --execute="foreach(['show_reg_by_in_copy','show_company_in_reports'] as \$n) Spatie\\Permission\\Models\\Permission::firstOrCreate(['name'=>\$n,'guard_name'=>'user'])"` (the seeder isn't re-runnable), confirm their ids are 6 and 7, then `php artisan permission:cache-reset`.
 - **Next up (feature, ?):** dedicated per-employee summary report; fix all-courses export.
 - **Next up:** owner to confirm the "(?)" items in CLAUDE.md / this file and the README placeholders (name, planned modules, language), then pick work. Candidates: items under "Known issues", expense/income tracking from README (?).
@@ -54,14 +54,14 @@
 ### StudentModule
 - **Last updated:** 2026-11-09
 - **Files:** `Controllers/{Admin/StudentAdminController,User/StudentUserController}.php`, `Services/StudentService.php`, `Repository/StudentRepository.php`, `Models/Student.php`, views `admin/{index,create,edit,show,student_export}`
-- **How it works:** CRUD with soft delete → archive list, restore, permanent delete. User portal locks to own branch. Student page lists registrations/payments and lets staff assign the student to a course. Fields include `academic_qualification` (added 2026-03) and notes.
+- **How it works:** CRUD with soft delete → archive list, restore, permanent delete. User portal locks to own branch. Student page lists registrations and lets staff assign the student to a course. Each registration row has the same buttons and modals as the course page (التفاصيل / الدفعات / تغيير حالة الدفع / حذف + "استعراض الدورة") via `coursemodule::admin.partials.*` (2026-11-09). Fields include `academic_qualification` (added 2026-03) and notes.
   - "تم التسجيل عن طريق" on the student page: registration modal has the same change button + dropdown + AJAX as the course page (`{portal}.updateRegBy`); the assign-to-course form uses a required dropdown `reg_by_employee_id` (validated in `assignStudentToCourse` via `CourseRegService::findRegByEmployee`). List comes from `RegByEmployeeService::findAllActive` in `show()`. Both dropdowns use Select2 RTL.
 - **Decisions:** delete restricted to admin / `can_delete` permission.
 - **Pending:** `note`/`notes` mismatch; send-mail feature missing (see Known issues).
 
 ### CourseModule (courses, registrations, payments)
 - **Last updated:** 2026-11-09
-- **Files:** `Controllers/Admin/{CourseAdminController,UnknownPaymentAdminController}.php` + `User/` twins; `Services/{CourseService,CourseRegService,CourseRegPaymentService,CourseRegStatusService,UnknownPaymentService}.php`; models `Course, CourseReg, CourseRegPayment, CourseRegStatus, CourseRegReceipt, UnknownPayment`; views `admin/{index,show,registers_list,receipt_pdf}`, `admin/unknown_payment/*`
+- **Files:** `Controllers/Admin/{CourseAdminController,UnknownPaymentAdminController}.php` + `User/` twins; `Services/{CourseService,CourseRegService,CourseRegPaymentService,CourseRegStatusService,UnknownPaymentService}.php`; models `Course, CourseReg, CourseRegPayment, CourseRegStatus, CourseRegReceipt, UnknownPayment`; views `admin/{index,show,registers_list,receipt_pdf}`, `admin/unknown_payment/*`; shared registration partials `admin/partials/{reg_actions,reg_modals,reg_modals_js}` (row buttons, details/payments/status modals for one `$reg` + their JS incl. نسخ البيانات; need `$employees`; rows need `id="reg{id}"` with `.paid_status_id` / `.paid_exam_id`) — used by the course page and the student page; change them once for both
 - **How it works:**
   - `Course`: name, group no., org no., dates (stored as strings), price, exam fees, branch.
   - `CourseReg` (student ↔ course): `main_price` / `student_price` / `price` (discount = `student_price − price`), exam fees, status (`course_reg_statuses`, with color), flags `is_course_paid`, `is_exam_paid`, `is_recive_cert`, `is_leave`, `is_free`; registered-by (below).
@@ -123,6 +123,12 @@
 ---
 
 ## Session log
+
+### 2026-11-09 — Student page: registration buttons/modals like the course page
+- **Changed:** extracted the course page's registration buttons, 3 modals and their JS into `CourseModule/resources/views/admin/partials/{reg_actions,reg_modals,reg_modals_js}.blade.php`; course page includes them (rendered HTML unchanged); student page now includes them too (old simple details/payments modals and their JS removed).
+- **Why:** show التفاصيل / الدفعات / تغيير حالة الدفع on the student page the same as on the course page, without duplicating ~1,100 lines.
+- **Affects:** CourseModule + StudentModule show views (both portals). Backend unchanged (actions use `back()`).
+- **Commit:** pending
 
 ### 2026-11-09 — "تم التسجيل عن طريق" names list (SettingModule) + report filter
 - **Changed:**

@@ -285,38 +285,30 @@
                                     <tbody>
                                         @if (!empty($student->courses_regs))
                                             @foreach ($student->courses_regs as $reg)
-                                                <tr>
+                                                <tr id="reg{{ $reg->id }}">
                                                     <td class="strong"> {{ $reg->course->FullName }}</td>
                                                     <td>{{ $reg->course->start_at }}</td>
                                                     <td>
-                                                        @if ($reg->main_price == $reg->price)
-                                                            {{ $reg->price }}
-                                                        @else
-                                                            <div>
-                                                                <span class="regprice"
-                                                                    reg_id="{{ $reg->id }}">{{ $reg->price }}</span>
-                                                                <br>
-                                                                <span class="small"
-                                                                    style="text-decoration: line-through">{{ $reg->main_price }}</span>
-                                                        @endif
+                                                        <div>
+                                                            <span class="regprice" reg_id="{{ $reg->id }}">{{ $reg->price }}</span>
+                                                            @if ($reg->main_price != $reg->price)
+                                                            <br>
+                                                            <span class="small" style="text-decoration: line-through">{{ $reg->main_price }}</span>
+                                                            @endif
+                                                        </div>
                                                     </td>
                                                     <td>{{ number_format($reg->coursePaidAmount, 2) }}</td>
                                                     <td>
                                                         @if ($reg->is_free == 1)
                                                             0.00
                                                         @else
-                                                            {{ number_format($reg->price - $reg->coursePaidAmount, 2) }}
+                                                            <span class="remaining_amount" reg_id="{{ $reg->id }}">{{ number_format($reg->price - $reg->coursePaidAmount, 2) }}</span>
                                                         @endif
                                                     </td>
-                                                    {{-- <td class="align-center">
-                                                        @if ($reg->is_exam_paid == 0)
-                                                        <i class="fa fa-close red list-boolean-icon"></i>
-                                                        @else
-                                                        <i class="fa fa-check green list-boolean-icon"></i>
-                                                        @endif
-                                                    </td> --}}
-                                                    <td class="align-center"
+                                                    <td class="align-center paid_status"
                                                         style="font-weight:bold; background-color: {{ $reg->status->color }} ">
+                                                        <div style="display: none" class="paid_status_id">{{ $reg->is_course_paid }}</div>
+                                                        <div style="display: none" class="paid_exam_id">{{ $reg->is_exam_paid }}</div>
                                                         @if ($reg->is_leave == 1)
                                                             [ مغادر ] &nbsp;&nbsp;&nbsp;
                                                         @endif
@@ -331,404 +323,17 @@
                                                         @endif
                                                     </td>
 
-
-                                                    <td style="width: 420px">
-                                                        <a class="btn-sm btn-warning one-reg" href="#"
-                                                            id="{{ $reg->id }}" role="button" data-toggle="modal"
-                                                            data-target="#modal-reg-{{ $reg->id }}">التفاصيل</a>
-
-
-                                                        <a class="btn-sm btn-primary one-reg"
+                                                    <td style="width: 520px">
+                                                        <a class="btn-sm btn-success"
                                                             href="{{ route(Auth::getDefaultDriver() . '.courses.show', $reg->course->id) }}">استعراض
                                                             الدورة</a>
 
-
-                                                        @cannot('view_only')
-                                                        @if (Auth::guard('admin')->check() || Auth::user()->can('can_delete'))
-                                                            <a class="btn-sm btn-danger"
-                                                                href="{{ route(Auth::getDefaultDriver() . '.courses.delete_reg', $reg->id) }}"
-                                                                onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطلب ؟')"
-                                                                role="button">حذف</a>
-                                                        @endif
-                                                        @endcannot
-
-                                                        {{-- <a class="btn-sm btn-warning one-pay" href="#"
-                                                            id="{{ $reg->id }}" role="button" data-toggle="modal"
-                                                            data-target="#modal-pay-{{ $reg->id }}">الدفعات</a> --}}
-
-                                                        {{-- <a class="btn-sm btn-danger"
-                                                href="{{route(Auth::getDefaultDriver().'.courses.delete_reg',$reg->id)}}"
-                                                onclick="return confirm('هل انت متأكد انك تريد حذف هذا الطلب ؟')"
-                                                role="button">حذف</a> --}}
+                                                        {{-- التفاصيل / الدفعات / تغيير حالة الدفع / حذف — same as course page --}}
+                                                        @include('coursemodule::admin.partials.reg_actions')
                                                     </td>
                                                 </tr>
 
-                                                <div class="modal fade text-xs-left reg-modal"
-                                                    id="modal-reg-{{ $reg->id }}" tabindex="-1" role="dialog"
-                                                    aria-labelledby="myModalLabel90" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document" style="max-width: 800px;">
-                                                        <div class="modal-content">
-                                                            <div id="reg-{{ $reg->id }}-info" style="">
-                                                                <div class="modal-body content-reports reg-modal"
-                                                                    style="padding:0">
-                                                                    <div class="statistic-table custom-bar">
-                                                                        <div class="content-body">
-                                                                            <section class="card">
-                                                                                <div class="card-header">
-                                                                                    <h4 class="card-title"
-                                                                                        style="float: right;">
-                                                                                        <i class="icon-desktop"></i>
-                                                                                        &nbsp;&nbsp;
-                                                                                        {{ $reg->course->FullName }}
-                                                                                    </h4>
-
-                                                                                    <button type="button" class="close"
-                                                                                        data-dismiss="modal"
-                                                                                        aria-label="Close">
-                                                                                        <span
-                                                                                            aria-hidden="true">&times;</span>
-                                                                                    </button>
-
-                                                                                </div>
-                                                                                <div class="card-block reg-template">
-                                                                                    <div class="card-text col-md-12">
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12 align-center"
-                                                                                                style="padding:10px 0;margin-bottom: 25px;font-weight:bold; background-color: {{ $reg->status->color }} ">
-                                                                                                @if ($reg->is_leave == 1)
-                                                                                                    [ مغادر ]
-                                                                                                    &nbsp;&nbsp;&nbsp;
-                                                                                                @endif
-                                                                                                {{ $reg->status->status }}
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    تبدأ في</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ $reg->course->start_at }}
-                                                                                                </div>
-
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    تنتهي في</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ $reg->course->end_at }}
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    السعر المتفق عليه</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    @if ($reg->main_price == $reg->price)
-                                                                                                        {{ $reg->price }}
-                                                                                                    @else
-                                                                                                        &nbsp;
-                                                                                                        <span
-                                                                                                            class="small"
-                                                                                                            style="text-decoration: line-through">{{ $reg->main_price }}</span>
-                                                                                                        <span
-                                                                                                            class="price">{{ $reg->price }}</span>
-                                                                                                    @endif
-                                                                                                    ر.س
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    السعر النهائي</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ $reg->price }}
-                                                                                                    ر.س
-                                                                                                </div>
-
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    الخصم</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ $reg->DiscountAmount }}
-                                                                                                    ر.س
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <div
-                                                                                                    class="col-lg-2 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    رسوم الاختبار</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ $reg->course->exam_fees }}
-                                                                                                    ر.س
-                                                                                                </div>
-
-
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12 regBy" reg_id="{{ $reg->id }}">
-                                                                                                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    تم التسجيل عن طريق
-                                                                                                </div>
-                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col regByText">
-                                                                                                    <span class="regByName">
-                                                                                                        @if ($reg->registered_by_name)
-                                                                                                            {{ $reg->registered_by_name }}
-                                                                                                        @else
-                                                                                                            ----
-                                                                                                        @endif
-                                                                                                    </span>
-                                                                                                    @if (Auth::guard('admin')->check() || Auth::user()->can('can_change_regby'))
-                                                                                                        <a class="btn btn-blue changeRegBy">تغير</a>
-                                                                                                    @endif
-                                                                                                </div>
-
-                                                                                                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col newRegBy" style="display: none">
-                                                                                                    <span>
-                                                                                                        <select id="reg_by" name="reg_by" reg_id="{{ $reg->id }}" class="regby-select" dir="rtl" style="width: 180px">
-                                                                                                            <option value="">-- اختر الموظف --</option>
-                                                                                                            @foreach ($employees as $employee)
-                                                                                                                <option value="{{ $employee->id }}" @selected($reg->reg_by_employee_id == $employee->id)>{{ $employee->name }}</option>
-                                                                                                            @endforeach
-                                                                                                        </select>
-                                                                                                    </span>
-
-                                                                                                    <a class="btn btn-green save-btn saveRegBy" reg_id="{{ $reg->id }}"> حفظ </a>
-                                                                                                    <a class="btn btn-red cancel-btn resetRegBy">إلغاء التغير </a>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <div
-                                                                                                    class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    تاريخ التقديم</div>
-                                                                                                <div
-                                                                                                    class="col-lg-4 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    {{ \Carbon\Carbon::parse($reg->created_at)->format('d-m-Y') }}
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <div
-                                                                                                    class="col-lg-3 col-md-3 col-sm-12 col-xs-12 col label font-bold">
-                                                                                                    تم استلام الشهادة </div>
-                                                                                                <div
-                                                                                                    class="col-lg-9 col-md-2 col-sm-12 col-xs-12 col">
-                                                                                                    @if ($reg->is_recive_cert == 1)
-                                                                                                        <i
-                                                                                                            class="fa fa-check green list-boolean-icon"></i>
-                                                                                                    @else
-                                                                                                        <i
-                                                                                                            class="fa fa-close red list-boolean-icon"></i>
-                                                                                                    @endif
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                </div>
-                                                                            </section>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="modal fade text-xs-left pay-modal"
-                                                    id="modal-pay-{{ $reg->id }}" tabindex="-1" role="dialog"
-                                                    aria-labelledby="myModalLabel90" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document" style="max-width: 800px;">
-                                                        <div class="modal-content">
-                                                            <div id="pay-{{ $reg->id }}-info" style="">
-                                                                <div class="modal-body content-reports pay-modal"
-                                                                    style="padding:0">
-                                                                    <div class="statistic-table custom-bar">
-                                                                        <form class="card-form" id="payActionForm"
-                                                                            method="POST"
-                                                                            action='{{ route(Auth::getDefaultDriver() . '.courses.pay_action') }}'>
-                                                                            @csrf
-                                                                            <input type="hidden" id="id"
-                                                                                name="id"
-                                                                                value="{{ $reg->id }}" />
-                                                                            <div class="content-body">
-                                                                                {{-- <section class="card"> --}}
-                                                                                <div class="card-header">
-                                                                                    <h4 class="card-title"
-                                                                                        style="float: right;">
-                                                                                        الدفعات لدورة :
-                                                                                        {{ $reg->course->FullName }}
-                                                                                    </h4>
-
-                                                                                    <button type="button" class="close"
-                                                                                        data-dismiss="modal"
-                                                                                        aria-label="Close">
-                                                                                        <span
-                                                                                            aria-hidden="true">&times;</span>
-                                                                                    </button>
-                                                                                </div>
-
-                                                                                <div class="card-block pay-template">
-                                                                                    <div class="card-text col-md-12">
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-4">
-                                                                                                <label><b>سعر الدورة
-                                                                                                        :</b></label>
-                                                                                                <span>
-                                                                                                    {{ number_format($reg->price, 2) }}
-                                                                                                    ر.س
-                                                                                                </span>
-                                                                                            </div>
-                                                                                            <div class="col-md-4">
-                                                                                                <label><b>المدفوع
-                                                                                                        :</b></label>
-                                                                                                <span style="color:green">
-                                                                                                    {{ number_format($reg->payments->sum('amount'), 2) }}
-                                                                                                    ر.س
-                                                                                                </span>
-                                                                                            </div>
-
-                                                                                            <div class="col-md-4">
-                                                                                                <label><b>المتبقي
-                                                                                                        :</b></label>
-                                                                                                <span style="color:red">
-                                                                                                    {{ number_format($reg->price - $reg->payments->sum('amount'), 2) }}
-                                                                                                    ر.س
-                                                                                                </span>
-                                                                                            </div>
-
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div class="card-block pay-template">
-                                                                                    <div class="card-text col-md-12">
-                                                                                        <div class="row">
-                                                                                            <div class="col-md-12">
-                                                                                                <h4 class="card-title"
-                                                                                                    style="float: right;">
-                                                                                                    الدفعات</h4>
-                                                                                            </div>
-
-                                                                                            @if ($reg->payments->count() > 0)
-                                                                                                @foreach ($reg->payments as $payment)
-                                                                                                    <div class="col-md-12">
-                                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                                                        <b> {{ $payment->amount }}
-                                                                                                            ر.س
-                                                                                                        </b>
-                                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                                                        ({{ $payment->paid_at }})
-                                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                                                                                        [
-                                                                                                        {{ $payment->pay_type }}
-                                                                                                        ]
-                                                                                                    </div>
-                                                                                                @endforeach
-                                                                                            @endif
-
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div class="card-block pay-template"
-                                                                                    style="margin-bottom: 20px">
-                                                                                    <div class="card-text col-md-12">
-                                                                                        <div class="row">
-
-                                                                                            <div class="col-md-12">
-                                                                                                <h4 class="card-title"
-                                                                                                    style="float: right;">
-                                                                                                    تسجيل دفع جديد</h4>
-                                                                                            </div>
-
-                                                                                            <div class="col-md-3">
-                                                                                                <label>القيمة :</label>
-                                                                                                <span>
-                                                                                                    <input type="text"
-                                                                                                        id="amount"
-                                                                                                        class="form-control"
-                                                                                                        name="amount" />
-                                                                                                </span>
-                                                                                            </div>
-
-                                                                                            <div class="col-md-4">
-                                                                                                <label for="paid_at">تاريخ
-                                                                                                    الدفع :</label>
-                                                                                                <span>
-                                                                                                    <input type="text"
-                                                                                                        id="paid_at"
-                                                                                                        class="form-control pickadate"
-                                                                                                        name="paid_at" />
-                                                                                                </span>
-                                                                                            </div>
-
-                                                                                            <div class="col-md-3">
-                                                                                                <label for="paid_at">نوع
-                                                                                                    الدفع :</label>
-                                                                                                <span>
-                                                                                                    <select id="pay_type"
-                                                                                                        name="pay_type"
-                                                                                                        class="form-control">
-                                                                                                        <option
-                                                                                                            value="كاش">
-                                                                                                            كاش</option>
-                                                                                                        <option
-                                                                                                            value="تحويل">
-                                                                                                            تحويل</option>
-                                                                                                        <option
-                                                                                                            value="شبكه">
-                                                                                                            شبكه</option>
-                                                                                                    </select>
-                                                                                                </span>
-                                                                                            </div>
-
-                                                                                            <div class="col-md-2"
-                                                                                                style="text-align: center">
-                                                                                                <label>&nbsp;</label>
-                                                                                                <span>
-                                                                                                    <br />
-                                                                                                    <a class="btn btn-success pay"
-                                                                                                        href="#">دفع</a>
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                {{-- </section> --}}
-                                                                            </div>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                @include('coursemodule::admin.partials.reg_modals')
                                             @endforeach
                                         @endif
                                     </tbody>
@@ -956,125 +561,6 @@
                 }
 
 
-                var actvRegID = 0;
-                var actvPayID = 0;
-
-                ///Reg Details
-                $('.one-reg').click(function() {
-                    actvRegID = this.id;
-                    $('#modal-reg-info div.modal-content').html($('#reg-' + actvRegID + '-info').html());
-                });
-
-                $('.reg-modal .changeRegDate').click(function() {
-                    $('#reg-' + actvRegID + '-info .regDateDV').hide();
-                    $('#reg-' + actvRegID + '-info .chooseNewDateDV').show();
-                    $('#reg-' + actvRegID + '-info #chngDate').val(1);
-                });
-
-                $('.reg-modal .resetRegDate').click(function() {
-                    $('#reg-' + actvRegID + '-info .chooseNewDateDV').hide();
-                    $('#reg-' + actvRegID + '-info .regDateDV').show();
-                    $('#reg-' + actvRegID + '-info #chngDate').val(0);
-                });
-
-                $('.reg-modal .accept').click(function() {
-                    $('#reg-' + actvRegID + '-info #reg-action').val('accept');
-                    $('#reg-' + actvRegID + '-info #regActionForm').submit();
-                    return;
-                });
-                $('.reg-modal .reject').click(function() {
-                    $('#reg-' + actvRegID + '-info #reg-action').val('reject');
-                    $('#reg-' + actvRegID + '-info #regActionForm').submit();
-                    return;
-                });
-                $('.reg-modal .waiting').click(function() {
-                    $('#reg-' + actvRegID + '-info #reg-action').val('waiting');
-                    $('#reg-' + actvRegID + '-info #regActionForm').submit();
-                    return;
-                });
-
-                //changeRegBy
-                // "تم التسجيل عن طريق" dropdown → Select2 (RTL, searchable)
-                function initRegBySelect($el, $parent) {
-                    if ($el.data('select2')) {
-                        $el.select2('destroy');
-                    }
-                    $el.select2({
-                        dir: 'rtl',
-                        width: 'style',
-                        placeholder: '-- اختر الموظف --',
-                        dropdownParent: $parent,
-                        language: {
-                            noResults: function() {
-                                return 'لا توجد نتائج';
-                            }
-                        }
-                    });
-                }
-
-                $('.reg-modal .changeRegBy').click(function() {
-                    $('#reg-' + actvRegID + '-info .regByText').hide();
-                    $('#reg-' + actvRegID + '-info .newRegBy').show();
-                    initRegBySelect($('#reg-' + actvRegID + '-info .newRegBy #reg_by'), $('#modal-reg-' + actvRegID));
-                });
-
-                $('.reg-modal .saveRegBy').on('click', function() {
-                    var reg_id = $(this).attr('reg_id');
-                    var $select = $('#reg-' + reg_id + '-info .newRegBy #reg_by');
-                    var reg_by = $select.val();
-                    if (!reg_by) {
-                        alert('يجب اختيار الموظف');
-                        return false;
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ route(Auth::getDefaultDriver().'.updateRegBy') }}',
-                        data: {
-                            'reg_by': reg_by,
-                            'reg_id': reg_id,
-                            '_token': '<?php echo csrf_token(); ?>'
-                        },
-                        success: (result) => {
-                            var $info = $('#reg-' + reg_id + '-info');
-                            $info.find('.regByName').text(result.new_reg_by || '----');
-                            var $sel = $info.find('.newRegBy #reg_by');
-                            $sel.find('option').removeAttr('selected');
-                            $sel.find('option[value="' + result.new_reg_by_id + '"]').attr('selected', 'selected');
-                            $sel.val(result.new_reg_by_id).trigger('change');
-                            $info.find('.regByText').show();
-                            $info.find('.newRegBy').hide();
-                        },
-                        error: function(jqXHR, exception) {
-                            var msg = (jqXHR.responseJSON && jqXHR.responseJSON.message) ? jqXHR.responseJSON.message : 'حدث خطأ أثناء الحفظ';
-                            alert(msg);
-                        }
-                    });
-                    return false;
-                });
-
-
-                $('.reg-modal .resetRegBy').click(function() {
-                    var $info = $('#reg-' + actvRegID + '-info');
-                    $info.find('.regByText').show();
-                    $info.find('.newRegBy').hide();
-                    // restore the saved employee in the list
-                    var $select = $info.find('.newRegBy #reg_by');
-                    $select.val($select.find('option[selected]').val() || '').trigger('change');
-                });
-                ///////////////////////////
-
-
-                //Pay
-                $('.one-pay').click(function() {
-                    actvRegID = this.id;
-                    $('#modal-pay-info div.modal-content').html($('#pay-' + actvRegID + '-info').html());
-                });
-                $('.pay-modal .pay').click(function() {
-                    //console.log(actvRegID);
-                    $('#pay-' + actvRegID + '-info #payActionForm').submit();
-                    return;
-                });
-
                 ////////Search &  Filter & Sort//////
                 var searchSortFilterParams = '';
                 //Search//
@@ -1216,6 +702,7 @@
                 /////////////////////////////////////////
             });
         </script>
+        @include('coursemodule::admin.partials.reg_modals_js')
     @endpush
 @endsection
 
