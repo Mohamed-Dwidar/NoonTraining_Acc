@@ -1,6 +1,10 @@
 {{-- JS for coursemodule::admin.partials.reg_modals + reg_actions (rows need id="reg{id}" with .paid_status_id / .paid_exam_id for نسخ البيانات). Include once, inside @push('scripts'). --}}
         <script>
             $(document).ready(function() {
+                // Modals are rendered inside the table (.table-responsive scrolls on mobile); on iOS a fixed
+                // modal inside a scrolling container is drawn under the backdrop → move them to <body>.
+                $('.modal.reg-modal, .modal.pay-modal, .modal.status-modal').appendTo('body');
+
                 var actvRegID = 0;
                 var actvPayID = 0;
 

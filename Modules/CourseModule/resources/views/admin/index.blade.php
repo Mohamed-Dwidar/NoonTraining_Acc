@@ -145,7 +145,7 @@
                                             @foreach ($courses as $course)
                                                 <tr>
                                                     <td class="strong">
-                                                        {{ $course->FullName }}
+                                                        <a href="{{ route(Auth::getDefaultDriver() . '.courses.show', $course->id) }}">{{ $course->FullName }}</a>
                                                     </td>
                                                     @if (Auth::guard('admin')->check())
                                                         <td>{{ $course->branch->name }}</td>

@@ -282,8 +282,9 @@
                                                 <tr id="reg{{ $reg->id }}">
                                                     {{-- <td class="strong" style="padding: 0.75rem 0;background-color: {{$reg->status->color}} ">&nbsp;</td> --}}
                                                     <td class="strong">
-                                                        <label
-                                                            for="{{ $reg->id }}">{{ $reg->student->name }}</label>
+                                                        <a class="one-reg" href="#" id="{{ $reg->id }}" role="button"
+                                                            data-toggle="modal"
+                                                            data-target="#modal-reg-{{ $reg->id }}">{{ $reg->student->name }}</a>
                                                     </td>
                                                     {{-- <td>{{$reg->created_at}}</td> --}}
                                                     <td>
