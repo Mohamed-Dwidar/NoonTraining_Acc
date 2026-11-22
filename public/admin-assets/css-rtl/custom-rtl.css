@@ -804,6 +804,17 @@ nav.pagination-nav {
     margin: 0;
 }
 
+/* search box inline with the report filters (courses_all) */
+.rpt-search-filter {
+    float: right;
+    margin-left: 20px;
+    white-space: nowrap;
+}
+
+.rpt-search-filter #srchInput {
+    width: 150px;
+}
+
 
 /* Responsive overrides — keep at the end of the file so they win over the rules above */
 /* ===== Phones + tablets (< 992px): compact one-line header; tables scroll inside their card instead of widening the page
@@ -1036,6 +1047,16 @@ nav.pagination-nav {
         gap: 4px;
         white-space: normal;
         margin: 6px 0;
+    }
+
+    .rpt-search-filter {
+        float: none;
+        clear: both;
+        margin: 6px 0;
+    }
+
+    .rpt-search-filter #srchInput {
+        width: auto;
     }
 
     .fltr-date-range input,

@@ -67,19 +67,17 @@
 
                                 </div>
 
-                                <div class="col-lg-5 col-md-4 col-sm-3 col-xs-12">
-                                    <div class="header-search" style="display: none">
+                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                    {{-- search by course name / group no. / org no. → srch (custom.js .srch-icon / .clear) --}}
+                                    <div class="header-search rpt-search-filter">
                                         <label>بحث</label>
-                                        <input value='@if (app('request')->srch != null) {{ app('request')->srch }} @endif'
-                                            id="srchInput" />
-                                        <button class="srch-icon-reg">
+                                        <input value="{{ app('request')->srch }}" id="srchInput" />
+                                        <button class="srch-icon">
                                             <i class="icon-search7"></i>
                                         </button>
-                                        <a href="#" class="clear-reg">إلغاء</a>
+                                        <a href="#" class="clear">إلغاء</a>
                                     </div>
-                                </div>
 
-                                <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
 
                                     <div class="filters" @if (Auth::guard('user')->check()) style="display:none" @endif>
                                         <input type="hidden" id="fltr_brnch_val" value="@if(app('request')->brnch != null){{ app('request')->brnch }}@endif" />

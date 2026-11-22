@@ -85,10 +85,11 @@ class Course extends Model
         }
 
         if (isset($request['srch'])) {
-            $query->where(function ($subQuery) use ($request) {
-                $subQuery->orWhereRaw('UPPER(name) LIKE "%' . strtoupper($request['srch']) . '%"');
-                $subQuery->orWhereRaw('UPPER(group_nu) LIKE "%' . strtoupper($request['srch']) . '%"');
-                $subQuery->orWhereRaw('UPPER(course_org_nu) LIKE "%' . strtoupper($request['srch']) . '%"');
+            $srch = '%' . strtoupper(trim($request['srch'])) . '%';
+            $query->where(function ($subQuery) use ($srch) {
+                $subQuery->orWhereRaw('UPPER(courses.name) LIKE ?', [$srch]);
+                $subQuery->orWhereRaw('UPPER(courses.group_nu) LIKE ?', [$srch]);
+                $subQuery->orWhereRaw('UPPER(courses.course_org_nu) LIKE ?', [$srch]);
             });
         }
 
