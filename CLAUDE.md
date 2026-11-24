@@ -21,7 +21,7 @@ Then suggest a commit message.
 ## Stack
 - Framework: Laravel 10 / PHP ^8.1, modular via `nwidart/laravel-modules` v10
 - Database: MySQL (?) — `DB_CONNECTION` in .env; raw SQL uses MySQL-style `"%...%"` LIKE strings
-- Frontend: Blade + jQuery + Bootstrap RTL admin theme (static files in `public/admin-assets/`). Select2 4.1 from CDN (loaded in `layoutmodule::admin.main`; use `dir: 'rtl'` — native `<select>` options can't be right-aligned on macOS). Report filters/export params are built in `public/admin-assets/js/custom.js`. Responsive rules (< 992px tablet, < 768px phone) live in the "Responsive overrides" section at the **end** of `public/admin-assets/css-rtl/custom-rtl.css` — keep it last and add new breakpoint rules there; wide tables scroll inside `.table-responsive` on small screens. Vite is configured but not used by module views (?)
+- Frontend: Blade + jQuery + Bootstrap RTL admin theme (static files in `public/admin-assets/`). Select2 4.1 from CDN (loaded in `layoutmodule::admin.main`; use `dir: 'rtl'` — native `<select>` options can't be right-aligned on macOS). Report filters/export params are built in `public/admin-assets/js/custom.js`. Responsive rules (< 992px tablet, < 768px phone) live in the "Responsive overrides" section at the **end** of `public/admin-assets/css-rtl/custom-rtl.css` — keep it last and add new breakpoint rules there; wide tables scroll inside `.table-responsive` on small screens — modals must not stay inside it (iOS draws them under the backdrop); move them to `<body>` as `reg_modals_js` does. Vite is configured but not used by module views (?)
 - Auth: custom session guards `admin` (model `AdminModule\...\Admin`, table `admins`) and `user` (model `UserModule\...\User`, table `users`) in `config/auth.php`
 - Permissions: `spatie/laravel-permission` v6, permissions on guard `user` only (admins bypass)
 - Key packages: `prettus/l5-repository` (repositories), `maatwebsite/excel` (exports), `niklasravnsborg/laravel-pdf` (receipt PDF), `geniusts/hijri-dates` (no longer used — Hijri removed), `laravel/sanctum` (unused (?))
@@ -59,7 +59,7 @@ Then suggest a commit message.
   - Services hold business logic and call **repositories** (their own module's, or another module's *service*, e.g. `CourseRegService` → `UserService`).
   - Repositories (prettus `BaseRepository` in `Modules/<X>/Repository/`) are the only place that queries Eloquent models; add a named repository method for any custom query.
   - Older code still breaks this (controllers querying models); fix it when you touch that code.
-- Admin + User controllers are near-duplicates: **any change to one usually must be mirrored in the other**
+- Admin + User controllers are near-duplicates: **any change to one usually must be mirrored in the other**. Exception: ReminderModule shares one abstract `ReminderController` with thin per-portal subclasses
 - Branch scoping (user portal): force `branch_id` / `branch` filter from `Auth::guard('user')->user()->branch_id` and compare ownership in show/edit
 - Permission checks: `$user->can('can_edit')` in controllers, `@can` / `@cannot('view_only')` in Blade, `permission:show_reports` middleware on user reports
 - Audit: call `LogService::recordLog($action, $description, $url)` on create/update/delete actions
@@ -79,6 +79,7 @@ Then suggest a commit message.
 - **PermissionModule** ↔ only seeders + model wrappers; permissions assigned per user in UserModule admin create/edit (`UserService` → `permissions()->sync()`)
 - **LocationModule** ↔ cities list for Student forms; no UI of its own
 - **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; `course_reg_payments.payment_method_id` → `payment_methods`; dropdowns on course + student pages, unknown-payment assign maps by name), Student (`show()` passes `$employees` + `$paymentMethods`), Report (admin-only `regby` filter), Log, Layout (nav sub-menu)
+- **ReminderModule** ("الأشعارات", both portals) ↔ Admin / User (polymorphic creator + reader), Branch (`reminders.branch_id`, null = all branches), Log, Layout (bell icon in `header` via `@includeIf`, nav item): its tables must exist or **every page** fails
 - **LayoutModule** ↔ every view (`layoutmodule::admin.main`); nav changes per guard
 - **Expenses / income tracking** (planned (?), mentioned in README) ↔ Branch, Reports
 

@@ -36,6 +36,13 @@
                         </a>
                     </li>
                 @endcan
+
+                <li class="nav-item">
+                    <a href="{{ route(Auth::getDefaultDriver() . '.reminders') }}" class="@if (Request::segment(2) == 'reminders') active @endif">
+                        <i class="fa fa-bell"></i>
+                        <span data-i18n="nav.dash.main" class="menu-title">الأشعارات</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>

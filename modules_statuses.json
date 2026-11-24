@@ -9,5 +9,6 @@
     "LocationModule": true,
     "LogModule": true,
     "PermissionModule": true,
-    "SettingModule": true
+    "SettingModule": true,
+    "ReminderModule": true
 }

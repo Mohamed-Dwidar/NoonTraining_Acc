@@ -26,6 +26,7 @@
             </div>
             <div class="col-xl-3 col-lg-2 col-xs-6 h-info">
                 <ul class="nav navbar-nav float-xs-right header-user-nav">
+                    @includeIf('remindermodule::admin.partials.header_icon')
                     <li class="dropdown dropdown-user nav-item header-user">
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle nav-link dropdown-user-link">
                             <span class="avatar avatar-online">

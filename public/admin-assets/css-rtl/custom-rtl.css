@@ -816,6 +816,232 @@ nav.pagination-nav {
 }
 
 
+/* ===== Reminders ("الأشعارات"): header bell icon + pages ===== */
+.header-user-nav {
+    display: flex;
+    align-items: center;
+}
+
+.header-reminders {
+    position: relative;
+    margin-top: -6px;
+}
+
+.header-navbar.navbar-semi-dark .navbar-nav .header-reminders-icon.nav-link {
+    position: relative;
+    display: block;
+    padding: 8px 10px;
+    color: #1A4A22;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.reminders-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background-color: #DA4453;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 18px;
+    text-align: center;
+}
+
+.header-reminders .reminders-menu {
+    right: auto;
+    left: 0;
+    width: 320px;
+    padding: 0;
+    text-align: right;
+}
+
+.reminders-list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+.reminder-item.unread {
+    background-color: #F3F7F4;
+}
+
+.reminder-item > a {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.reminder-item .reminder-title {
+    display: block;
+    line-height: 1.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reminder-item.unread .reminder-title {
+    font-weight: bold;
+}
+
+.reminder-item .reminder-date,
+.reminder-read-at,
+.reminder-excerpt,
+.reminder-hint {
+    color: #777777;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.reminder-empty {
+    padding: 24px 12px;
+    color: #777777;
+    text-align: center;
+}
+
+.reminders-footer {
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+/* reminders list: one card per row (text | status + buttons) */
+.reminder-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+}
+
+.reminder-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    border: 1px solid #E4E7ED;
+    border-right: 4px solid #CCD3CE;
+    border-radius: 0.65rem;
+    background-color: #FFFFFF;
+    box-shadow: 0 2.5px 10px 0 rgba(0, 0, 0, 0.05);
+}
+
+.reminder-card.reminder-unread {
+    border-right-color: #0C9170;
+    background-color: #F3F7F4;
+}
+
+.reminder-card-head {
+    padding: 12px 14px 8px;
+}
+
+.reminder-card-title {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.reminder-card-date {
+    color: #0C9170;
+    font-size: 13px;
+}
+
+.reminder-card-body {
+    grid-column: 1;
+    padding: 0 14px 10px;
+}
+
+.reminder-card-body .reminder-excerpt {
+    margin-bottom: 8px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.reminder-card-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    line-height: 1.9;
+}
+
+.reminder-card-info i {
+    width: 18px;
+    color: #777777;
+    text-align: center;
+}
+
+.reminder-card-foot {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 14px;
+}
+
+.reminder-card-foot .btn {
+    padding: 5px 12px;
+    font-size: 13px;
+}
+
+.reminder-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.reminder-filters .form-control {
+    width: auto;
+    min-width: 160px;
+}
+
+.reminder-time-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.reminder-time-row .form-control {
+    width: 110px;
+}
+
+.reminder-audience {
+    margin-top: 18px;
+}
+
+/* keep "date time" in this order inside RTL text */
+.reminder-dt {
+    display: inline-block;
+    direction: ltr;
+    white-space: nowrap;
+}
+
+.reminder-view {
+    padding: 20px;
+}
+
+.reminder-details {
+    white-space: pre-line;
+}
+
+.reminder-actions {
+    margin-top: 12px;
+}
+
 /* Responsive overrides — keep at the end of the file so they win over the rules above */
 /* ===== Phones + tablets (< 992px): compact one-line header; tables scroll inside their card instead of widening the page
    (style-admin.css sets .table-responsive overflow-x: inherit for desktop) ===== */
@@ -930,6 +1156,15 @@ nav.pagination-nav {
         left: 20px;
     }
 
+    .header-reminders {
+        margin-top: 0;
+    }
+
+    .header-navbar.navbar-semi-dark .navbar-nav .header-reminders-icon.nav-link {
+        font-size: 20px;
+        padding: 6px 8px;
+    }
+
     .nav-links {
         margin-top: 6px;
     }
@@ -937,6 +1172,28 @@ nav.pagination-nav {
 
 /* ===== Phones (< 768px) ===== */
 @media (max-width:767px) {
+
+    /* reminders menu: as wide as the screen, under the header */
+    .header-reminders .reminders-menu {
+        position: fixed;
+        top: 58px;
+        left: 8px;
+        right: 8px;
+        width: auto;
+    }
+
+    /* reminder card: status + buttons under the text */
+    .reminder-card {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .reminder-card-foot {
+        grid-column: 1;
+        grid-row: auto;
+        flex-wrap: wrap;
+        gap: 8px;
+        border-top: 1px solid #E4E7ED;
+    }
 
     /* --- Nav: small icons, 4 per row --- */
     .nav-links {
