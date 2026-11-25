@@ -909,7 +909,8 @@ nav.pagination-nav {
 }
 
 .reminders-footer {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
     padding: 10px 12px;
     font-size: 13px;
 }
@@ -1180,6 +1181,16 @@ nav.pagination-nav {
         left: 8px;
         right: 8px;
         width: auto;
+    }
+
+    /* short screens: the list scrolls so the menu links stay visible */
+    .reminders-list {
+        max-height: calc(100vh - 130px);
+        max-height: calc(100dvh - 130px); /* iOS: without the browser bars */
+    }
+
+    .reminders-footer a {
+        padding: 6px 0;
     }
 
     /* reminder card: status + buttons under the text */

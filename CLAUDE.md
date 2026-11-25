@@ -79,7 +79,7 @@ Then suggest a commit message.
 - **PermissionModule** ↔ only seeders + model wrappers; permissions assigned per user in UserModule admin create/edit (`UserService` → `permissions()->sync()`)
 - **LocationModule** ↔ cities list for Student forms; no UI of its own
 - **SettingModule** (admin-only "إعدادات النظام") ↔ Course (`course_regs.reg_by_employee_id` → `reg_by_employees`; `course_reg_payments.payment_method_id` → `payment_methods`; dropdowns on course + student pages, unknown-payment assign maps by name), Student (`show()` passes `$employees` + `$paymentMethods`), Report (admin-only `regby` filter), Log, Layout (nav sub-menu)
-- **ReminderModule** ("الأشعارات", both portals) ↔ Admin / User (polymorphic creator + reader), Branch (`reminders.branch_id`, null = all branches), Log, Layout (bell icon in `header` via `@includeIf`, nav item): its tables must exist or **every page** fails
+- **ReminderModule** ("الأشعارات", both portals) ↔ Admin / User (polymorphic creator + reader), Branch (`reminders.branch_id`, null = all branches), Log, Layout (bell icon in `header` via `@includeIf`; no nav item): its tables must exist or **every page** fails
 - **LayoutModule** ↔ every view (`layoutmodule::admin.main`); nav changes per guard
 - **Expenses / income tracking** (planned (?), mentioned in README) ↔ Branch, Reports
 

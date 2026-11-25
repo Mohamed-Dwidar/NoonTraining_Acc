@@ -7,10 +7,10 @@
 ---
 
 ## Current status
-- **Branch:** `main` (2026-11-25). ReminderModule (below) + docs are uncommitted; last commit 9cadafa.
+- **Branch:** `main` (2026-11-25). ReminderModule committed (65e07f8); uncommitted: nav item removed + add link in the bell menu + docs.
 - **Last done:** ReminderModule "الأشعارات" (2026-11-25; local migrations ran): reminders with several alert times, per-person read state, bell icon in the header, one-card-per-row list. Before that: course name link in courses list, student name opens the details popup on the course page, iOS popup fix (b3e584b, 2026-11-12); search box on the all-courses report + safe search query (9cadafa, 2026-11-22). Before that (2026-11-09): mobile responsive layout (29e8906), status "محال إلى القضاء" + its report, report date filter, notes in exports, names list, payment methods list. All local migrations ran.
 - **Working on:** nothing in progress.
-- **Not yet verified (ReminderModule):** 60s icon refresh in a real browser, real phone, the last nav order change and bell footer after removing the add link. (AJAX read was checked in Chrome with a saved response and via HTTP tests; the owner is already using it locally.)
+- **Not yet verified (ReminderModule):** 60s icon refresh in a real browser, real phone. (AJAX read was checked in Chrome with a saved response and via HTTP tests; the owner is already using it locally.)
 - **Questions open with the owner (ReminderModule):** (1) label "الأشعارات" vs standard "الإشعارات"; (2) rename "لي فقط" to "لي وللإدارة فقط" (admin now receives private reminders); (3) default audience on create is "لي فقط" — keep, switch to "الكل", or select nothing.
 - **Not yet verified:** nothing from b3e584b / 9cadafa was opened in a browser by Claude. To check: (1) real iPhone — course + student page popups (name, التفاصيل / الدفعات / تغيير حالة الدفع) open above the dark overlay and can be closed; the owner hasn't confirmed the fix; (2) desktop — popups look the same now that they sit under `<body>` (styles inherited from the card/table no longer apply); (3) all-courses report — search + branch + reg-by + date fit on one line for admin. Also iOS tap on the settings sub-menu (29e8906).
 - **Before deploying (ReminderModule):** enable it (`modules_statuses.json`) and migrate right away (`php artisan module:migrate ReminderModule`) — the header icon queries its tables on every page; then `optimize:clear`. Server must stay on app timezone Asia/Riyadh (times compared with PHP `now()`, not SQL).
@@ -127,7 +127,7 @@
   - **Audience:** private = the creator + admins (admin sees everything). "الكل" by a user = admins + users of the creator's branch (`branch_id` stored at creation); by admin = everyone (`branch_id` null). Rule: `Reminder::scopeForPerson`.
   - **Admin:** sees all reminders incl. users' private ones, on the page and in the icon/count, with the read button (owner decision 2026-11-25; replaced "own + shared only" in the icon) + filter by creator (`usr=admin-1|user-9`). Status filter `sts=unread|read|upcoming` in both portals.
   - **Read:** per person and per time (`reminder_reads`, `read_at`); "مقروء" = AJAX `{portal}.reminders.read`, marks all times due so far, so the next time makes it unread again. Moving the date clears the reads of moved times.
-  - **Icon:** view composer in `ReminderModuleServiceProvider` gives count + latest 8 due reminders (menu footer: only "عرض كل الأشعارات", no add link); `reminders.js` refreshes it every 60s (`{portal}.reminders.latest`). Nav item: last in the user nav, before "إعدادات النظام" in the admin nav.
+  - **Icon:** view composer in `ReminderModuleServiceProvider` gives count + latest 8 due reminders (menu footer: "عرض كل الأشعارات" + "أضف إشعار جديد"); `reminders.js` refreshes it every 60s (`{portal}.reminders.latest`). No item in the main nav of either portal (owner decision 2026-11-25) — the bell menu is the only way in. On phones the list scrolls (`100dvh - 130px`) so the footer links stay visible.
   - List page shows one card per row (`.reminder-cards` / `.reminder-card`), not a table (2026-11-25); status + buttons beside the text, under it on phones.
   - Edit/delete (soft): creator + admin only (`canBeManagedBy`), not tied to `can_edit` / `view_only`. Logged; private titles are not written to the log (users log is visible to branch staff).
 - **Pending:** the 3 owner questions in "Current status"; no list of who read a reminder (data is stored); new users see old shared reminders as unread.
@@ -152,10 +152,10 @@
 ## Session log
 
 ### 2026-11-25 — ReminderModule "الأشعارات"
-- **Changed:** new `Modules/ReminderModule` (both portals); bell icon in `layoutmodule::admin.header`, nav item in both navs; `reminders.js`, CSS; `modules_statuses.json`. Then by owner request: add link removed from the bell menu; admin's icon/count covers all reminders incl. private ones; list as one card per row instead of a table; nav item last for users.
+- **Changed:** new `Modules/ReminderModule` (both portals); bell icon in `layoutmodule::admin.header`; `reminders.js`, CSS; `modules_statuses.json`. Then by owner request: admin's icon/count covers all reminders incl. private ones; list as one card per row instead of a table; no main nav item, add link in the bell menu footer.
 - **Why:** owner request — reminders for users and admin.
 - **Affects:** LayoutModule (every page's header). Checked: temporary HTTP tests of the rules (98 + 21 assertions, rolled back, not kept in the repo), Chrome screenshots at desktop + phone width. See "Not yet verified".
-- **Commit:** uncommitted
+- **Commit:** 65e07f8 (nav removal + add link: uncommitted)
 
 ### 2026-11-12 → 11-22 — Course links, iOS popup fix, all-courses search
 - **Changed:** courses list name → link to course page; course page student name → opens details popup; `reg_modals_js` moves registration modals to `<body>`; search box in `courses_all` placed before the filters (+ `.rpt-search-filter` CSS); `Course::scopeFilter` `srch` uses bindings.

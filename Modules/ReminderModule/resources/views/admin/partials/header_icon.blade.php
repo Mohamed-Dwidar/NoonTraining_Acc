@@ -13,6 +13,7 @@
         </div>
         <div class="reminders-footer">
             <a href="{{ route($portal . '.reminders') }}">عرض كل الأشعارات</a>
+            <a href="{{ route($portal . '.reminders.add') }}"><i class="fa fa-plus"></i> أضف إشعار جديد</a>
         </div>
     </div>
 </li>
