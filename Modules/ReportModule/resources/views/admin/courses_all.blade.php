@@ -102,7 +102,8 @@
                                         </div>
                                     </div>
 
-                                    @if (Auth::guard('admin')->check())
+                                    {{-- admin, or employee with permission filter_reports_by_reg_by (controller passes the list only then) --}}
+                                    @isset($reg_by_employees)
                                     <div class="filters">
                                         <input type="hidden" id="fltr_regby_val" value="{{ app('request')->regby }}" />
                                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -131,7 +132,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    @endif
+                                    @endisset
 
                                     @include('reportmodule::admin.partials.date_range_filter', ['label' => 'تاريخ بداية الدورة'])
 

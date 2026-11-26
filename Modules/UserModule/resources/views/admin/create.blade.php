@@ -127,6 +127,12 @@
                                                             <label for="show_company_in_reports">عرض القطاع في التقارير</label>
                                                         </div>
 
+                                                        <div class="col-lg-3 col-sm-12 col-xs-12 col-6">
+                                                            <input type="checkbox" name="permissions[]" id="filter_reports_by_reg_by" value="8"
+                                                                {{ in_array('filter_reports_by_reg_by', old('permissions', [])) ? 'checked' : '' }}>
+                                                            <label for="filter_reports_by_reg_by">فلتر التقارير بالموظفين</label>
+                                                        </div>
+
                                                         {{-- @endforeach --}}
                                                     </div>
                                                 </div>

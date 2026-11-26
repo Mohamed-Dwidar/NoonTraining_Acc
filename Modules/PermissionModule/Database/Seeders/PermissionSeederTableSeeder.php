@@ -34,6 +34,7 @@ class PermissionSeederTableSeeder extends Seeder
         $permission = Permission::firstOrCreate(['name' => 'can_change_regby', 'guard_name' => $guardName]);
         $permission = Permission::firstOrCreate(['name' => 'show_reg_by_in_copy', 'guard_name' => $guardName]);
         $permission = Permission::firstOrCreate(['name' => 'show_company_in_reports', 'guard_name' => $guardName]);
+        $permission = Permission::firstOrCreate(['name' => 'filter_reports_by_reg_by', 'guard_name' => $guardName]);
 
 
         // Assign permissions to the role
